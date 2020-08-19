@@ -1,7 +1,7 @@
 {
   "name": "electron-react-boilerplate",
-  "productName": "ElectronReact",
-  "version": "1.3.0",
+  "productName": "小鱼云视频",
+  "version": "1.3.2",
   "description": "Electron application boilerplate based on React, React Router, Webpack, React Hot Loader for rapid application development",
   "scripts": {
     "build": "concurrently \"yarn build-main\" \"yarn build-renderer\"",
@@ -20,7 +20,7 @@
     "package-ci": "yarn postinstall && yarn build && electron-builder --publish always",
     "package-mac": "yarn build && electron-builder build --mac",
     "package-linux": "yarn build && electron-builder build --linux",
-    "package-win": "yarn build && electron-builder build --win --x64",
+    "package-win": "yarn build && electron-builder build --win --ia32",
     "postinstall": "node -r @babel/register internals/scripts/CheckNativeDep.js && electron-builder install-app-deps && yarn build-dll && opencollective-postinstall",
     "postlint-fix": "prettier --ignore-path .eslintignore --single-quote --write '**/*.{js,jsx,json,html,css,less,scss,yml}'",
     "postlint-styles-fix": "prettier --ignore-path .eslintignore --single-quote --write '**/*.{css,scss}'",
@@ -52,8 +52,8 @@
     ]
   },
   "build": {
-    "productName": "ElectronReact",
-    "appId": "org.develar.ElectronReact",
+    "productName": "小鱼云视频",
+    "appId": "org.xylink.electronMeeting",
     "files": [
       "dist/",
       "node_modules/",
@@ -78,8 +78,26 @@
     },
     "win": {
       "target": [
-        "nsis",
-        "msi"
+        "nsis"
+      ],
+      "extraFiles": [
+        "./avcodec-58.dll",
+        "./avdevice-58.dll",
+        "./avfilter-7.dll",
+        "./avformat-58.dll",
+        "./avutil-56.dll",
+        "./NemoSdk.dll",
+        "./openjp2.dll",
+        "./swresample-3.dll",
+        "./swscale-5.dll",
+        "./xin265_32.dll",
+        {
+          "from": "node_modules/@xylink/xy-electron-sdk/build/Release/",
+          "to": "./resources",
+          "filter": [
+            "**/*"
+          ]
+        }
       ]
     },
     "linux": {
@@ -190,6 +208,7 @@
     "@babel/preset-react": "^7.10.4",
     "@babel/preset-typescript": "^7.10.4",
     "@babel/register": "^7.10.5",
+    "@types/clone-deep": "^4.0.1",
     "@types/enzyme": "^3.10.5",
     "@types/enzyme-adapter-react-16": "^1.0.6",
     "@types/history": "^4.7.6",
@@ -206,6 +225,8 @@
     "@types/webpack-env": "^1.15.2",
     "@typescript-eslint/eslint-plugin": "^3.6.1",
     "@typescript-eslint/parser": "^3.6.1",
+    "@xylink/xy-electron-sdk": "^0.0.14",
+    "antd": "^4.5.4",
     "babel-eslint": "^10.1.0",
     "babel-jest": "^26.1.0",
     "babel-loader": "^8.1.0",
@@ -213,12 +234,13 @@
     "babel-plugin-transform-react-remove-prop-types": "^0.4.24",
     "browserslist-config-erb": "^0.0.1",
     "chalk": "^4.1.0",
+    "clone-deep": "^4.0.1",
     "concurrently": "^5.2.0",
     "core-js": "^3.6.5",
     "cross-env": "^7.0.0",
     "css-loader": "^3.6.0",
     "detect-port": "^1.3.0",
-    "electron": "^8",
+    "electron": "^9.2.1",
     "electron-builder": "^22.3.6",
     "electron-devtools-installer": "^2.2.4",
     "electron-rebuild": "^1.10.0",
@@ -246,6 +268,7 @@
     "jest": "^26.1.0",
     "lint-staged": "^10.2.11",
     "mini-css-extract-plugin": "^0.9.0",
+    "node-loader": "^1.0.1",
     "opencollective-postinstall": "^2.0.3",
     "optimize-css-assets-webpack-plugin": "^5.0.3",
     "prettier": "^2.0.5",
@@ -279,6 +302,7 @@
     "electron-log": "^4.2.2",
     "electron-updater": "^4.3.1",
     "history": "^4.7.2",
+    "native-ext-loader": "^2.3.0",
     "react": "^16.13.1",
     "react-dom": "^16.12.0",
     "react-hot-loader": "^4.12.21",

@@ -65,9 +65,6 @@ export default merge(baseConfig, {
           {
             loader: 'css-loader',
             options: {
-              modules: {
-                localIdentName: '[name]__[local]__[hash:base64:5]',
-              },
               sourceMap: true,
             },
           },
@@ -83,14 +80,14 @@ export default merge(baseConfig, {
           {
             loader: 'css-loader',
             options: {
-              sourceMap: true,
+              sourceMap: false,
               importLoaders: 1,
             },
           },
           {
             loader: 'sass-loader',
             options: {
-              sourceMap: true,
+              sourceMap: false,
             },
           },
         ],
@@ -105,17 +102,13 @@ export default merge(baseConfig, {
           {
             loader: 'css-loader',
             options: {
-              modules: {
-                localIdentName: '[name]__[local]__[hash:base64:5]',
-              },
-              importLoaders: 1,
-              sourceMap: true,
+              sourceMap: false,
             },
           },
           {
             loader: 'sass-loader',
             options: {
-              sourceMap: true,
+              sourceMap: false,
             },
           },
         ],
@@ -173,6 +166,18 @@ export default merge(baseConfig, {
       {
         test: /\.(?:ico|gif|png|jpg|jpeg|webp)$/,
         use: 'url-loader',
+      },
+      {
+        test: /\.ogg$/,
+        loader: 'file-loader',
+      },
+      {
+        test: /\.node$/,
+        loader: 'native-ext-loader',
+        options: {
+          name: '[name].[ext]',
+          rewritePath: './resources',
+        },
       },
     ],
   },

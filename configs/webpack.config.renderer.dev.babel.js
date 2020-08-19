@@ -72,7 +72,7 @@ export default merge(baseConfig, {
           {
             loader: 'css-loader',
             options: {
-              sourceMap: true,
+              sourceMap: false,
             },
           },
         ],
@@ -86,10 +86,7 @@ export default merge(baseConfig, {
           {
             loader: 'css-loader',
             options: {
-              modules: {
-                localIdentName: '[name]__[local]__[hash:base64:5]',
-              },
-              sourceMap: true,
+              sourceMap: false,
               importLoaders: 1,
             },
           },
@@ -105,29 +102,7 @@ export default merge(baseConfig, {
           {
             loader: 'css-loader',
             options: {
-              sourceMap: true,
-            },
-          },
-          {
-            loader: 'sass-loader',
-          },
-        ],
-      },
-      // SASS support - compile all other .scss files and pipe it to style.css
-      {
-        test: /^((?!\.global).)*\.(scss|sass)$/,
-        use: [
-          {
-            loader: 'typings-for-css-modules-loader',
-          },
-          {
-            loader: 'typings-for-css-modules-loader',
-            options: {
-              modules: {
-                localIdentName: '[name]__[local]__[hash:base64:5]',
-              },
-              sourceMap: true,
-              importLoaders: 1,
+              sourceMap: false,
             },
           },
           {
@@ -188,6 +163,18 @@ export default merge(baseConfig, {
       {
         test: /\.(?:ico|gif|png|jpg|jpeg|webp)$/,
         use: 'url-loader',
+      },
+      {
+        test: /\.ogg$/,
+        loader: 'file-loader',
+      },
+      {
+        test: /\.node$/,
+        loader: 'native-ext-loader',
+        options: {
+          name: '[name].[ext]',
+          rewritePath: path.resolve(__dirname, '../app/dist'),
+        },
       },
     ],
   },

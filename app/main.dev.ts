@@ -11,10 +11,9 @@
 import 'core-js/stable';
 import 'regenerator-runtime/runtime';
 import path from 'path';
-import { app, BrowserWindow } from 'electron';
+import { app, BrowserWindow, ipcMain } from 'electron';
 import { autoUpdater } from 'electron-updater';
 import log from 'electron-log';
-import MenuBuilder from './menu';
 
 export default class AppUpdater {
   constructor() {
@@ -55,6 +54,7 @@ const createWindow = async () => {
   ) {
     await installExtensions();
   }
+  // Menu.setApplicationMenu(null);
 
   mainWindow = new BrowserWindow({
     show: false,
@@ -92,12 +92,16 @@ const createWindow = async () => {
     mainWindow = null;
   });
 
-  const menuBuilder = new MenuBuilder(mainWindow);
-  menuBuilder.buildMenu();
-
   // Remove this if your app does not use auto updates
   // eslint-disable-next-line
   new AppUpdater();
+
+  ipcMain.on('relaunch', (event: any, arg: any) => {
+    if (arg) {
+      app.relaunch();
+      app.exit(0);
+    }
+  });
 };
 
 /**

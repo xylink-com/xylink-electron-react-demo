@@ -1,20 +1,31 @@
-<img src="internals/img/erb-banner.png" width="100%" />
+# 小鱼易连-electron sdk react demo
 
-## Install
-
-- **If you have installation or compilation issues with this project, please see [our debugging guide](https://github.com/electron-react-boilerplate/electron-react-boilerplate/issues/400)**
-
-First, clone the repo via git and install dependencies:
-
-```bash
-git clone --depth 1 --single-branch https://github.com/electron-react-boilerplate/electron-react-boilerplate.git your-project-name
-cd your-project-name
-yarn
-```
+当前项目是基于 electron 官方推荐的 react 模板创建，详见[electron-react-boilerplate](https://github.com/electron-react-boilerplate/electron-react-boilerplate)
 
 ## Starting Development
 
-Start the app in the `dev` environment. This starts the renderer process in [**hot-module-replacement**](https://webpack.js.org/guides/hmr-react/) mode and starts a webpack dev server that sends hot updates to the renderer process:
+建议在 dev 前，将 yarn/npm 镜像切换到 toabao 镜像地址上，加速安装依赖。
+
+1. 安装依赖
+
+```bash
+$ yarn
+
+# 安装完成后，安装32位electron，版本随意
+$ yarn add electron@5.0.13 -D --arch=ia32
+```
+
+2. 项目根目录：node_modules -> @xylink -> xy-electron-sdk -> dll 文件夹下，将所有的 \*.dll 文件复制到项目的根目录上；
+
+3. 执行编译
+
+```bash
+$ yarn build-dll
+
+$ yarn build
+```
+
+4. dev
 
 ```bash
 yarn dev
@@ -22,29 +33,14 @@ yarn dev
 
 ## Packaging for Production
 
-To package apps for the local platform:
+To package apps for the local win 32 platform:
 
 ```bash
-yarn package
+yarn package-win
 ```
+
+build successfully, go to /release folder get app.
 
 ## Docs
 
-See our [docs and guides here](https://electron-react-boilerplate.js.org/docs/installation)
-
-## License
-
-MIT © [Electron React Boilerplate](https://github.com/electron-react-boilerplate)
-
-[github-actions-status]: https://github.com/electron-react-boilerplate/electron-react-boilerplate/workflows/Test/badge.svg
-[github-actions-url]: https://github.com/electron-react-boilerplate/electron-react-boilerplate/actions
-[github-tag-image]: https://img.shields.io/github/tag/electron-react-boilerplate/electron-react-boilerplate.svg?label=version
-[github-tag-url]: https://github.com/electron-react-boilerplate/electron-react-boilerplate/releases/latest
-[stackoverflow-img]: https://img.shields.io/badge/stackoverflow-electron_react_boilerplate-blue.svg
-[stackoverflow-url]: https://stackoverflow.com/questions/tagged/electron-react-boilerplate
-[david-image]: https://img.shields.io/david/electron-react-boilerplate/electron-react-boilerplate.svg
-[david-url]: https://david-dm.org/electron-react-boilerplate/electron-react-boilerplate
-[david-dev-image]: https://img.shields.io/david/dev/electron-react-boilerplate/electron-react-boilerplate.svg?label=devDependencies
-[david-dev-url]: https://david-dm.org/electron-react-boilerplate/electron-react-boilerplate?type=dev
-[good-first-issue-image]: https://img.shields.io/github/issues/electron-react-boilerplate/electron-react-boilerplate/good%20first%20issue.svg?label=good%20first%20issues
-[good-first-issue-url]: https://github.com/electron-react-boilerplate/electron-react-boilerplate/issues?q=is%3Aopen+is%3Aissue+label%3A"good+first+issue"
+See our [xy electron sdk docs](https://www.yuque.com/jinghui/xylink/gbi9i5)
