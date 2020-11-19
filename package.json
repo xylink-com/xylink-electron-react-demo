@@ -1,7 +1,7 @@
 {
   "name": "electron-react-boilerplate",
-  "productName": "小鱼云视频",
-  "version": "1.3.2",
+  "productName": "小鱼云视频react",
+  "version": "1.3.3",
   "description": "Electron application boilerplate based on React, React Router, Webpack, React Hot Loader for rapid application development",
   "scripts": {
     "build": "concurrently \"yarn build-main\" \"yarn build-renderer\"",
@@ -28,7 +28,7 @@
     "start-renderer-dev": "cross-env NODE_ENV=development webpack-dev-server --config configs/webpack.config.renderer.dev.babel.js"
   },
   "build": {
-    "productName": "小鱼云视频",
+    "productName": "小鱼云视频react",
     "appId": "org.xylink.electronMeeting",
     "files": [
       "dist/",
@@ -62,10 +62,16 @@
         "./avfilter-7.dll",
         "./avformat-58.dll",
         "./avutil-56.dll",
+        "./concrt140.dll",
+        "./I420ToARGB.cso",
+        "./msvcp140.dll",
         "./NemoSdk.dll",
         "./openjp2.dll",
         "./swresample-3.dll",
         "./swscale-5.dll",
+        "./ucrtbase.dll",
+        "./vccorlib140.dll",
+        "./vcruntime140.dll",
         "./xin265_32.dll",
         {
           "from": "node_modules/@xylink/xy-electron-sdk/build/Release/",
@@ -201,7 +207,7 @@
     "@types/webpack-env": "^1.15.2",
     "@typescript-eslint/eslint-plugin": "^3.6.1",
     "@typescript-eslint/parser": "^3.6.1",
-    "@xylink/xy-electron-sdk": "^0.0.14",
+    "@xylink/xy-electron-sdk": "^0.1.1",
     "antd": "^4.5.4",
     "babel-eslint": "^10.1.0",
     "babel-jest": "^26.1.0",
@@ -216,7 +222,7 @@
     "cross-env": "^7.0.0",
     "css-loader": "^3.6.0",
     "detect-port": "^1.3.0",
-    "electron": "^9.2.1",
+    "electron": "5.0.13",
     "electron-builder": "^22.3.6",
     "electron-devtools-installer": "^2.2.4",
     "electron-rebuild": "^1.10.0",

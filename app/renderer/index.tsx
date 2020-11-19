@@ -22,7 +22,7 @@ function App() {
   const statusRef = useRef('xyLogin');
 
   // xyLogin/externalLogin/logined/calling/meeting
-  const [status, setStatus] = useState('xyLogin');
+  const [status, setStatus] = useState('externalLogin');
   const [screenInfo, setScreenInfo] = useState({
     layoutWidth: 0,
     layoutHeight: 0,
@@ -47,30 +47,31 @@ function App() {
   const [disableAudio] = useState(false);
   const [shareContentStatus, setShareContentStatus] = useState(0);
   const [setting, setSetting] = useState(false);
+  const [micLevel, setMicLevel] = useState(0);
 
   useEffect(() => {
     xyRTC = XYRTC.getXYInstance({
       httpProxy: proxy,
+      model: "auto",
+      muteAudio: true,
     });
 
     xyRTC.setLogLevel('INFO');
 
-    xyRTC.on('CallState', (e: any) => {
-      console.log('call state e: ', e, status);
+    xyRTC.on("CallState", (e: any) => {
+      console.log("call state e: ", e, status);
       const { state, reason } = e;
 
-      if (state === 'Connected') {
-        if (status !== 'meeting') {
-          // start render
-          setStatus('meeting');
-
-          xyRTC.createLocalRender();
-          message.info('入会成功');
+      if (state === "Connected") {
+        if (status !== "meeting") {
+          setStatus("meeting");
+          message.info("入会成功");
         }
-      } else if (state === 'Disconnected') {
+      } else if (state === "Disconnected") {
         message.info(reason);
         hangup(false);
-      } else if (state === 'Connecting' || state === 'Disconnecting') {
+      } else if (state === "Connecting") {
+      } else if (state === "Disconnecting") {
       }
     });
 
@@ -108,6 +109,11 @@ function App() {
       }
 
       setShareContentStatus(e);
+    });
+
+    // 实时获取麦克风声量大小（0-100）
+    xyRTC.on("MicEnergyReported", (value: number) => {
+      setMicLevel(value);
     });
   }, []);
 
@@ -155,6 +161,7 @@ function App() {
     setAudio('unmute');
     setVideo('unmuteVideo');
     setStatus('logined');
+    setLayout([]);
 
     xyRTC.endCall();
   };
@@ -447,9 +454,9 @@ function App() {
     return layout.map((val) => {
       if (val) {
         // @ts-ignore
-        const { isContent, participantId } = val.roster;
+        const { isContent, callUri } = val.roster;
         const mediagroupid = isContent ? 1 : 0;
-        const key = participantId + mediagroupid;
+        const key = callUri + mediagroupid;
 
         return (
           <Video
@@ -495,7 +502,7 @@ function App() {
           <div className="aec">
             <div
               className="aec_content"
-              style={{ transform: `translateY(-0%)` }}
+              style={{ transform: `translateY(-${micLevel}%)` }}
             />
           </div>
         )}
