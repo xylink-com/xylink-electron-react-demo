@@ -11,22 +11,25 @@ import './index.css';
 const Video = (props: any) => {
   const { item, xyRTC } = props;
   const videoRef = useRef(null);
-  const videoRenderTimmer = useRef(0);
-  const videoRender = useRef();
-  const canvasInfo = useRef();
+  const canvasInfo = useRef(null);
 
   useEffect(() => {
     canvasInfo.current = props.item.position;
 
-    if (!videoRender.current) {
-      // @ts-ignore
-      videoRef.current.width = item.position.width;
-      // @ts-ignore
-      videoRef.current.height = item.position.height;
+    // @ts-ignore
+    videoRef.current.width = item.position.width;
+    // @ts-ignore
+    videoRef.current.height = item.position.height;
+  });
 
-      videoRender.current = xyRTC.getRender(videoRef.current);
-    }
-  }, []);
+  useEffect(() => {
+    const { sourceId } = props.item;
+
+    // 此副作用受sourceId的影响，在其变动时，重新执行此 setVideoRender 方法
+    // 此方法是动态绑定sourceId和canvas元素，SDK内部会启动定时器按照屏幕刷新率30帧/s的方法获取流数据并通过webgl渲染
+    // 此方法设置完成后，第三方不需要关注流的渲染，关注业务逻辑即可
+    xyRTC.setVideoRender(sourceId, videoRef.current);
+  }, [props.item.sourceId]);
 
   useEffect(() => {
     // @ts-ignore
@@ -47,47 +50,17 @@ const Video = (props: any) => {
     }
   }, [props.item]);
 
-  useEffect(() => {
-    const { sourceId, isContent, state } = item.roster;
-
-    const renderLoop = () => {
-      xyRTC.drawVideoFrame(videoRender.current, sourceId, isContent);
-
-      videoRenderTimmer.current = window.requestAnimationFrame(renderLoop);
-    };
-
-    if (sourceId && !videoRenderTimmer.current) {
-      videoRenderTimmer.current = window.requestAnimationFrame(renderLoop);
-    }
-
-    if ((!sourceId && videoRenderTimmer.current) || state !== 5) {
-      console.log('clear animate');
-      cancelAnimationFrame(videoRenderTimmer.current);
-      // @ts-ignore
-      videoRenderTimmer.current = null;
-    }
-
-    return () => {
-      if (videoRenderTimmer.current) {
-        console.log('clear timmer when conponent unmount');
-        cancelAnimationFrame(videoRenderTimmer.current);
-        // @ts-ignore
-        videoRenderTimmer.current = null;
-      }
-    };
-  }, [props.item.sourceId, props.item.roster.state]);
-
   const renderVideoName = () => {
     return (
       <div className="video-status">
         <div
           className={
             item.roster.audioMute
-              ? 'audio-muted-status'
-              : 'audio-unmuted-status'
+              ? "audio-muted-status"
+              : "audio-unmuted-status"
           }
         ></div>
-        <div className="name">{`${item.roster.displayName || 'Local'}`}</div>
+        <div className="name">{item.roster.displayName}</div>
       </div>
     );
   };
@@ -144,6 +117,8 @@ const Video = (props: any) => {
           <div className="video-model">{renderVideoStatus()}</div>
         </div>
 
+        {/* electron sdk的流由内部webgl渲染，所以业务层需要提供一个canvas元素供内部使用 */}
+        {/* 通过 SDK暴露的 setVideoRender 方法，可将sourceId和canvas元素绑定起来，内部会自动执行渲染 */}
         <canvas ref={videoRef} />
       </div>
     </div>
