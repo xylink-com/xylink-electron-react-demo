@@ -8,3 +8,10 @@ export interface IInfo {
   extUserId: string;
   displayName: string;
 }
+
+export interface IConfControl {
+  // 主会场callerurl
+  chirmanUri: string;
+  // 会控web url地址，打开即可进行会议控制
+  confMgmtUrl: string;
+}

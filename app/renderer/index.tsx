@@ -7,7 +7,7 @@ import SettingModal from './components/Modal';
 import Store from 'electron-store';
 import { USER_INFO, DEFAULT_PROXY } from './utils/enum';
 import Video from './components/Video';
-import { IInfo } from './type/index';
+import { IInfo, IConfControl } from './type/index';
 import ring from '../style/ring.ogg';
 import endCall from '../style/img/end-call.png';
 
@@ -52,26 +52,26 @@ function App() {
   useEffect(() => {
     xyRTC = XYRTC.getXYInstance({
       httpProxy: proxy,
-      model: "auto",
+      model: 'auto',
       muteAudio: true,
     });
 
     xyRTC.setLogLevel('INFO');
 
-    xyRTC.on("CallState", (e: any) => {
-      console.log("call state e: ", e, status);
+    xyRTC.on('CallState', (e: any) => {
+      console.log('call state e: ', e, status);
       const { state, reason } = e;
 
-      if (state === "Connected") {
-        if (status !== "meeting") {
-          setStatus("meeting");
-          message.info("入会成功");
+      if (state === 'Connected') {
+        if (status !== 'meeting') {
+          setStatus('meeting');
+          message.info('入会成功');
         }
-      } else if (state === "Disconnected") {
+      } else if (state === 'Disconnected') {
         message.info(reason);
         hangup(false);
-      } else if (state === "Connecting") {
-      } else if (state === "Disconnecting") {
+      } else if (state === 'Connecting') {
+      } else if (state === 'Disconnecting') {
       }
     });
 
@@ -112,8 +112,13 @@ function App() {
     });
 
     // 实时获取麦克风声量大小（0-100）
-    xyRTC.on("MicEnergyReported", (value: number) => {
+    xyRTC.on('MicEnergyReported', (value: number) => {
       setMicLevel(value);
+    });
+
+    // 会控消息回调
+    xyRTC.on('ConfControl', (e: IConfControl) => {
+      console.log('ConfControl message: ', e);
     });
   }, []);
 
