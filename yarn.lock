@@ -2106,10 +2106,10 @@
   resolved "https://registry.yarnpkg.com/@xtuc/long/-/long-4.2.2.tgz#d291c6a4e97989b5c61d9acf396ae4fe133a718d"
   integrity sha512-NuHqBY1PB/D8xU6s/thBgOAiAP7HOYDQ32+BFZILJ8ivkUkAHQnWfn6WhL79Owj1qmUnoN/YPhktdIoucipkAQ==
 
-"@xylink/xy-electron-sdk@^0.1.1":
-  version "0.1.1"
-  resolved "https://registry.yarnpkg.com/@xylink/xy-electron-sdk/-/xy-electron-sdk-0.1.1.tgz#35c32a1c83742c4b1ef13fd0e2c6d2db67991bf5"
-  integrity sha512-xoM+2CPBQSpnhqQY0/uJF4xrcI6N+pkJbGvMkTeLs8CiRtQklKbj5CP6j7ylX8J58zU/VaLMvph6m3w9VjtjFw==
+"@xylink/xy-electron-sdk@0.1.4":
+  version "0.1.4"
+  resolved "https://registry.yarnpkg.com/@xylink/xy-electron-sdk/-/xy-electron-sdk-0.1.4.tgz#048ecee4aae98ecd7048a75587e23eab23e21591"
+  integrity sha512-iz3/DehPpCM6EKi9Ngux/zsYblp2NajIYTdj7iXlLKnxTEBrL3VRhdkFgxuyMGYZbjSGa1/1MAJ8nkk+AwyyvQ==
   dependencies:
     download "^8.0.0"
     electron-store "^6.0.0"
