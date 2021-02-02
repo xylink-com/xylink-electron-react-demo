@@ -5,21 +5,26 @@
  * @date  2020-1-07 10:34:18
  */
 
-import React, { useRef, useEffect } from 'react';
-import './index.css';
+import React, { useRef, useEffect } from "react";
+import "./index.css";
 
-const Video = (props: any) => {
+interface IProps {
+  item:any;
+  xyRTC:any;
+}
+
+const Video = (props:IProps) => {
   const { item, xyRTC } = props;
-  const videoRef = useRef(null);
-  const canvasInfo = useRef(null);
+  const videoRef = useRef<HTMLCanvasElement | null>(null);
+  const canvasInfo = useRef<{width:number,height:number} | null>(null);
 
   useEffect(() => {
     canvasInfo.current = props.item.position;
 
-    // @ts-ignore
-    videoRef.current.width = item.position.width;
-    // @ts-ignore
-    videoRef.current.height = item.position.height;
+    if(videoRef.current){
+      videoRef.current.width = item.position.width;
+      videoRef.current.height = item.position.height;
+    }
   });
 
   useEffect(() => {
@@ -32,7 +37,9 @@ const Video = (props: any) => {
   }, [props.item.sourceId]);
 
   useEffect(() => {
-    // @ts-ignore
+    // 此副作用是动态设置canvas的宽高
+    // 受切换 SPEAKER / GALLERY 布局影响，当前video组件的size会动态重新计算，所以需要重新赋值
+    // 第三方如果是自定义layout布局模式，即 model: custom 布局模式，则可以不需要执行此副作用计算，自行处理canvas的size
     const { width = 0, height = 0 } = canvasInfo.current || {};
 
     if (
@@ -40,9 +47,7 @@ const Video = (props: any) => {
       props.item.position.height !== height
     ) {
       if (videoRef.current) {
-        // @ts-ignore
-        videoRef.current['width'] = props.item.position.width;
-        // @ts-ignore
+        videoRef.current.width = props.item.position.width;
         videoRef.current.height = props.item.position.height;
 
         canvasInfo.current = props.item.position;
@@ -65,6 +70,7 @@ const Video = (props: any) => {
     );
   };
 
+  // 视频状态，由state控制
   const renderVideoStatus = () => {
     const { state } = item.roster;
 
@@ -100,7 +106,7 @@ const Video = (props: any) => {
       return (
         <div className="video-bg">
           <div className="center">
-            <div className="displayname">{item.roster.displayName || ''}</div>
+            <div className="displayname">{item.roster.displayName || ""}</div>
             <div>语音通话中</div>
           </div>
         </div>
