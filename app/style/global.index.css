@@ -54,6 +54,16 @@ p {
   padding-top: 10px;
 }
 
+.xy__demo-line {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.model {
+  margin-left: 15px;
+}
+
 .line {
   margin: 10px 5px;
   display: flex;
@@ -393,6 +403,25 @@ input {
 
 .meeting-footer .end_call:hover .icon {
   background: url("./img/operate/end_call_hover.png") center center no-repeat;
+  background-size: contain;
+  width: 34px;
+}
+
+
+.meeting-footer .setting .icon {
+  background: url("./img/operate/meeting_setting.png") center center no-repeat;
+  background-size: contain;
+  width: 34px;
+}
+
+.meeting-footer .setting:hover .icon {
+  background: url("./img/operate/meeting_setting_hover.png") center center no-repeat;
+  background-size: contain;
+  width: 34px;
+}
+
+.meeting-footer .setting:active .icon {
+  background: url("./img/operate/meeting_setting_active.png") center center no-repeat;
   background-size: contain;
   width: 34px;
 }
