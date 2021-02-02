@@ -9,6 +9,12 @@ export interface IInfo {
   displayName: string;
 }
 
+export interface ICallState  {
+  state: string;
+  error: number;
+  reason: string;
+};
+
 export interface IConfControl {
   // 主会场callerurl
   chirmanUri: string;
