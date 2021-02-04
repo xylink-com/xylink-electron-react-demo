@@ -81,7 +81,7 @@ function App() {
   useEffect(() => {
     xyRTC.current = XYRTC.getXYInstance({
       httpProxy: proxy,
-      model: 'auto'
+      model: model
     });
 
     xyRTC.current.setLogLevel('INFO');
@@ -491,24 +491,35 @@ function App() {
   };
 
   // 切换layout
-  const switchLayout = () => {
-    xyRTC.current.switchLayout();
+  const switchLayout = async () => {
+    try {
+      const result = await xyRTC.current.switchLayout();
+
+      console.log("result: ", result);
+    } catch (err) {
+      console.log("err: ", err);
+      message.info(err?.msg || "切换失败");
+    }
   };
 
   // mic 操作
   const audioOperate = () => {
-    if (audio === 'unmute') {
-      setAudio('mute');
-      message.info('麦克风已静音');
+    if (audio === "mute" && disableAudio) {
+      return;
+    }
+
+    if (audio === "unmute") {
+      setAudio("mute");
+      message.info("麦克风已静音");
 
       xyRTC.current.muteMic(true);
     } else {
-      setAudio('unmute');
+      setAudio("unmute");
       xyRTC.current.muteMic(false);
     }
   };
 
-  const settingProxy = () => {
+  const toggleProxyModal = () => {
     setSetting(!setting);
   };
 
@@ -516,7 +527,7 @@ function App() {
     store.set('xyHttpProxy', value);
     ipcRenderer.send('relaunch', proxy);
 
-    settingProxy();
+    toggleProxyModal();
   };
 
   const switchModel = (val: TModel) => {
@@ -867,7 +878,7 @@ function App() {
 
               {renderAudio()}
 
-              <div onClick={settingProxy} className="button setting">
+              <div onClick={toggleProxyModal} className="button setting">
                   <div className="icon"></div>
                   <div className="title">设置</div>
               </div>
@@ -899,7 +910,7 @@ function App() {
           <div className="xy__demo-line">
             <div>
               <span>{env} 环境</span>
-              <span onClick={settingProxy} className="xy_setting">
+              <span onClick={toggleProxyModal} className="xy_setting">
                 [设置]
               </span>
             </div>
@@ -919,7 +930,7 @@ function App() {
             xyRTC={xyRTC.current}
             deviceChangeType={deviceChangeType}
             onHandleOk={onSettingProxy}
-            onHandleCancel={settingProxy}
+            onHandleCancel={toggleProxyModal}
           />
 
           {renderXYLoginForm()}
