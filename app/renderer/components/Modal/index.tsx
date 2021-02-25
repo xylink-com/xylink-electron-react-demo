@@ -1,27 +1,34 @@
-import React, { useState, useEffect, useRef} from 'react';
-import { Button, Modal, Input, Row, Col, Select } from "antd";
-import {ISelectedDevice} from "../../type/index"
-import "./index.css";
+import React, { useState, useEffect, useRef } from 'react';
+import { Button, Modal, Input, Row, Col, Select, Checkbox} from 'antd';
+import { ISelectedDevice } from '../../type/index';
+import './index.css';
 
-const {Option} = Select;
+const { Option } = Select;
 
 // @ts-ignore
-const SettingModal = ({ visible, onHandleOk, onHandleCancel, value = '', xyRTC, deviceChangeType }) => {
-  
+const SettingModal = ({
+  visible,
+  onHandleOk,
+  onHandleCancel,
+  value = '',
+  xyRTC,
+  deviceChangeType,
+  onChangeWithAudio,
+}) => {
   const [proxy, setProxy] = useState(value);
   const [cameraList, setCameraList] = useState([]);
   const [microphoneList, setMicrophoneList] = useState([]);
   const [speakerList, setSpeakerList] = useState([]);
   const [selectedDevice, setSelectedDevice] = useState({
-    camera: "",
-    microphone: "",
-    speaker: "",
+    camera: '',
+    microphone: '',
+    speaker: '',
   });
 
   const selectedDeviceRef = useRef({
-    camera: "",
-    microphone: "",
-    speaker: "",
+    camera: '',
+    microphone: '',
+    speaker: '',
   });
 
   useEffect(() => {
@@ -34,11 +41,11 @@ const SettingModal = ({ visible, onHandleOk, onHandleCancel, value = '', xyRTC, 
 
   useEffect(() => {
     (async () => {
-      if (deviceChangeType === "camera") {
+      if (deviceChangeType === 'camera') {
         await updateCameraDevices();
-      } else if (deviceChangeType === "microphone") {
+      } else if (deviceChangeType === 'microphone') {
         await updateMicrophoneDevices();
-      } else if (deviceChangeType === "speaker") {
+      } else if (deviceChangeType === 'speaker') {
         await updateSpeakerDevices();
       }
 
@@ -59,12 +66,12 @@ const SettingModal = ({ visible, onHandleOk, onHandleCancel, value = '', xyRTC, 
       return;
     }
 
-    const camera = await xyRTC.getDeviceList("camera");
+    const camera = await xyRTC.getDeviceList('camera');
     const selectedId = updateSelectedDevice(camera);
 
     setCameraList(camera);
 
-    if(selectedId !==  selectedDevice.camera){
+    if (selectedId !== selectedDevice.camera) {
       onSwitchCamera(selectedId);
     }
 
@@ -73,18 +80,18 @@ const SettingModal = ({ visible, onHandleOk, onHandleCancel, value = '', xyRTC, 
       camera: selectedId,
     };
   };
-  
+
   const updateMicrophoneDevices = async () => {
     if (!xyRTC) {
       return;
     }
 
-    const microphone = await xyRTC.getDeviceList("microphone");
+    const microphone = await xyRTC.getDeviceList('microphone');
     const selectedId = updateSelectedDevice(microphone);
 
     setMicrophoneList(microphone);
-    
-    if(selectedId !== selectedDevice.microphone){
+
+    if (selectedId !== selectedDevice.microphone) {
       onSwitchMicrophone(selectedId);
     }
 
@@ -99,13 +106,13 @@ const SettingModal = ({ visible, onHandleOk, onHandleCancel, value = '', xyRTC, 
       return;
     }
 
-    const speaker = await xyRTC.getDeviceList("speaker");
+    const speaker = await xyRTC.getDeviceList('speaker');
     const selectedId = updateSelectedDevice(speaker);
 
     setSpeakerList(speaker);
 
-    if(selectedId !== selectedDevice.speaker){
-      onSwitchSpeaker(selectedId)
+    if (selectedId !== selectedDevice.speaker) {
+      onSwitchSpeaker(selectedId);
     }
 
     selectedDeviceRef.current = {
@@ -114,8 +121,8 @@ const SettingModal = ({ visible, onHandleOk, onHandleCancel, value = '', xyRTC, 
     };
   };
 
-  const updateSelectedDevice = (list:ISelectedDevice[]) => {
-    let selectedId = "";
+  const updateSelectedDevice = (list: ISelectedDevice[]) => {
+    let selectedId = '';
     const selectedDevice = list.filter((item) => item.isSelected);
 
     if (selectedDevice.length > 0) {
@@ -139,35 +146,35 @@ const SettingModal = ({ visible, onHandleOk, onHandleCancel, value = '', xyRTC, 
     onHandleCancel();
   };
 
-  const onChange = (e:any) => {
+  const onChange = (e: any) => {
     setProxy(e.target.value);
   };
 
-  const onSwitchCamera = async (val:string) => {
+  const onSwitchCamera = async (val: string) => {
     try {
-      await xyRTC.switchDevice("camera", val);
+      await xyRTC.switchDevice('camera', val);
     } catch (err) {
-      console.log("switch camera device error: ", err);
+      console.log('switch camera device error: ', err);
     }
-  }
+  };
 
-  const onSwitchMicrophone = async (val:string) => {
+  const onSwitchMicrophone = async (val: string) => {
     try {
-      await xyRTC.switchDevice("microphone", val);
+      await xyRTC.switchDevice('microphone', val);
     } catch (err) {
-      console.log("switch microphone device error: ", err);
+      console.log('switch microphone device error: ', err);
     }
-  }
+  };
 
-  const onSwitchSpeaker = async (val:string) => {
+  const onSwitchSpeaker = async (val: string) => {
     try {
-      await xyRTC.switchDevice("speaker", val);
+      await xyRTC.switchDevice('speaker', val);
     } catch (err) {
-      console.log("switch speaker device error: ", err);
+      console.log('switch speaker device error: ', err);
     }
-  }
+  };
 
-  const onSelectCamera = async (val:string) => {
+  const onSelectCamera = async (val: string) => {
     setSelectedDevice({
       ...selectedDevice,
       camera: val,
@@ -175,7 +182,7 @@ const SettingModal = ({ visible, onHandleOk, onHandleCancel, value = '', xyRTC, 
 
     onSwitchCamera(val);
   };
-  const onSelectMicrophone = async (val:string) => {
+  const onSelectMicrophone = async (val: string) => {
     setSelectedDevice({
       ...selectedDevice,
       microphone: val,
@@ -183,15 +190,18 @@ const SettingModal = ({ visible, onHandleOk, onHandleCancel, value = '', xyRTC, 
 
     onSwitchMicrophone(val);
   };
-  const onSelectSpeaker = async (val:string) => {
+  const onSelectSpeaker = async (val: string) => {
     setSelectedDevice({
       ...selectedDevice,
       speaker: val,
     });
-    
+
     onSwitchSpeaker(val);
   };
 
+  const onChangeContentAudio =  (e:any) => {
+    onChangeWithAudio(e.target.checked);
+  };
 
   return (
     <>
@@ -277,12 +287,19 @@ const SettingModal = ({ visible, onHandleOk, onHandleCancel, value = '', xyRTC, 
             >
               {speakerList.map(({ devId, devName }) => {
                 return (
-                  <Option  key={devId} value={devId}>
+                  <Option key={devId} value={devId}>
                     {devName}
                   </Option>
                 );
               })}
             </Select>
+          </Col>
+        </Row>
+        <Row className="mb15">
+          <Col>
+            <Checkbox onChange={onChangeContentAudio}>
+              共享内容时采集电脑声音
+            </Checkbox>
           </Col>
         </Row>
       </Modal>

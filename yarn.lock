@@ -2106,10 +2106,10 @@
   resolved "https://registry.yarnpkg.com/@xtuc/long/-/long-4.2.2.tgz#d291c6a4e97989b5c61d9acf396ae4fe133a718d"
   integrity sha512-NuHqBY1PB/D8xU6s/thBgOAiAP7HOYDQ32+BFZILJ8ivkUkAHQnWfn6WhL79Owj1qmUnoN/YPhktdIoucipkAQ==
 
-"@xylink/xy-electron-sdk@0.1.5":
-  version "0.1.5"
-  resolved "https://registry.yarnpkg.com/@xylink/xy-electron-sdk/-/xy-electron-sdk-0.1.5.tgz#a51ae884489aabc1e082a1423a1ab71177fd38e9"
-  integrity sha512-Die0ZrerSWgsP8Iem1ppO82pd6qstfifgMY5m8MHenmBe6S2bpV6dvzpkjYkU8DF9z7pML1mo+tnJ+NBlKos7A==
+"@xylink/xy-electron-sdk@0.1.7":
+  version "0.1.7"
+  resolved "http://10.80.84.176:4873/@xylink%2fxy-electron-sdk/-/xy-electron-sdk-0.1.7.tgz#1d1ea8847e549ac774b8ba12d7319c49b9f18002"
+  integrity sha512-gl7fbNnpCgXx7EhK1ak0TngqvmfpQOJKwxLsp3dyrPDU7n54PdCKg47C3Zx5ovLCs94d6kNN9vMSQcQIwEim7A==
   dependencies:
     download "^8.0.0"
     electron-store "^6.0.0"
@@ -6005,10 +6005,10 @@ electron-updater@^4.3.1:
     lodash.isequal "^4.5.0"
     semver "^7.3.2"
 
-electron@5.0.0:
-  version "5.0.0"
-  resolved "https://registry.yarnpkg.com/electron/-/electron-5.0.0.tgz#d8352e2c9625b3be0112ce0c1bf5c9b6f692557e"
-  integrity sha512-++emIe4vLihiYiAVL+E8DT5vSNVFEIuQCRxA+VfpDRVBcog85UB28vi4ogRmMOK3UffzKdWV6e1jqp3T0KpBoA==
+electron@5.0.13:
+  version "5.0.13"
+  resolved "http://10.80.84.176:4873/electron/-/electron-5.0.13.tgz#81d44f2078fb13d306279cf3854d3734f2c390b4"
+  integrity sha1-gdRPIHj7E9MGJ5zzhU03NPLDkLQ=
   dependencies:
     "@types/node" "^10.12.18"
     electron-download "^4.1.0"

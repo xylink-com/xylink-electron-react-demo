@@ -475,7 +475,9 @@ function App() {
   };
 
   const shareContent = () => {
-    xyRTC.current.startSendContent();
+    const withDesktopAudio = store.get("xyWithDesktopAudio") || false;
+
+    xyRTC.current.startSendContent(withDesktopAudio);
   };
 
   // 开启/关闭摄像头
@@ -528,6 +530,10 @@ function App() {
     ipcRenderer.send('relaunch', proxy);
 
     toggleProxyModal();
+  };
+
+  const onChangeWithAudio = (isChecked:boolean) => {
+    store.set("xyWithDesktopAudio", isChecked);
   };
 
   const switchModel = (val: TModel) => {
@@ -931,6 +937,7 @@ function App() {
             deviceChangeType={deviceChangeType}
             onHandleOk={onSettingProxy}
             onHandleCancel={toggleProxyModal}
+            onChangeWithAudio = {onChangeWithAudio}
           />
 
           {renderXYLoginForm()}
