@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { Button, message, Row, Form, Input, Modal, Select } from 'antd';
+import { Button, message, Row, Form, Input, Modal, Select, Checkbox} from 'antd';
 import { XYRTC } from '@xylink/xy-electron-sdk';
 import cloneDeep from 'clone-deep';
 import { ipcRenderer } from 'electron';
@@ -485,6 +485,16 @@ function App() {
     store.set('xyUserInfo.' + key, e.target.value);
   };
 
+  const onChangeFormValue = (value:boolean, key:string) => {
+    setInfo({
+      ...info,
+      [key]: value,
+    });
+
+    store.set("xyUserInfo." + key, value);
+  };
+
+
   const hangup = (isConfirm = true) => {
     if (isConfirm) {
       confirm({
@@ -514,7 +524,7 @@ function App() {
 
   const mackCall = () => {
     // 登录&连接服务器成功，可以入会
-    const { meeting, meetingPassword, meetingName } = info;
+    const { meeting, meetingPassword, meetingName, muteVideo = false, muteAudio=false} = info;
 
     if (!meeting || !meetingName) {
       message.info('请填写入会信息');
@@ -526,7 +536,9 @@ function App() {
     const result = xyRTC.current.makeCall(
       meeting,
       meetingPassword,
-      meetingName
+      meetingName,
+      muteVideo,
+      muteAudio,
     );
 
     if (result.code === 3002) {
@@ -783,6 +795,24 @@ function App() {
                 onChangeInput(e, 'meetingName');
               }}
             />
+          </Form.Item>
+          <Form.Item 
+            name="muteVideo"
+          >
+            <Checkbox checked={!!info.muteVideo} onChange={(e)=>{
+                onChangeFormValue(e.target.checked, "muteVideo");
+            }}>
+              入会时关闭摄像头
+            </Checkbox>
+          </Form.Item>
+          <Form.Item
+            name="muteAudio"
+          >
+            <Checkbox checked={!!info.muteAudio} onChange={(e)=>{
+                onChangeFormValue(e.target.checked, "muteAudio");
+            }}>
+              入会时静音
+            </Checkbox>
           </Form.Item>
           <Row justify="center">
             <Button type="primary" htmlType="submit">
