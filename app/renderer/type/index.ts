@@ -1,3 +1,10 @@
+
+
+export type TDeviceType = "camera" | "microphone" | "speaker" | string;
+
+export type TModel = 'custom'|'auto';
+
+export type TResolutionType = 0 | 1 | 2 | 3 | 4 | 5;
 export interface IInfo {
   phone: string;
   password: string;
@@ -7,6 +14,8 @@ export interface IInfo {
   extID: string;
   extUserId: string;
   displayName: string;
+  muteVideo: boolean;
+  muteAudio: boolean;
 }
 
 export interface ICallState  {
@@ -36,13 +45,6 @@ export interface ISelectedDevice {
   isSelected:boolean;
   devId:string;
 }
-
-export type TDeviceType = "camera" | "microphone" | "speaker" | string;
-
-export type TModel = 'custom'|'auto';
-
-export type TResolutionType = 0 | 1 | 2 | 3 | 4 | 5;
-
 export interface ITemplateObj {
   position:number[]
 }

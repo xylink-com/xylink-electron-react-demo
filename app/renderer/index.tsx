@@ -4,27 +4,41 @@ import { XYRTC } from '@xylink/xy-electron-sdk';
 import cloneDeep from 'clone-deep';
 import { ipcRenderer } from 'electron';
 import SettingModal from './components/Modal';
+import Barrage from './components/Barrage';
+import InOutReminder from './components/InOutReminder';
 import Store from 'electron-store';
 import { USER_INFO, DEFAULT_PROXY } from './utils/enum';
 import Video from './components/Video';
-import { TEMPLATE } from "./utils/template";
-import { getScreenInfo } from "./utils/index";
-import { IInfo, IConfControl, TDeviceType, TModel, IConfInfoChanged, ICallState} from './type/index';
+import { TEMPLATE } from './utils/template';
+import { getScreenInfo } from './utils/index';
+import {
+  IInfo,
+  IConfControl,
+  TDeviceType,
+  TModel,
+  IConfInfoChanged,
+  ICallState,
+} from './type/index';
 import ring from '../style/ring.ogg';
 import endCall from '../style/img/end-call.png';
+import {
+  IHowlingDetected,
+  IInOutReminder,
+  ISubTitle,
+} from '@xylink/xy-electron-sdk/lib/main/type';
 
 const store = new Store();
 const { confirm } = Modal;
 const { Option } = Select;
 
 const proxy: string = (store.get('xyHttpProxy') || DEFAULT_PROXY) as string;
-const env: string = String(proxy).split('.')[0] || 'cloud';
+const env: string = 'cloud';
 
 /**
  * 此处配置布局模式：自定义布局custom和自动布局auto
  * 不支持动态切换布局模式
  */
-const MODEL = "custom";
+const MODEL = 'custom';
 const maxSize = 4;
 const defaultPageInfo = {
   currentPage: 0,
@@ -40,7 +54,7 @@ function App() {
   const cacheConfInfo = useRef<IConfInfoChanged>({
     contentPartCount: 0,
     participantCount: 0,
-    chairManUrl: "",
+    chairManUrl: '',
   });
   const cacheScreenInfo = useRef({
     rateWidth: 0,
@@ -75,13 +89,18 @@ function App() {
   const [shareContentStatus, setShareContentStatus] = useState(0);
   const [setting, setSetting] = useState(false);
   const [micLevel, setMicLevel] = useState(0);
-  const [deviceChangeType, setDeviceChangeType] = useState<TDeviceType>("");
+  const [deviceChangeType, setDeviceChangeType] = useState<TDeviceType>('');
   const [pageInfo, setPageInfo] = useState(defaultPageInfo);
+  const [subTitle, setSubTitle] = useState<any>({
+    action: 'cancel',
+    content: '',
+  });
+  const [inOutReminder, setInOutReminder] = useState<IInOutReminder[]>([]);
 
   useEffect(() => {
     xyRTC.current = XYRTC.getXYInstance({
       httpProxy: proxy,
-      model: model
+      model: model,
     });
 
     xyRTC.current.setLogLevel('INFO');
@@ -122,14 +141,13 @@ function App() {
     });
 
     xyRTC.current.on('VideoStreams', (e: any) => {
-     
-      console.log("demo get video streams: ", e);
+      console.log('demo get video streams: ', e);
 
-      if (model === "custom") {
+      if (model === 'custom') {
         // 每次推送都会携带local数据，如果分页不需要展示，则移除local数据
         if (cachePageInfo.current.currentPage !== 0) {
           const localIndex = e.findIndex(
-            (item:any) => item.sourceId === "LocalPreviewID"
+            (item: any) => item.sourceId === 'LocalPreviewID'
           );
 
           if (localIndex >= 0) {
@@ -139,11 +157,14 @@ function App() {
 
         const nextTemplateRate = TEMPLATE.GALLERY.rate[e.length] || 0.5625;
         // 此处无id是container的容器，则使用document.body的size计算screen
-        cacheScreenInfo.current = getScreenInfo("container", nextTemplateRate, [92,0]);
+        cacheScreenInfo.current = getScreenInfo('container', nextTemplateRate, [
+          92,
+          0,
+        ]);
 
         const nextLayout = calculateBaseLayoutList(e);
 
-        console.log("nextLayout:", nextLayout);
+        console.log('nextLayout:', nextLayout);
 
         setLayout(nextLayout);
       } else {
@@ -151,21 +172,38 @@ function App() {
       }
     });
 
+    // local 音频状态
+    xyRTC.current.on('AudioStatusChanged', (e: any) => {
+      console.log('local audio status changed: ', e);
+
+      const { muteMic } = e;
+
+      if (muteMic === 'mute') {
+        setAudio('mute');
+      } else if (muteMic === 'unmute') {
+        setAudio('unmute');
+      }
+    });
+
     xyRTC.current.on('ScreenInfo', (e: any) => {
       setScreenInfo(e);
     });
 
-    xyRTC.current.on("KickOut", (e:string) => {
-      console.log("demo get kick out message: ", e);
-      const errorMap:{[key:string]:string} = {
-        4000: "多个重复长连接建立",
-        4001: "用户在另一台设备登录",
-        4003: "登录过期"
+    xyRTC.current.on('SDKError', (e: any) => {
+     console.log("SDKError=======>", e)
+    });
+
+    xyRTC.current.on('KickOut', (e: string) => {
+      console.log('demo get kick out message: ', e);
+      const errorMap: { [key: string]: string } = {
+        4000: '多个重复长连接建立',
+        4001: '用户在另一台设备登录',
+        4003: '登录过期',
       };
 
       onLogout();
 
-      message.info(`账号异常：${errorMap[e] || "未知异常，重新登录"}`);
+      message.info(`账号异常：${errorMap[e] || '未知异常，重新登录'}`);
     });
 
     xyRTC.current.on('ContentState', (e: any) => {
@@ -179,12 +217,12 @@ function App() {
     });
 
     // 实时获取麦克风声量大小（0-100）
-    xyRTC.current.on("MicEnergyReported", (value:number) => {
+    xyRTC.current.on('MicEnergyReported', (value: number) => {
       setMicLevel(value);
     });
 
     // 麦克风/摄像头设备变化事件
-    xyRTC.current.on("MediaDeviceEvent", (value:TDeviceType) => {
+    xyRTC.current.on('MediaDeviceEvent', (value: TDeviceType) => {
       setDeviceChangeType(value);
     });
 
@@ -193,22 +231,22 @@ function App() {
     // 自定义布局模式下，主会场callUri需要记录下来，后续requestLayout计算需要使用
     xyRTC.current.on('ConfControl', (e: IConfControl) => {
       console.log('ConfControl message: ', e);
-      console.log("metting control message: ", e);
+      console.log('metting control message: ', e);
 
-      const {disableMute, muteMic} = e;
+      const { disableMute, muteMic } = e;
       setDisableAudio(disableMute);
-      if(muteMic === "mute"){
+      if (muteMic === 'mute') {
         setAudio('mute');
-      }else if(muteMic === "unmute"){
+      } else if (muteMic === 'unmute') {
         setAudio('unmute');
       }
     });
 
     // 会议信息发生变化，会推送此消息，开始计算请求layout
-    xyRTC.current.on("ConfInfoChanged", (e: IConfInfoChanged) => {
-      console.log("react conf info change:", e);
+    xyRTC.current.on('ConfInfoChanged', (e: IConfInfoChanged) => {
+      console.log('react conf info change:', e);
 
-      if (model === "auto") {
+      if (model === 'auto') {
         // 自动布局内部计算了layout请流，不需要外部处理
         return;
       }
@@ -233,16 +271,39 @@ function App() {
         nextPageInfo.currentPage = totalPage;
       }
 
-      console.log("next page info: ", nextPageInfo);
+      console.log('next page info: ', nextPageInfo);
 
       // 缓存页码信息
       cachePageInfo.current = nextPageInfo;
 
       startRequestLayout();
     });
+
+    //  是否检测到啸叫
+    xyRTC.current.on('HowlingDetected', (e: boolean) => {
+      console.log('HowlingDetected:', e);
+      if (e) {
+        message.info('已检测到回声，可能您离终端太近!');
+      }
+    });
+
+    // 网络状况
+    xyRTC.current.on('NetworkIndicatorLevel', (e: IHowlingDetected) => {
+      console.log('NetworkIndicatorLevel:', e);
+    });
+
+    // 字幕
+    xyRTC.current.on('SubTitle', (e: ISubTitle) => {
+      setSubTitle(e);
+    });
+
+    // 出入会
+    xyRTC.current.on('InOutReminder', (e: IInOutReminder[]) => {
+      setInOutReminder(e);
+    });
   }, []);
 
-  const calculateBaseLayoutList = (list:any[]) => {
+  const calculateBaseLayoutList = (list: any[]) => {
     const { rateHeight, rateWidth } = cacheScreenInfo.current;
 
     setScreenInfo({
@@ -251,14 +312,14 @@ function App() {
     });
 
     let positionStyle = {
-      left: "0px",
-      top: "0px",
-      width: "0px",
-      height: "0px",
+      left: '0px',
+      top: '0px',
+      width: '0px',
+      height: '0px',
     };
     const positionInfo = TEMPLATE.GALLERY.temp[list.length];
 
-    const layoutList = list.map((item:any, index:number) => {
+    const layoutList = list.map((item: any, index: number) => {
       const [x, y, w, h] = positionInfo[index].position;
       let layoutX = Math.round(rateWidth * x);
       let layoutY = Math.round(rateHeight * y);
@@ -283,16 +344,15 @@ function App() {
     return layoutList;
   };
 
-  
   const startRequestLayout = () => {
-    console.log("request layout cacheConfInfo: ", cacheConfInfo.current);
+    console.log('request layout cacheConfInfo: ', cacheConfInfo.current);
 
     // resolution: 0:90, 1: 180, 2:360, 3: 720, 4: 1080
     // quality: 0: low, 1: normal, 2: high
     const {
       contentPartCount = 0,
       participantCount = 0,
-      chairManUrl = "",
+      chairManUrl = '',
     } = cacheConfInfo.current;
     const { maxSize, currentPage } = cachePageInfo.current;
     const reqList = [];
@@ -314,7 +374,7 @@ function App() {
     if (contentPartCount > 0 && currentPage === 0) {
       reqList.push({
         isContent: true,
-        callUri: "",
+        callUri: '',
         resolution: 4,
         quality: 2,
       });
@@ -338,14 +398,14 @@ function App() {
         if (reqList.length === 0 && currentPage === 0) {
           reqList.push({
             isContent: false,
-            callUri: "",
+            callUri: '',
             resolution: 3,
             quality: 1,
           });
         } else {
           reqList.push({
             isContent: false,
-            callUri: "",
+            callUri: '',
             resolution: 1,
             quality: 0,
           });
@@ -353,7 +413,7 @@ function App() {
       }
     }
 
-    console.log("custom request layout: ", reqList);
+    console.log('custom request layout: ', reqList);
 
     // 更新页码信息
     setPageInfo({ ...cachePageInfo.current });
@@ -361,24 +421,24 @@ function App() {
     xyRTC.current.requestLayout(reqList, maxSize, currentPage);
   };
 
-  const switchPage = (type:string) => {
-    console.log("cachePageInfo.current: ", cachePageInfo.current);
+  const switchPage = (type: string) => {
+    console.log('cachePageInfo.current: ', cachePageInfo.current);
     const { currentPage, totalPage } = cachePageInfo.current;
     let nextPage = currentPage;
 
-    if (model === "auto") {
-      message.info("自动布局不支持分页显示");
+    if (model === 'auto') {
+      message.info('自动布局不支持分页显示');
       return;
     }
 
     if (shareContentStatus === 1) {
-      message.info("正在分享content，不允许分页");
+      message.info('正在分享content，不允许分页');
       return;
     }
 
-    if (type === "next") {
+    if (type === 'next') {
       if (currentPage + 1 > totalPage) {
-        message.info("已经在最后一页啦");
+        message.info('已经在最后一页啦');
         return;
       } else {
         nextPage = currentPage + 1;
@@ -386,9 +446,9 @@ function App() {
 
       // 缓存页码信息
       cachePageInfo.current.currentPage = nextPage;
-    } else if ("previous") {
+    } else if ('previous') {
       if (currentPage - 1 < 0) {
-        message.info("已经在首页啦");
+        message.info('已经在首页啦');
         return;
       } else {
         nextPage = currentPage - 1;
@@ -398,11 +458,11 @@ function App() {
       cachePageInfo.current.currentPage = nextPage;
     }
 
-    console.log("switch paage: ", cachePageInfo.current);
+    console.log('switch paage: ', cachePageInfo.current);
 
     startRequestLayout();
   };
-  
+
   const onLogin = (e: any) => {
     const { phone, password } = e;
 
@@ -461,11 +521,20 @@ function App() {
       return;
     }
 
-    const result = xyRTC.current.makeCall(meeting, meetingPassword, meetingName);
+    xyRTC.current.setLocalPreviewResolution(2); // 设置本地视频分辨率(360P)
+
+    const result = xyRTC.current.makeCall(
+      meeting,
+      meetingPassword,
+      meetingName
+    );
 
     if (result.code === 3002) {
       message.info('请登录后发起呼叫');
     } else {
+      setVideo(info.muteVideo ? "muteVideo" : "unmuteVideo");
+      setAudio(info.muteAudio ? "mute" : "unmute")
+
       setStatus('calling');
     }
   };
@@ -475,7 +544,7 @@ function App() {
   };
 
   const shareContent = () => {
-    const withDesktopAudio = store.get("xyWithDesktopAudio") || false;
+    const withDesktopAudio = store.get('xyWithDesktopAudio') || false;
 
     xyRTC.current.startSendContent(withDesktopAudio);
   };
@@ -497,26 +566,26 @@ function App() {
     try {
       const result = await xyRTC.current.switchLayout();
 
-      console.log("result: ", result);
+      console.log('result: ', result);
     } catch (err) {
-      console.log("err: ", err);
-      message.info(err?.msg || "切换失败");
+      console.log('err: ', err);
+      message.info(err?.msg || '切换失败');
     }
   };
 
   // mic 操作
   const audioOperate = () => {
-    if (audio === "mute" && disableAudio) {
+    if (audio === 'mute' && disableAudio) {
       return;
     }
 
-    if (audio === "unmute") {
-      setAudio("mute");
-      message.info("麦克风已静音");
+    if (audio === 'unmute') {
+      setAudio('mute');
+      message.info('麦克风已静音');
 
       xyRTC.current.muteMic(true);
     } else {
-      setAudio("unmute");
+      setAudio('unmute');
       xyRTC.current.muteMic(false);
     }
   };
@@ -532,16 +601,16 @@ function App() {
     toggleProxyModal();
   };
 
-  const onChangeWithAudio = (isChecked:boolean) => {
-    store.set("xyWithDesktopAudio", isChecked);
+  const onChangeWithAudio = (isChecked: boolean) => {
+    store.set('xyWithDesktopAudio', isChecked);
   };
 
   const switchModel = (val: TModel) => {
-    console.log("val: ", val);
-    store.set("xyLayoutModel", val);
+    console.log('val: ', val);
+    store.set('xyLayoutModel', val);
     setModel(val);
 
-    ipcRenderer.send("relaunch", val);
+    ipcRenderer.send('relaunch', val);
   };
 
   const onLogout = () => {
@@ -769,13 +838,7 @@ function App() {
         const mediagroupid = isContent ? 1 : 0;
         const key = callUri + mediagroupid;
 
-        return (
-          <Video
-            key={key}
-            item={val}
-            xyRTC={xyRTC.current}
-          ></Video>
-        );
+        return <Video key={key} item={val} xyRTC={xyRTC.current}></Video>;
       }
 
       return null;
@@ -829,13 +892,17 @@ function App() {
             <div className="meeting-layout" style={layoutStyle}>
               {renderLayout()}
             </div>
+
+            <Barrage subTitle={subTitle} />
+
+            <InOutReminder reminders={inOutReminder} />
           </div>
 
           <div className="meeting-footer">
             <div className="middle">
-            <div
+              <div
                 onClick={() => {
-                  switchPage("previous");
+                  switchPage('previous');
                 }}
                 className="button layout"
               >
@@ -845,7 +912,7 @@ function App() {
 
               <div
                 onClick={() => {
-                  switchPage("next");
+                  switchPage('next');
                 }}
                 className="button layout"
               >
@@ -885,8 +952,8 @@ function App() {
               {renderAudio()}
 
               <div onClick={toggleProxyModal} className="button setting">
-                  <div className="icon"></div>
-                  <div className="title">设置</div>
+                <div className="icon"></div>
+                <div className="title">设置</div>
               </div>
             </div>
             <div className="right">
@@ -912,7 +979,7 @@ function App() {
     <div className="container" id="container">
       <div>
         <div className="login">
-        <h1 className="xy__demo-title"> XY ELECTRON DEV </h1>
+          <h1 className="xy__demo-title"> XY ELECTRON DEV </h1>
           <div className="xy__demo-line">
             <div>
               <span>{env} 环境</span>
@@ -921,7 +988,7 @@ function App() {
               </span>
             </div>
 
-            <div style={{ marginLeft: "20px" }}>
+            <div style={{ marginLeft: '20px' }}>
               <span>布局模式：</span>
               <Select value={model} onChange={switchModel}>
                 <Option value="auto">自动布局</Option>
@@ -937,7 +1004,7 @@ function App() {
             deviceChangeType={deviceChangeType}
             onHandleOk={onSettingProxy}
             onHandleCancel={toggleProxyModal}
-            onChangeWithAudio = {onChangeWithAudio}
+            onChangeWithAudio={onChangeWithAudio}
           />
 
           {renderXYLoginForm()}
