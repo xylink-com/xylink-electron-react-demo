@@ -16,3 +16,12 @@ export const USER_INFO = {
 };
 
 export const DEFAULT_PROXY: string = 'cloud.xylink.com';
+
+
+export const RECORD_STATE_MAP={
+  idel:0, // 空闲 录制完成
+  starting:1, // 开启录制中
+  acting:2, // 正在录制中
+  stoping:3, // 停止录制中
+  inact:4 // 暂未使用 暂停录制相关，暂时用不到
+}

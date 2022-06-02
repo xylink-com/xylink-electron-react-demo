@@ -1,13 +1,14 @@
-import React, { useState, useEffect, useRef } from 'react';
-import { Button, message, Row, Form, Input, Modal, Select, Checkbox} from 'antd';
+import React, { useState, useEffect, useRef, useMemo } from 'react';
+import { Button, message, Row, Form, Input, Modal, Select, Checkbox } from 'antd';
 import { XYRTC } from '@xylink/xy-electron-sdk';
 import cloneDeep from 'clone-deep';
 import { ipcRenderer } from 'electron';
 import SettingModal from './components/Modal';
 import Barrage from './components/Barrage';
 import InOutReminder from './components/InOutReminder';
+import CloudRecordStatus from "./components/CloudRecordStatus";
 import Store from 'electron-store';
-import { USER_INFO, DEFAULT_PROXY } from './utils/enum';
+import { USER_INFO, DEFAULT_PROXY, RECORD_STATE_MAP } from './utils/enum';
 import Video from './components/Video';
 import { TEMPLATE } from './utils/template';
 import { getScreenInfo } from './utils/index';
@@ -18,6 +19,8 @@ import {
   TModel,
   IConfInfoChanged,
   ICallState,
+  IRecordStateChange,
+  IRecordNotification
 } from './type/index';
 import ring from '../style/ring.ogg';
 import endCall from '../style/img/end-call.png';
@@ -96,11 +99,37 @@ function App() {
     content: '',
   });
   const [inOutReminder, setInOutReminder] = useState<IInOutReminder[]>([]);
+  // 自己开启录制的状态
+  const [recordStatus, setRecordStatus] = useState(RECORD_STATE_MAP.idel);
+  // 其它端是否录制暂停中
+  const [isRecordPaused, setIsRecordPaused] = useState(false);
+  // 录制权限相关
+  const [recordPermission, setRecordPermission] = useState({
+    isStartRecord: false, // 是否其他人已经开启录制
+    canRecord: true, // 录制开关
+    confCanRecord: true // 会控中开启关闭录制权限
+  });
+
+  const disableRecord = useMemo(() => {
+    const { isStartRecord, canRecord, confCanRecord } = recordPermission;
+
+    if (isStartRecord || !canRecord || !confCanRecord) {
+      return true;
+    }
+
+    if (![RECORD_STATE_MAP.idel, RECORD_STATE_MAP.acting].includes(recordStatus)) {
+      return true;
+    }
+
+    return false;
+  }, [recordPermission, recordStatus]);
+
 
   useEffect(() => {
     xyRTC.current = XYRTC.getXYInstance({
       httpProxy: proxy,
       model: model,
+      dllPath: "./dll",
     });
 
     xyRTC.current.setLogLevel('INFO');
@@ -190,7 +219,7 @@ function App() {
     });
 
     xyRTC.current.on('SDKError', (e: any) => {
-     console.log("SDKError=======>", e)
+      console.log('sdkerror:', e);
     });
 
     xyRTC.current.on('KickOut', (e: string) => {
@@ -233,13 +262,19 @@ function App() {
       console.log('ConfControl message: ', e);
       console.log('metting control message: ', e);
 
-      const { disableMute, muteMic } = e;
+      const { disableMute, muteMic, disableRecord } = e;
       setDisableAudio(disableMute);
       if (muteMic === 'mute') {
         setAudio('mute');
       } else if (muteMic === 'unmute') {
         setAudio('unmute');
       }
+
+      // 会控控制录制权限
+      setRecordPermission(permission => ({
+        ...permission,
+        confCanRecord: !disableRecord
+      }));
     });
 
     // 会议信息发生变化，会推送此消息，开始计算请求layout
@@ -300,6 +335,43 @@ function App() {
     // 出入会
     xyRTC.current.on('InOutReminder', (e: IInOutReminder[]) => {
       setInOutReminder(e);
+    });
+
+
+    // 别人开启或关闭云端录制
+    xyRTC.current.on("RecordStatusNotification", (e: IRecordNotification) => {
+      if (e.status) {
+        // RECORDING_STATE_ACTING/RECORDING_STATE_PAUSED
+        setIsRecordPaused(e.status === "RECORDING_STATE_PAUSED");
+      } else {
+        setRecordPermission(permission => ({
+          ...permission,
+          isStartRecord: e.isStart
+        }));
+      }
+    });
+
+    // 自己开启录制状态改变
+    xyRTC.current.on("RecordingStateChanged", (e: IRecordStateChange) => {
+      if (e.reason === 'XYSDK:963902') {
+        setRecordPermission(permission => ({
+          ...permission,
+          canRecord: false
+        }));
+
+        return;
+      }
+
+      setRecordStatus(e.recordState);
+
+      if (e.reason !== 'STATE:200') {
+        message.info(e.message);
+        return;
+      }
+
+      if (e.recordState === RECORD_STATE_MAP.idel) {
+        message.info('云端录制完成，录制视频已保存到云会议室管理员的文件夹中')
+      }
     });
   }, []);
 
@@ -485,7 +557,7 @@ function App() {
     store.set('xyUserInfo.' + key, e.target.value);
   };
 
-  const onChangeFormValue = (value:boolean, key:string) => {
+  const onChangeFormValue = (value: boolean, key: string) => {
     setInfo({
       ...info,
       [key]: value,
@@ -506,7 +578,7 @@ function App() {
         onOk() {
           endMeeting();
         },
-        onCancel() {},
+        onCancel() { },
       });
     } else {
       endMeeting();
@@ -519,12 +591,25 @@ function App() {
     setStatus('logined');
     setLayout([]);
 
+    resetRecordStatus();
+
     xyRTC.current.endCall();
   };
 
+  // 重置录制状态
+  const resetRecordStatus = () => {
+    setIsRecordPaused(false);
+    setRecordStatus(RECORD_STATE_MAP.idel);
+    setRecordPermission({
+      isStartRecord: false,
+      canRecord: true,
+      confCanRecord: true
+    });
+  }
+
   const mackCall = () => {
     // 登录&连接服务器成功，可以入会
-    const { meeting, meetingPassword, meetingName, muteVideo = false, muteAudio=false} = info;
+    const { meeting, meetingPassword, meetingName, muteVideo = false, muteAudio = false } = info;
 
     if (!meeting || !meetingName) {
       message.info('请填写入会信息');
@@ -579,7 +664,7 @@ function App() {
       const result = await xyRTC.current.switchLayout();
 
       console.log('result: ', result);
-    } catch (err) {
+    } catch (err: any) {
       console.log('err: ', err);
       message.info(err?.msg || '切换失败');
     }
@@ -611,6 +696,19 @@ function App() {
     ipcRenderer.send('relaunch', proxy);
 
     toggleProxyModal();
+  };
+
+  // 开始/停止录制
+  const recordOperate = () => {
+    if (disableRecord) {
+      return;
+    }
+
+    if (recordStatus === RECORD_STATE_MAP.idel) {
+      xyRTC.current.startCloudRecord();
+    } else if (recordStatus === RECORD_STATE_MAP.acting) {
+      xyRTC.current.stopCloudRecord();
+    }
   };
 
   const onChangeWithAudio = (isChecked: boolean) => {
@@ -796,11 +894,11 @@ function App() {
               }}
             />
           </Form.Item>
-          <Form.Item 
+          <Form.Item
             name="muteVideo"
           >
-            <Checkbox checked={!!info.muteVideo} onChange={(e)=>{
-                onChangeFormValue(e.target.checked, "muteVideo");
+            <Checkbox checked={!!info.muteVideo} onChange={(e) => {
+              onChangeFormValue(e.target.checked, "muteVideo");
             }}>
               入会时关闭摄像头
             </Checkbox>
@@ -808,8 +906,8 @@ function App() {
           <Form.Item
             name="muteAudio"
           >
-            <Checkbox checked={!!info.muteAudio} onChange={(e)=>{
-                onChangeFormValue(e.target.checked, "muteAudio");
+            <Checkbox checked={!!info.muteAudio} onChange={(e) => {
+              onChangeFormValue(e.target.checked, "muteAudio");
             }}>
               入会时静音
             </Checkbox>
@@ -910,6 +1008,17 @@ function App() {
     );
   };
 
+  const renderCloudRecordStatus = () => {
+    if (!recordPermission.isStartRecord && RECORD_STATE_MAP.acting !== recordStatus) {
+      return null;
+    }
+    return (
+      <div className="status-item record-status">
+        <CloudRecordStatus showTimer={RECORD_STATE_MAP.acting === recordStatus} isRecordPaused={isRecordPaused} />
+      </div>
+    );
+  };
+
   const renderMeeting = () => {
     if (status === 'meeting') {
       return (
@@ -919,6 +1028,11 @@ function App() {
           </div>
 
           <div className="meeting-content">
+
+            <div className="status-container">
+              {renderCloudRecordStatus()}
+            </div>
+
             <div className="meeting-layout" style={layoutStyle}>
               {renderLayout()}
             </div>
@@ -968,10 +1082,20 @@ function App() {
               )}
 
               <div
+                onClick={recordOperate}
+                className={`button ${recordStatus === RECORD_STATE_MAP.acting ? "pause_record" : "record"
+                  } ${disableRecord ? "disabled-button" : ""}`}
+              >
+                <div className="icon"></div>
+                <div className="title">
+                  {recordStatus === RECORD_STATE_MAP.acting ? "停止录制" : "开启录制"}
+                </div>
+              </div>
+
+              <div
                 onClick={videoOperate}
-                className={`button ${
-                  video === 'unmuteVideo' ? 'camera' : 'mute_camera'
-                }`}
+                className={`button ${video === 'unmuteVideo' ? 'camera' : 'mute_camera'
+                  }`}
               >
                 <div className="icon"></div>
                 <div className="title">

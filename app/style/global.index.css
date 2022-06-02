@@ -432,6 +432,70 @@ input {
   color: rgba(255, 255, 255, 0.8);
 }
 
+
+ /* 云端录制 */
+ 
+ .meeting-footer .record .icon {
+  background: url("./img/operate/record-normal.png") center center no-repeat;
+  background-size: contain;
+  width: 34px;
+}
+
+.meeting-footer .record:hover .icon {
+  background: url("./img/operate/record-hover.png") center center no-repeat;
+  background-size: contain;
+  width: 34px;
+}
+
+.meeting-footer .record:active .icon {
+  background: url("./img/operate/record-click.png") center center no-repeat;
+  background-size: contain;
+  width: 34px;
+}
+
+
+.meeting-footer .pause_record .icon {
+  background: url("./img/operate/pause-record-normal.png") center center no-repeat;
+  background-size: contain;
+  width: 34px;
+}
+
+.meeting-footer .pause_record:hover .icon {
+  background: url("./img/operate/pause-record-hover.png") center center no-repeat;
+  background-size: contain;
+  width: 34px;
+}
+
+
+.status-container{
+  position: absolute;
+  left: 10px;
+  top: 8px;
+  z-index:1;
+}
+
+.status-item{
+  height: 32px;
+  background: rgba(0, 0, 0, 0.6);
+  border-radius: 3px;
+  display: flex;
+  align-items: center;
+  padding: 0 12px;
+  z-index: 99;
+  margin-bottom: 8px;
+  color: #FFF;
+  font-size: 14px;
+}
+
+.status-item:last-child{
+  margin-bottom: 0;
+}
+
+.meeting-footer .disabled-button {
+  opacity: 0.3;
+  cursor: default;
+}
+
 /* ----------------------meeting setting --------------- */
 .xy_setting {
   color: #1890ff;

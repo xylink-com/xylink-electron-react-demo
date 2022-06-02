@@ -1,7 +1,7 @@
 {
   "name": "electron-react-boilerplate",
   "productName": "小鱼云视频react",
-  "version": "1.3.3",
+  "version": "0.3.1",
   "description": "Electron application boilerplate based on React, React Router, Webpack, React Hot Loader for rapid application development",
   "scripts": {
     "build": "concurrently \"yarn build-main\" \"yarn build-renderer\"",
@@ -57,27 +57,37 @@
         "nsis"
       ],
       "extraFiles": [
-        "./avcodec-58.dll",
-        "./avdevice-58.dll",
-        "./avfilter-7.dll",
-        "./avformat-58.dll",
-        "./avutil-56.dll",
-        "./concrt140.dll",
-        "./d3dx9_43.dll",
-        "./I420ToARGB.cso",
-        "./Magnification.dll",
-        "./msvcp140.dll",
-        "./NemoSDK.dll",
-        "./openjp2.dll",
-        "./swresample-3.dll",
-        "./swscale-5.dll",
-        "./ucrtbase.dll",
-        "./vccorlib140.dll",
-        "./vcruntime140.dll",
-        "./xin265_32.dll",
+        "./dll/avcodec-58.dll",
+        "./dll/avdevice-58.dll",
+        "./dll/avfilter-7.dll",
+        "./dll/avformat-58.dll",
+        "./dll/avutil-56.dll",
+        "./dll/concrt140.dll",
+        "./dll/d3dx9_43.dll",
+        "./dll/I420ToARGB.cso",
+        "./dll/Magnification.dll",
+        "./dll/msvcp140.dll",
+        "./dll/NemoSDK.dll",
+        "./dll/openjp2.dll",
+        "./dll/style.dll",
+        "./dll/swresample-3.dll",
+        "./dll/swscale-5.dll",
+        "./dll/ucrtbase.dll",
+        "./dll/vccorlib140.dll",
+        "./dll/vcruntime140.dll",
+        "./dll/websocket_mg.dll",
+        "./dll/xin265_32.dll",
+        "./dll/xylinkAIEngine.dll",
         {
           "from": "node_modules/@xylink/xy-electron-sdk/build/Release/",
           "to": "./resources",
+          "filter": [
+            "**/*"
+          ]
+        },
+        {
+          "from": "./dll/I420ToARGB.cso",
+          "to": "./",
           "filter": [
             "**/*"
           ]
@@ -107,17 +117,7 @@
     "type": "git",
     "url": "git@github.com:xylink-com/xylink-electron-react-demo.git"
   },
-  "author": {
-    "name": "jinhui-luo",
-    "email": "luojinghui424@gmail.com",
-    "url": "https://www.luojh.me"
-  },
-  "contributors": [
-    {
-      "name": "jinghui-luo",
-      "email": "luojinghui424@gmail.com"
-    }
-  ],
+  "author": "XYLink Inc",
   "license": "MIT",
   "bugs": {
     "url": "https://github.com/xylink-com/xylink-electron-react-demo/issues"
@@ -260,7 +260,7 @@
     "@fortawesome/fontawesome-free": "^5.14.0",
     "@hot-loader/react-dom": "^16.13.0",
     "@reduxjs/toolkit": "^1.4.0",
-    "@xylink/xy-electron-sdk": "0.2.0",
+    "@xylink/xy-electron-sdk": "0.3.1",
     "connected-react-router": "^6.6.1",
     "electron-debug": "^3.1.0",
     "electron-log": "^4.2.2",

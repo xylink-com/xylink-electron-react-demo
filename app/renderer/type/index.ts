@@ -33,6 +33,8 @@ export interface IConfControl {
   disableMute:boolean;  
   // 静音、非静音
   muteMic:string;
+  // 禁止录制
+  disableRecord:boolean;
 }
 
 export interface IConfInfoChanged {
@@ -59,4 +61,40 @@ export interface ITemplate  {
       [index:number]:number
     }
   }
+}
+
+export enum RecordStatus {
+  Idel, // 空闲 录制完成
+  Starting, // 开启录制中
+  Acting, // 正在录制中
+  Stoping, // 停止录制中
+  Inact // 暂未使用 暂停录制相关，暂时用不到
+}
+
+/**
+ * 云端录制回调
+ * 
+ * @property { RecordStatus } recordState 录制状态
+ * @property { boolean } isRecorded 是否录制中
+ * @property { string } reason 错误码
+ * @property { string } message 错误码信息描述
+ */
+export interface IRecordStateChange {
+  recordState: RecordStatus;
+  isRecorded:boolean;
+  reason:string;
+  message:string;
+}
+
+/**
+ * 远端录制状态回调
+ * 
+ * @property { boolean } isStart 远端是否开启了录制
+ * @property { string } uri 录制发起者名称
+ */
+export interface IRecordNotification {
+  isStart: boolean;
+  uri:string;
+  callUri:string;
+  status:string;
 }
