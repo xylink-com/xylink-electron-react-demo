@@ -9,10 +9,16 @@
 $ yarn
 ```
 ### step2:
-安装完成后，安装32位electron，版本随意
+安装完成后，
+在windows上安装32位electron，版本随意
 
 ```
-$ yarn add electron@5.0.13 -D
+$ yarn add electron@13.6.9 -D
+```
+
+在mac上，注释.npmrc中内容
+```
+$ yarn add electron@13.6.9 -D
 ```
 
 ### step3:
@@ -20,29 +26,21 @@ $ yarn add electron@5.0.13 -D
 $ yarn add @xylink/xy-electron-sdk@latest -D
 ```
 
-### step4:
-使用 yarn 或 npm 安装完成  `@xylink/xy-electron-sdk` 后，在项目根目录：node_modules -> @xylink -> xy-electron-sdk -> dll 文件夹下，将所有的文件复制到当前项目的根目录上；
-
-### step5:
-执行完步骤四，项目根目录会存在一个 `I420ToARGB.cso` 文件，将此文件复制到：node_modules\electron\dist 目录下；
-
-> 注意：步骤四是解决本地开发时，调用摄像头采集crash的问题，打正式包时，此步骤不需要，会自动copy此文件。
-
 ## Starting Development
 执行此命令，开始编译和打开electron：
 ```bash
-yarn start
+yarn dev
 ```
 
 ## Packaging for Production
-
-To package apps for the local win 32 platform:
 
 ```bash
 yarn package
 ```
 
-build successfully, go to /release folder get app.
+> 注意： 需在Mac电脑下Mac安装包；在windows电脑下构建windows安装包
+
+构建完成后，在release/build目录下可得到对应的包。
 
 ## Docs
 
