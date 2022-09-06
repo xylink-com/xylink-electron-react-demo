@@ -3,7 +3,7 @@
 当前项目是基于 electron 官方推荐的 react 模板创建，详见[electron-react-boilerplate](https://github.com/electron-react-boilerplate/electron-react-boilerplate)
 
 ## Project setup
-建议在 dev 前，将 yarn/npm 镜像切换到 toabao 镜像地址上，加速安装依赖。
+建议在 dev 前，将 yarn/npm 镜像切换到 taobao 镜像地址上，加速安装依赖。
 ### step1:
 ```bash
 $ yarn
@@ -28,18 +28,10 @@ $ yarn add @xylink/xy-electron-sdk@latest -D
 
 > 注意：步骤四是解决本地开发时，调用摄像头采集crash的问题，打正式包时，此步骤不需要，会自动copy此文件。
 
-### step6:
-编译一次，分别执行
-```bash
-$ yarn build-dll
-
-$ yarn build
-```
-
 ## Starting Development
 执行此命令，开始编译和打开electron：
 ```bash
-yarn dev
+yarn start
 ```
 
 ## Packaging for Production
@@ -47,7 +39,7 @@ yarn dev
 To package apps for the local win 32 platform:
 
 ```bash
-yarn package-win
+yarn package
 ```
 
 build successfully, go to /release folder get app.

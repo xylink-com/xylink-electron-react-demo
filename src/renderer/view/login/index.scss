@@ -1,0 +1,29 @@
+@import '@/assets/style/var.scss';
+
+.login {
+  &-tab {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    font-size: 20px;
+    font-weight: bold;
+    color: $text-color;
+    &-click {
+      font-size: 14px;
+      color: $primary-color;
+      font-weight: normal;
+      cursor: pointer;
+    }
+    margin-bottom: 24px;
+  }
+}
+
+.xy-form-bottom {
+  position: relative;
+  .setting-btn {
+    position: absolute;
+    bottom: -40px;
+    left: 50%;
+    transform: translateX(-50%);
+  }
+}

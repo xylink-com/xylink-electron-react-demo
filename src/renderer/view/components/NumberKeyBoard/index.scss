@@ -1,0 +1,69 @@
+@import '@/assets/style/var.scss';
+
+.keyboard {
+  &-modal {
+    .ant-modal-content {
+      border-radius: 3px;
+      background: transparent;
+    }
+  }
+
+  &-header {
+    height: 30px;
+    background: rgba(44, 53, 64, 1);
+    border-top-right-radius: 3px;
+    border-top-left-radius: 3px;
+  }
+
+  &-close {
+    width: 12px;
+    height: 12px;
+    position: absolute;
+    right: 6px;
+    top: 6px;
+    cursor: pointer;
+    .svg-icon {
+      fill: #fff;
+      fill-opacity: 0.8;
+      fill-rule: evenodd;
+      width: 14px;
+      height: auto;
+    }
+
+    &:hover {
+      .svg-icon {
+        fill: $svg-danger-color;
+        fill-opacity: 1;
+      }
+    }
+  }
+
+  &-input {
+    height: 80px;
+    background: #fff;
+    border-bottom: 1px solid #ccc;
+    font-size: 30px;
+    line-height: 80px;
+    text-align: center;
+    direction: rtl;
+    padding: 0 10px;
+    @include text-ellipsis;
+  }
+
+  &-number {
+    display: flex;
+    flex-flow: wrap;
+    background: #fff;
+    li {
+      width: 100px;
+      height: 50px;
+      text-align: center;
+      line-height: 50px;
+      font-size: 22px;
+      cursor: pointer;
+      &:hover {
+        background: rgba(42, 46, 51, 0.1);
+      }
+    }
+  }
+}
