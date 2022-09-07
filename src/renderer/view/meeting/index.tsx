@@ -770,7 +770,6 @@ function Meeting() {
       okText: '确定',
       centered: true,
       onOk() {
-        ipcRenderer.send('closeExternalWindow', true);
         endMeeting();
       },
       // onCancel() { },
@@ -820,7 +819,6 @@ function Meeting() {
     ipcRenderer.removeAllListeners('domReady');
     ipcRenderer.removeAllListeners('secondWindow');
     ipcRenderer.removeAllListeners('currentWindowId');
-    ipcRenderer.removeAllListeners('closedExternalWindow');
   };
 
   const stopShareContent = () => {
@@ -1085,7 +1083,7 @@ function Meeting() {
                 <div className="title">
                   {recordStatus === RECORD_STATE_MAP.acting
                     ? '停止录制'
-                    : '开启录制'}
+                    : '开始录制'}
                 </div>
               </div>
 

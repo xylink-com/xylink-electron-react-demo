@@ -28,7 +28,6 @@ import { ReactComponent as OPT_MAX } from '@/assets/img/svg/max.svg';
 import { ReactComponent as OPT_CLOSE } from '@/assets/img/svg/close.svg';
 import { ReactComponent as OPT_WIN_MIN } from '@/assets/img/svg/min_win.svg';
 import { ReactComponent as AudioOnly } from '@/assets/img/svg/audioOnly.svg';
-import { ReactComponent as External } from '@/assets/img/svg/external.svg';
 
 const IconMap: { [key: string]: any } = {
   meeting_host: MeetingHost,
@@ -60,8 +59,7 @@ const IconMap: { [key: string]: any } = {
   max: OPT_MAX,
   min_win: OPT_WIN_MIN,
   close: OPT_CLOSE,
-  audio_only: AudioOnly,
-  external: External,
+  audio_only: AudioOnly
 };
 
 export { IconMap };

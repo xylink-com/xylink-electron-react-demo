@@ -53,7 +53,7 @@ const NumberKeyBoard = (props: IProps) => {
             </div>
           </div>
           <div className="keyboard-input">
-            {number}
+            <span dir='ltr'>{number}</span>
           </div>
           <ul className="keyboard-number">
             {numArray.map((i) => {
