@@ -144,7 +144,6 @@
   "build": {
     "productName": "小鱼云视频",
     "appId": "com.xylink.electron",
-    "compression": "store",
     "nsis": {
       "oneClick": false,
       "allowElevation": true,
