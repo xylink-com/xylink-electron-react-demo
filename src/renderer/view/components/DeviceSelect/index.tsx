@@ -1,7 +1,7 @@
 /**
  * 设备选择
  */
-import { ReactNode, useEffect, useState } from 'react';
+import { ReactNode, useCallback, useEffect, useState } from 'react';
 import { Popover } from 'antd';
 import './index.scss';
 import xyRTC from '@/utils/xyRTC';
@@ -9,7 +9,7 @@ import { IDeviceItem, IDeviceType } from '@xylink/xy-electron-sdk';
 import { useRecoilState, useSetRecoilState } from 'recoil';
 import {
   currentTabState,
-  selectedDeviceState, 
+  selectedDeviceState,
   settingModalState,
   toolbarState,
 } from '@/utils/state';
@@ -38,8 +38,37 @@ const DeviceSelect = (props: IProps) => {
       enableHidden: !visible,
       canHidden: !visible,
     }));
-
   }, [visible]);
+
+  const updateDevices = useCallback(
+    async (key: IDeviceType) => {
+      const list = await xyRTC.getDeviceList(key);
+      const selectedId = updateSelectedDevice(list);
+
+      switch (key) {
+        case 'camera':
+          setCameraList(list);
+          break;
+        case 'microphone':
+          setMicrophoneList(list);
+          break;
+        case 'speaker':
+          setSpeakerList(list);
+          break;
+      }
+
+      setSelectedDevice((selectedDevice) => {
+        if (selectedDevice[key] !== selectedId) {
+          return {
+            ...selectedDevice,
+            camera: selectedId,
+          };
+        }
+        return selectedDevice;
+      });
+    },
+    [setSelectedDevice]
+  );
 
   useEffect(() => {
     (async () => {
@@ -48,13 +77,13 @@ const DeviceSelect = (props: IProps) => {
       }
 
       if (type === 'audio') {
-        await updateMicrophoneDevices();
-        await updateSpeakerDevices();
+        await updateDevices('microphone');
+        await updateDevices('speaker');
       } else {
-        await updateCameraDevices();
+        await updateDevices('camera');
       }
     })();
-  }, [type]);
+  }, [type, updateDevices]);
 
   const onSwitchDevice = async (type: IDeviceType, deviceId: string) => {
     setSelectedDevice((selectedDevice) => ({
@@ -66,45 +95,6 @@ const DeviceSelect = (props: IProps) => {
       await xyRTC.switchDevice(type, deviceId);
     } catch (err) {
       console.log(`switch ${type} device error: `, err);
-    }
-  };
-
-  const updateCameraDevices = async () => {
-    const camera = await xyRTC.getDeviceList('camera');
-    const selectedId = updateSelectedDevice(camera);
-
-    setCameraList(camera);
-
-    if (selectedId !== selectedDevice.camera) {
-      onSwitchDevice('camera', selectedId);
-    }
-  };
-
-  const updateMicrophoneDevices = async () => {
-    const microphone = await xyRTC.getDeviceList('microphone');
-
-    console.log('getDeviceList microphone:', microphone);
-
-    const selectedId = updateSelectedDevice(microphone);
-
-    setMicrophoneList(microphone);
-
-    console.log('microphone selectedId', selectedId);
-    console.log('selectedDevice.microphone', selectedDevice.microphone);
-
-    if (selectedId !== selectedDevice.microphone) {
-      onSwitchDevice('microphone', selectedId);
-    }
-  };
-
-  const updateSpeakerDevices = async () => {
-    const speaker = await xyRTC.getDeviceList('speaker');
-    const selectedId = updateSelectedDevice(speaker);
-
-    setSpeakerList(speaker);
-
-    if (selectedId !== selectedDevice.speaker) {
-      onSwitchDevice('speaker', selectedId);
     }
   };
 
