@@ -34,8 +34,14 @@ yarn dev
 
 ## Packaging for Production
 
+### Windows打包
 ```bash
 yarn package
+```
+
+### Mac 打包
+```bash
+yarn package:mac
 ```
 
 > 注意： 需在Mac电脑下Mac安装包；在windows电脑下构建windows安装包
