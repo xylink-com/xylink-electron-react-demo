@@ -1,0 +1,16 @@
+.record-time {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  .icon {
+    width: 8px;
+    flex: 0 0 8px;
+    height: 8px;
+    border-radius: 50%;
+    margin-right: 6px;
+    background: #fa6a69;
+  }
+  .icon.hide {
+    background: transparent;
+  }
+}

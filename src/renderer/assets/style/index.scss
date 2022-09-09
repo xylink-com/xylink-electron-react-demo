@@ -1,0 +1,90 @@
+@import './var.scss';
+
+.xy-section {
+  width: 100%;
+  height: 100%;
+  margin: 0 auto;
+  display: flex;
+  align-items: center;
+
+  .left {
+    width: 480px;
+    height: 100%;
+    background: url('@/assets/img/left_bg.png') no-repeat;
+    background-size: 100% 100%;
+  }
+  .right {
+    width: 480px;
+    height: 100%;
+    padding-top: 32px;
+  }
+
+  .section-content {
+    position: relative;
+    height: 100%;
+    padding: 88px 70px 0 70px;
+    display: flex;
+    flex-direction: column;
+  }
+}
+
+.xy-btn.ant-btn {
+  width: 100%;
+  height: 40px;
+}
+
+.disabled-btn.ant-btn-primary[disabled],
+.disabled-btn.ant-btn-primary[disabled]:hover,
+.disabled-btn.ant-btn-primary[disabled]:focus,
+.disabled-btn.ant-btn-primary[disabled]:active {
+  background: $primary-btn-color;
+  opacity: 0.6;
+  color: #fff;
+}
+
+.xy-form {
+  position: relative;
+  flex: 1;
+  .ant-form-item {
+    margin-bottom: 16px;
+    color: $text-color;
+    .ant-input {
+      color: $text-color;
+      padding: 10px 12px;
+    }
+    .ant-form-item-explain-error {
+      font-size: 12px;
+    }
+    .ant-form-item-control-input {
+      min-height: auto;
+    }
+  }
+  .xy-checkbox {
+    margin-bottom: 12px;
+  }
+
+  .declare {
+    label {
+      font-size: 12px;
+      color: #acacac;
+    }
+    &-url {
+      cursor: pointer;
+      color: $primary-color;
+    }
+  }
+
+  &-bottom {
+    position: absolute;
+    width: 100%;
+    bottom: 100px;
+    flex-direction: column;
+    align-items: center;
+  }
+}
+
+.setting-btn {
+  font-size: 12px;
+  color: $primary-color;
+  cursor: pointer;
+}

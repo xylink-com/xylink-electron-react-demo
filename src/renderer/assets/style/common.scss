@@ -1,0 +1,237 @@
+@import './var.scss';
+
+// !!! 复写antd 样式
+.ant-btn {
+  border-radius: 3px;
+}
+
+.ant-input {
+  border-color: #d8d8d8;
+  border-radius: 3px;
+}
+
+.ant-btn-primary {
+  color: #fff;
+  background: $primary-btn-color;
+  border: none;
+  &:hover {
+    background: $primary-btn-hover-color;
+  }
+  &:active,
+  &:focus {
+    background: $primary-btn-color;
+    border: none;
+  }
+}
+
+.ant-input-affix-wrapper:focus,
+.ant-input-affix-wrapper-focused {
+  box-shadow: none;
+}
+
+.ant-input[disabled] {
+  color: $lighter-color;
+}
+
+.ant-message {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate3d(-50%, -50%, 0);
+  &-notice-content {
+    background: rgba(0, 0, 0, 0.6);
+    border-radius: 3px;
+    color: #fff;
+    .anticon {
+      display: none;
+    }
+  }
+}
+
+// model
+.model {
+  position: fixed;
+  top: 0;
+  left: 0;
+  background-color: rgba(0, 0, 0, 0.6);
+  width: 100vw;
+  height: 100vh;
+  z-index: 10;
+
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+
+  &-content {
+    background: $bg-color;
+    box-shadow: 0px 2px 20px 0px rgba(119, 119, 178, 0.2);
+    border-radius: 4px;
+    opacity: 0;
+    position: relative;
+    margin-top: 200px;
+    padding: 0 30px;
+  }
+
+  &-container {
+    position: relative;
+    padding-bottom: 24px;
+  }
+
+  &-title {
+    color: #3e454c;
+    font-size: 20px;
+    padding: 24px 0 28px;
+
+    .close {
+      position: absolute;
+      right: 14px;
+      top: 14px;
+      cursor: pointer;
+      display: flex;
+
+      img {
+        width: 22px;
+        height: 22px;
+      }
+    }
+  }
+}
+
+.slideIn {
+  animation: slideIn 0.5s ease;
+  animation-fill-mode: forwards;
+}
+
+@keyframes slideIn {
+  0% {
+    opacity: 0;
+    transform: translateY(-40px);
+  }
+
+  80% {
+    opacity: 1;
+  }
+
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.fadeIn {
+  animation: fadeIn 0.3s ease;
+  animation-fill-mode: forwards;
+}
+
+@keyframes fadeIn {
+  0% {
+    opacity: 0;
+  }
+
+  100% {
+    opacity: 1;
+  }
+}
+
+.drawer {
+  .ant-drawer-header {
+    padding: 0;
+    height: 36px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-bottom: none;
+    .ant-drawer-title {
+      font-size: 14px;
+      color: $normal-color;
+    }
+    &::after {
+      content: '';
+      position: absolute;
+      left: 0;
+      top: 0;
+      width: 200%;
+      border-bottom: 1px solid #d8d8d8;
+      color: #d8d8d8;
+      height: 200%;
+      -webkit-transform-origin: left top;
+      transform-origin: left top;
+      -webkit-transform: scale(0.5);
+      transform: scale(0.5);
+      pointer-events: none;
+      box-sizing: border-box;
+    }
+  }
+  .ant-drawer-body {
+    padding: 0;
+  }
+
+  &-box {
+    display: flex;
+    width: 100%;
+    align-items: center;
+    justify-content: space-between;
+    user-select: none;
+
+    .right {
+      font-weight: normal;
+      font-size: 14px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+  }
+}
+
+.ant-drawer-content-wrapper {
+  user-select: text;
+}
+
+.ant-drawer-mask {
+  background-color: rgba(0, 0, 0, 0);
+}
+
+.ant-checkbox-wrapper {
+  color: $text-color;
+}
+
+.ant-input-focused,
+.ant-input:focus {
+  border-color: $primary-color;
+}
+
+.xy-popover {
+  .ant-popover-inner-content {
+    color: #fff;
+    font-size: 12px;
+  }
+  .ant-popover-inner {
+    background: rgba(35, 36, 51, 0.9);
+    border-radius: 3px;
+  }
+  & > .ant-popover-content > .ant-popover-arrow {
+    border-right-color: rgba(35, 36, 51, 0.9);
+    border-bottom-color: rgba(35, 36, 51, 0.9);
+    .ant-popover-arrow-content {
+      &::before {
+        background: rgba(35, 36, 51, 0.9);
+      }
+    }
+  }
+  .ant-popover-arrow-content {
+    background: rgba(35, 36, 51, 0.9);
+  }
+}
+
+.close-icon {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  width: 22px;
+  height: 22px;
+  background: url('@/assets/img/icon/close.png') no-repeat;
+  background-size: 100% 100%;
+  cursor: pointer;
+  z-index: 999;
+}
