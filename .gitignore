@@ -37,6 +37,7 @@ release/build
 .erb/dll
 dist
 dll
+models
 
 .idea
 npm-debug.log.*

@@ -144,7 +144,6 @@
   "build": {
     "productName": "小鱼云视频",
     "appId": "com.xylink.electron",
-    "compression": "store",
     "nsis": {
       "oneClick": false,
       "allowElevation": true,
@@ -157,6 +156,14 @@
       "include": "assets/installer.nsh"
     },
     "asar": false,
+    "protocols": [
+      {
+        "name": "xylink-electron",
+        "schemes": [
+          "xylink-electron"
+        ]
+      }
+    ],
     "mac": {
       "category": "xylink.app.category.type",
       "gatekeeperAssess": false,

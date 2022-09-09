@@ -10,6 +10,7 @@ import path from 'path';
 import { useRecoilState, useRecoilValue } from 'recoil';
 import { callState, selectedDeviceState } from '@/utils/state';
 import { MeetingStatus } from '@/type/enum';
+import { IDeviceItem } from '@xylink/xy-electron-sdk';
 
 const { Option } = Select;
 
@@ -34,14 +35,14 @@ const Device = () => {
   const micLevelTimer = useRef<ReturnType<typeof setInterval> | null>(null);
   const speakerLevelTimer = useRef<ReturnType<typeof setInterval> | null>(null);
 
-  useEffect(()=>{
-    return ()=>{
+  useEffect(() => {
+    return () => {
       // 会外 离开此页面时，释放音频
-      if(!isInMeeting){
-        xyRTC.releaseAudioFocus()
+      if (!isInMeeting) {
+        xyRTC.releaseAudioFocus();
       }
-    }
-  },[isInMeeting])
+    };
+  }, [isInMeeting]);
 
   useEffect(() => {
     testSpeakerStatusRef.current = testSpeakerStatus;
@@ -53,9 +54,34 @@ const Device = () => {
         return;
       }
 
-      await updateCameraDevices();
-      await updateMicrophoneDevices();
-      await updateSpeakerDevices();
+      const updateDevices = async (key: IDeviceType) => {
+        const list = await xyRTC.getDeviceList(key);
+
+        const selectedId = updateSelectedDevice(list);
+
+        switch (key) {
+          case 'camera':
+            setCameraList(list);
+            break;
+          case 'microphone':
+            // 因为离开设备检测页面时，会释放音频。 所以在获取音频列表时，主动choose当下的设备。
+            onSwitchDevice('microphone', selectedId);
+            setMicrophoneList(list);
+            break;
+          case 'speaker':
+            setSpeakerList(list);
+            break;
+        }
+
+        selectedDeviceRef.current = {
+          ...selectedDeviceRef.current,
+          [key]: selectedId,
+        };
+      };
+
+      await updateDevices('camera');
+      await updateDevices('microphone');
+      await updateDevices('speaker');
 
       setSelectedDevice(selectedDeviceRef.current);
     })();
@@ -121,67 +147,9 @@ const Device = () => {
     onSwitchDevice(type, deviceId);
   };
 
-  const updateCameraDevices = async () => {
-    const camera = await xyRTC.getDeviceList('camera');
-
-    const selectedId = updateSelectedDevice(camera);
-
-    setCameraList(camera);
-
-    if (selectedId !== selectedDevice.camera) {
-      onSwitchDevice('camera', selectedId);
-    }
-
-    selectedDeviceRef.current = {
-      ...selectedDeviceRef.current,
-      camera: selectedId,
-    };
-  };
-
-  const updateMicrophoneDevices = async () => {
-    const microphone = await xyRTC.getDeviceList('microphone');
-
-    console.log('getDeviceList microphone:', microphone);
-
-    const selectedId = updateSelectedDevice(microphone);
-
-    // 因为离开设备检测页面时，会释放音频。 所以在获取音频列表时，主动choose当下的设备。
-    onSwitchDevice('microphone', selectedId);
-
-    setMicrophoneList(microphone);
-
-    console.log('microphone selectedId', selectedId);
-    console.log('selectedDevice.microphone', selectedDevice.microphone);
-
-    if (selectedId !== selectedDevice.microphone) {
-      onSwitchDevice('microphone', selectedId);
-    }
-
-    selectedDeviceRef.current = {
-      ...selectedDeviceRef.current,
-      microphone: selectedId,
-    };
-  };
-
-  const updateSpeakerDevices = async () => {
-    const speaker = await xyRTC.getDeviceList('speaker');
-    const selectedId = updateSelectedDevice(speaker);
-
-    setSpeakerList(speaker);
-
-    if (selectedId !== selectedDevice.speaker) {
-      onSwitchDevice('speaker', selectedId);
-    }
-
-    selectedDeviceRef.current = {
-      ...selectedDeviceRef.current,
-      speaker: selectedId,
-    };
-  };
-
-  const updateSelectedDevice = (list: any) => {
+  const updateSelectedDevice = (list: IDeviceItem[]) => {
     let selectedId = '';
-    const selectedDevice = list.filter((item: any) => item.isSelected);
+    const selectedDevice = list.filter((item: IDeviceItem) => item.isSelected);
 
     if (selectedDevice.length > 0) {
       selectedId = selectedDevice[0].devId;
