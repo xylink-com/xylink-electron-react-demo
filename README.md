@@ -16,10 +16,12 @@ $ yarn
 $ yarn add electron@13.6.9 -D
 ```
 
-在mac上，注释.npmrc中内容
+mac
 ```
 $ yarn add electron@13.6.9 -D
 ```
+
+>注意：mac平台安装需要注释掉`.npmrc`的内容
 
 ### step3:
 ```bash
@@ -34,17 +36,17 @@ yarn dev
 
 ## Packaging for Production
 
-### Windows打包
+### Windows
 ```bash
 yarn package
 ```
 
-### Mac 打包
+### Mac
 ```bash
 yarn package:mac
 ```
 
-> 注意： 需在Mac电脑下Mac安装包；在windows电脑下构建windows安装包
+> 注意： 需在Mac电脑下构建Mac安装包；在windows电脑下构建windows安装包
 
 构建完成后，在release/build目录下可得到对应的包。
 
