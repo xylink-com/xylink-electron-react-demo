@@ -1,18 +1,21 @@
 /**
  * 设备选择
  */
-import { ReactNode, useCallback, useEffect, useState } from 'react';
+import { ReactNode, useCallback, useEffect, useRef, useState } from 'react';
 import { Popover } from 'antd';
-import './index.scss';
 import xyRTC from '@/utils/xyRTC';
 import { IDeviceItem, IDeviceType } from '@xylink/xy-electron-sdk';
-import { useRecoilState, useSetRecoilState } from 'recoil';
+import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
 import {
   currentTabState,
+  deviceChangeState,
   selectedDeviceState,
   settingModalState,
   toolbarState,
 } from '@/utils/state';
+
+import './index.scss';
+
 interface IProps {
   type: 'audio' | 'video';
   children?: ReactNode;
@@ -26,11 +29,15 @@ const DeviceSelect = (props: IProps) => {
   const [speakerList, setSpeakerList] = useState([]);
   const setSettingVisible = useSetRecoilState(settingModalState);
   const setCurrent = useSetRecoilState(currentTabState);
-
+  const deviceChangeType = useRecoilValue(deviceChangeState);
   const [selectedDevice, setSelectedDevice] =
     useRecoilState(selectedDeviceState);
-
   const setToolVisible = useSetRecoilState(toolbarState);
+  const selectedDeviceRef = useRef({
+    camera: '',
+    microphone: '',
+    speaker: '',
+  });
 
   useEffect(() => {
     setToolVisible((state) => ({
@@ -38,10 +45,34 @@ const DeviceSelect = (props: IProps) => {
       enableHidden: !visible,
       canHidden: !visible,
     }));
-  }, [visible]);
+  }, [visible, setToolVisible]);
+
+  useEffect(() => {
+    selectedDeviceRef.current = selectedDevice;
+  }, [selectedDevice]);
+
+  const onSwitchDevice = useCallback(
+    async (type: IDeviceType, deviceId: string, isSwitch = true) => {
+      if (deviceId) {
+        try {
+          if (isSwitch) {
+            await xyRTC.switchDevice(type, deviceId);
+          }
+
+          setSelectedDevice((selectedDevice) => ({
+            ...selectedDevice,
+            [type]: deviceId,
+          }));
+        } catch (err) {
+          console.log(`switch ${type} device error: `, err);
+        }
+      }
+    },
+    [setSelectedDevice]
+  );
 
   const updateDevices = useCallback(
-    async (key: IDeviceType) => {
+    async (key: IDeviceType, isSwitch = true) => {
       const list = await xyRTC.getDeviceList(key);
       const selectedId = updateSelectedDevice(list);
 
@@ -57,17 +88,11 @@ const DeviceSelect = (props: IProps) => {
           break;
       }
 
-      setSelectedDevice((selectedDevice) => {
-        if (selectedDevice[key] !== selectedId) {
-          return {
-            ...selectedDevice,
-            camera: selectedId,
-          };
-        }
-        return selectedDevice;
-      });
+      if (selectedDeviceRef.current[key] !== selectedId && isSwitch) {
+        onSwitchDevice(key, selectedId, isSwitch);
+      }
     },
-    [setSelectedDevice]
+    [onSwitchDevice]
   );
 
   useEffect(() => {
@@ -77,30 +102,30 @@ const DeviceSelect = (props: IProps) => {
       }
 
       if (type === 'audio') {
-        await updateDevices('microphone');
-        await updateDevices('speaker');
+        await updateDevices('microphone', false);
+        await updateDevices('speaker', false);
       } else {
-        await updateDevices('camera');
+        await updateDevices('camera', false);
       }
     })();
   }, [type, updateDevices]);
 
-  const onSwitchDevice = async (type: IDeviceType, deviceId: string) => {
-    setSelectedDevice((selectedDevice) => ({
-      ...selectedDevice,
-      [type]: deviceId,
-    }));
+  useEffect(() => {
+    // 设备变化
+    if (deviceChangeType) {
+      if (type === 'video' && deviceChangeType === 'camera') {
+        updateDevices('camera');
+      }
 
-    try {
-      await xyRTC.switchDevice(type, deviceId);
-    } catch (err) {
-      console.log(`switch ${type} device error: `, err);
+      if (type === 'audio' && deviceChangeType !== 'camera') {
+        updateDevices(deviceChangeType as IDeviceType);
+      }
     }
-  };
+  }, [deviceChangeType, type, updateDevices]);
 
-  const updateSelectedDevice = (list: any) => {
+  const updateSelectedDevice = (list: IDeviceItem[]) => {
     let selectedId = '';
-    const selectedDevice = list.filter((item: any) => item.isSelected);
+    const selectedDevice = list.filter((item: IDeviceItem) => item.isSelected);
 
     if (selectedDevice.length > 0) {
       selectedId = selectedDevice[0].devId;

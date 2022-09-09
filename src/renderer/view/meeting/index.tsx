@@ -61,6 +61,7 @@ import {
 import {
   callModeState,
   callState,
+  deviceChangeState,
   faceTypeState,
   settingInfoState,
   toolbarState,
@@ -131,6 +132,7 @@ function Meeting() {
   const settingInfo = useRecoilValue(settingInfoState);
   const setFaceType = useSetRecoilState(faceTypeState);
   const setCallMode = useSetRecoilState(callModeState);
+  const setDeviceChangeType = useSetRecoilState(deviceChangeState);
 
   const facePositionInfoRef = useRef(new Map()); // AI Face 位置信息
   const faceInfoRef = useRef(new Map()); // AI Face 人脸信息
@@ -268,6 +270,8 @@ function Meeting() {
     // 麦克风/摄像头设备变化事件
     xyRTC.current.on('MediaDeviceEvent', (value: string) => {
       console.log('device change type:', value);
+
+      setDeviceChangeType(value);
     });
 
     // 会议控制消息
@@ -789,6 +793,7 @@ function Meeting() {
     setFaceType('');
     setCallMode(CallMode.AudioVideo);
     setHandStatus(false);
+    setDeviceChangeType('');
 
     facePositionInfoRef.current = new Map();
     faceInfoRef.current = new Map();
