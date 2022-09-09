@@ -90,6 +90,11 @@ const DeviceSelect = (props: IProps) => {
 
       if (selectedDeviceRef.current[key] !== selectedId && isSwitch) {
         onSwitchDevice(key, selectedId, isSwitch);
+      } else {
+        setSelectedDevice((selectedDevice) => ({
+          ...selectedDevice,
+          [key]: selectedId,
+        }));
       }
     },
     [onSwitchDevice]
