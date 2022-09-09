@@ -156,6 +156,14 @@
       "include": "assets/installer.nsh"
     },
     "asar": false,
+    "protocols": [
+      {
+        "name": "xylink-electron",
+        "schemes": [
+          "xylink-electron"
+        ]
+      }
+    ],
     "mac": {
       "category": "xylink.app.category.type",
       "gatekeeperAssess": false,
