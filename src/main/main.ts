@@ -326,7 +326,7 @@ if (!app.requestSingleInstanceLock()) {
             },
           },
         ]);
-        tray.setToolTip('小鱼易连');
+        tray.setToolTip('小鱼云视频');
         tray.setContextMenu(contextMenu);
 
         tray.on('double-click', () => {
