@@ -120,3 +120,11 @@ export const deviceCheckFinishedState = atom({
     microphoneCheckFinished: false,
   },
 });
+
+/**
+ * 设备变更类型
+ */
+export const deviceChangeState = atom({
+  key: 'deviceChangeState',
+  default: '',
+});

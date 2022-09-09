@@ -2505,10 +2505,10 @@
   resolved "https://registry.yarnpkg.com/@xtuc/long/-/long-4.2.2.tgz#d291c6a4e97989b5c61d9acf396ae4fe133a718d"
   integrity sha512-NuHqBY1PB/D8xU6s/thBgOAiAP7HOYDQ32+BFZILJ8ivkUkAHQnWfn6WhL79Owj1qmUnoN/YPhktdIoucipkAQ==
 
-"@xylink/xy-electron-sdk@0.3.2-beta.2":
-  version "0.3.2-beta.2"
-  resolved "https://fe-private-npm.xylink.com/@xylink%2fxy-electron-sdk/-/xy-electron-sdk-0.3.2-beta.2.tgz#9022b599b07e1aed318d2ba3364cd9d09ab2c77b"
-  integrity sha512-y+ABWk0azL+EDkKHrJfgDURD9E4N7uGq6dui2aDKVqxx1Ezy08F+c3nbUo+jXbbBaz7CzX2qLEx1MiMosScfiA==
+"@xylink/xy-electron-sdk@1.0.0":
+  version "1.0.0"
+  resolved "https://fe-private-npm.xylink.com/@xylink%2fxy-electron-sdk/-/xy-electron-sdk-1.0.0.tgz#0e66f13b8e2c71086232d42c0b461ccb077859eb"
+  integrity sha512-kksyQEvnooIwP+hv8SSyQSY7QyIKQ/CBjp/bWp6PQkDS3iJ6IRVQ9VsfCvCh9NitRgYjmG+Y/vnWEvb1+axn8A==
   dependencies:
     download "^8.0.0"
     semver "^7.3.2"
