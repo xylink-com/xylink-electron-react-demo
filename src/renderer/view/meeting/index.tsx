@@ -124,6 +124,8 @@ function Meeting() {
   });
   // 会控下发主会场
   const [chirmanUri, setChirmanUri] = useState('');
+  // 是否是主持人
+  const [confHost, setConfHost] = useState({meetingId:"", isHost: false});
   // 会议状态
   const [meetingState, setMeetingState] = useRecoilState(callState);
   // Toolbar显示隐藏状态
@@ -489,6 +491,8 @@ function Meeting() {
     // 会控主持人回调
     xyRTC.current.on('ConfHostChanged', (e: IConfHost) => {
       console.log('ConfHostChanged:', e);
+
+      setConfHost(e);
     });
 
     return () => {
@@ -1046,7 +1050,9 @@ function Meeting() {
 
               <div onClick={openMeetingControlWin} className={`button host`}>
                 <SVG icon="meeting_host" />
-                <div className="title">参会者</div>
+                <div className="title">
+                {confHost?.isHost ? '主持会议' : '参会者'}
+                </div>
                 <div className="tag">{confInfo?.visibleEpCount || 1}</div>
               </div>
 
