@@ -9,7 +9,7 @@
  * 重要提示
  * 重要提示
  */
-export const SERVER = 'cloud.xylink.com';
+export const SERVER = 'sdkapi.xylink.com';
 
 export const ACCOUNT = {
   extId: '',
