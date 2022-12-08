@@ -1,6 +1,7 @@
+import { ILayoutModelMap } from '@/type';
 import { ACCOUNT, SERVER } from '@/config';
 import { MeetingStatus } from '@/type/enum';
-import { LayoutModel } from '@xylink/xy-electron-sdk';
+import { LayoutModel, TemplateModel } from '@xylink/xy-electron-sdk';
 
 // 服务协议
 export const XYLINK_AGREEMENT_URL =
@@ -36,7 +37,6 @@ export const DEFAULT_LOGIN_INFO = {
   extUserId: '',
   userId: 0,
   deviceId: 0,
-  tokenInfo: { accessToken: '', refreshToken: '', expires: 0 },
 };
 /**
  * 会议信息
@@ -47,6 +47,7 @@ export const DEFAULT_MEETING_INFO = {
   displayName: '', // 会议中显示的名称
   muteVideo: true, // 入会时是否关闭摄像头
   muteAudio: true, // 入会时是否静音
+  meetingId:'',
 };
 
 /**
@@ -118,3 +119,56 @@ export const RESOLUTION_LIST = [
     title: '360P',
   },
 ];
+
+/**
+ * 布局视图分类
+ *
+ * @value normal 无content布局
+ * @value content 有content布局
+ */
+export const LAYOUT_MODEL_MAP: ILayoutModelMap = {
+  normal: [
+    [
+      {
+        key: TemplateModel.SPEAKER,
+        text: '缩略视图'
+      }
+    ],
+    [
+      {
+        key: TemplateModel.GALLERY,
+        text: '宫格视图'
+      }
+    ]
+  ],
+  content: [
+    [
+      {
+        key: TemplateModel.MULTI_PIC_CONTENT_HIGH_PRIORITY,
+        text: '缩略视图'
+      },
+      {
+        key: TemplateModel.MULTI_PIC_ACTIVE_HIGH_PRIORITY,
+        text: '缩略共享'
+      },
+      {
+        key: TemplateModel.TWO_PIC_PIP,
+        text: '共享视图'
+      },
+      {
+        key: TemplateModel.CONTENT_ONLY,
+        text: '共享全视图'
+      },
+      {
+        key: TemplateModel.TWO_PIC_SYMMETRIC,
+        text: '共享+演讲'
+      }
+    ],
+    [
+      {
+        key: TemplateModel.GALLERY,
+        text: '宫格视图'
+      }
+    ]
+  ]
+};

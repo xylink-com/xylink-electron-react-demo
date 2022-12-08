@@ -57,6 +57,7 @@ const JoinMeeting = () => {
       meetingPassword,
       muteVideo = false,
       muteAudio = false,
+      meetingId
     } = info;
 
     const result = xyRTC.makeCall(
@@ -67,6 +68,7 @@ const JoinMeeting = () => {
       muteAudio,
       {
         isMonitor: isMonitorRef.current,
+        meetingId
       }
     );
 
@@ -168,6 +170,17 @@ const JoinMeeting = () => {
             placeholder="输入云会议号或终端号"
             onChange={(e) => {
               onChangeValue(e.target.value, 'meetingNumber');
+            }}
+          />
+        </Form.Item>
+        <Form.Item
+          name="meetingId"
+        >
+          <Input
+            type="text"
+            placeholder="meetingId, 可选"
+            onChange={(e) => {
+              onChangeValue(e.target.value, 'meetingId');
             }}
           />
         </Form.Item>

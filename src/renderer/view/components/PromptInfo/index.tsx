@@ -1,6 +1,9 @@
 import { RECORD_STATE_MAP } from '@/enum';
 import { IRecordPermission, ILayout } from '@xylink/xy-electron-sdk';
 import CloudRecordStatus from '../CloudRecordStatus';
+import { useRecoilState, useRecoilValue } from 'recoil';
+import { signInState, interactiveState } from '@/utils/state';
+
 
 import './index.scss';
 
@@ -16,6 +19,8 @@ interface IProps {
 }
 
 const PromptInfo = (props: IProps) => {
+  const { copywriting } = useRecoilValue(interactiveState);
+  const [{ promp, isSuccess }, setSignInState] = useRecoilState(signInState);
   const {
     recordPermission,
     isRecordPaused,
@@ -64,6 +69,32 @@ const PromptInfo = (props: IProps) => {
     );
   };
 
+  const renderSignInStatus = () => {
+    if (!promp) {
+      return null;
+    }
+    return (
+      <div className="meeting-prompt-box">
+        {copywriting.notifyContent}
+        {
+          isSuccess ? ` (已签到)` : <div
+            className="lock-btn"
+            onClick={(e) => {
+              e.stopPropagation();
+              setSignInState((state) => ({
+                ...state,
+                modal: true,
+                promp: false
+              }))
+            }}
+          >
+            {copywriting.notifyLabel}
+          </div>
+        }
+      </div>
+    );
+  };
+
   return (
     <div className={`meeting-prompt`}>
       {renderCloudRecordStatus()}
@@ -71,6 +102,8 @@ const PromptInfo = (props: IProps) => {
       {chirmanUri && <div className="meeting-prompt-box">主会场模式</div>}
 
       {renderFullScreenStatus()}
+
+      {renderSignInStatus()}
 
       {isLocalShareContent && (
         <div className="meeting-prompt-box">本地共享中</div>

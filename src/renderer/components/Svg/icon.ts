@@ -19,6 +19,23 @@ import { ReactComponent as HandDown } from '@/assets/img/svg/hand_down.svg';
 import { ReactComponent as HandEnd } from '@/assets/img/svg/hand_end.svg';
 import { ReactComponent as EndCall } from '@/assets/img/svg/end_call.svg';
 import { ReactComponent as Home } from '@/assets/img/svg/home.svg';
+
+import { ReactComponent as CONTENT_ONLY } from '@/assets/img/svg/CONTENT_ONLY.svg';
+import { ReactComponent as GALLERY } from '@/assets/img/svg/GALLERY.svg';
+import { ReactComponent as MULTI_PIC_ACTIVE_HIGH_PRIORITY } from '@/assets/img/svg/MULTI_PIC_ACTIVE_HIGH_PRIORITY.svg';
+import { ReactComponent as MULTI_PIC_CONTENT_HIGH_PRIORITY } from '@/assets/img/svg/MULTI_PIC_CONTENT_HIGH_PRIORITY.svg';
+import { ReactComponent as SPEAKER } from '@/assets/img/svg/SPEAKER.svg';
+import { ReactComponent as TWO_PIC_PIP } from '@/assets/img/svg/TWO_PIC_PIP.svg';
+import { ReactComponent as TWO_PIC_SYMMETRIC } from '@/assets/img/svg/TWO_PIC_SYMMETRIC.svg';
+
+import { ReactComponent as CONTENT_ONLY_active } from '@/assets/img/svg/CONTENT_ONLY_active.svg';
+import { ReactComponent as GALLERY_active } from '@/assets/img/svg/GALLERY_active.svg';
+import { ReactComponent as MULTI_PIC_ACTIVE_HIGH_PRIORITY_active } from '@/assets/img/svg/MULTI_PIC_ACTIVE_HIGH_PRIORITY_active.svg';
+import { ReactComponent as MULTI_PIC_CONTENT_HIGH_PRIORITY_active } from '@/assets/img/svg/MULTI_PIC_CONTENT_HIGH_PRIORITY_active.svg';
+import { ReactComponent as SPEAKER_active } from '@/assets/img/svg/SPEAKER_active.svg';
+import { ReactComponent as TWO_PIC_PIP_active } from '@/assets/img/svg/TWO_PIC_PIP_active.svg';
+import { ReactComponent as TWO_PIC_SYMMETRIC_active } from '@/assets/img/svg/TWO_PIC_SYMMETRIC_active.svg';
+
 import { ReactComponent as Record } from '@/assets/img/svg/record.svg';
 import { ReactComponent as RecordStop } from '@/assets/img/svg/record_stop.svg';
 import { ReactComponent as Subtitle } from '@/assets/img/svg/subtitle.svg';
@@ -26,8 +43,12 @@ import { ReactComponent as SubtitleStop } from '@/assets/img/svg/subtitle_stop.s
 import { ReactComponent as OPT_MIN } from '@/assets/img/svg/min.svg';
 import { ReactComponent as OPT_MAX } from '@/assets/img/svg/max.svg';
 import { ReactComponent as OPT_CLOSE } from '@/assets/img/svg/close.svg';
+import { ReactComponent as modalClose } from '@/assets/img/svg/close2.svg';
 import { ReactComponent as OPT_WIN_MIN } from '@/assets/img/svg/min_win.svg';
 import { ReactComponent as AudioOnly } from '@/assets/img/svg/audioOnly.svg';
+import { ReactComponent as Direction } from '@/assets/img/svg/direction.svg';
+import { ReactComponent as Plus } from '@/assets/img/svg/plus.svg';
+import { ReactComponent as Minus } from '@/assets/img/svg/minus.svg';
 
 const IconMap: { [key: string]: any } = {
   meeting_host: MeetingHost,
@@ -55,11 +76,29 @@ const IconMap: { [key: string]: any } = {
   record_stop: RecordStop,
   subtitle: Subtitle,
   subtitle_stop: SubtitleStop,
+  SPEAKER,
+  GALLERY,
+  MULTI_PIC_ACTIVE_HIGH_PRIORITY,
+  MULTI_PIC_CONTENT_HIGH_PRIORITY,
+  CONTENT_ONLY,
+  TWO_PIC_PIP,
+  TWO_PIC_SYMMETRIC,
+  SPEAKER_active,
+  GALLERY_active,
+  MULTI_PIC_ACTIVE_HIGH_PRIORITY_active,
+  MULTI_PIC_CONTENT_HIGH_PRIORITY_active,
+  CONTENT_ONLY_active,
+  TWO_PIC_PIP_active,
+  TWO_PIC_SYMMETRIC_active,
   min: OPT_MIN,
   max: OPT_MAX,
   min_win: OPT_WIN_MIN,
   close: OPT_CLOSE,
-  audio_only: AudioOnly
+  modalClose,
+  audio_only: AudioOnly,
+  direction: Direction,
+  plus: Plus,
+  minus: Minus,
 };
 
 export { IconMap };

@@ -1,0 +1,121 @@
+.far-hard-control {
+  position: fixed;
+  bottom: 116px;
+  right: 40px;
+  display: flex;
+  align-items: center;
+  .plus {
+    margin-right: 20px;
+  }
+  .minus {
+    margin-left: 20px;
+  }
+  .item {
+    width: 36px;
+    height: 36px;
+    background: rgba(255, 255, 255, 0.2);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    &.up {
+      transform: rotateZ(-90deg);
+    }
+    &.left {
+      transform: rotateY(180deg);
+    }
+    &.bottom {
+      transform: rotateZ(90deg);
+    }
+
+    .control-direction {
+      width: 14px;
+      height: 14px;
+      fill: rgba(255, 255, 255, 0.8);
+    }
+    &:hover {
+      background: rgba(255, 255, 255, 0.5);
+      .control-direction {
+        fill: rgba(255, 255, 255, 1);
+      }
+    }
+    &:active {
+      background: rgba(255, 255, 255, 0.9);
+      .control-direction {
+        fill: #fc494f;
+      }
+    }
+  }
+  .control-direction-wrapper {
+    width: 115px;
+    height: 115px;
+    background: rgba(0, 0, 0, 0.7);
+    border-radius: 50%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    line-height: 1;
+    padding: 3px;
+    position: relative;
+    &::after{
+      display: none;
+    }
+    &.up::after,
+    &.bottom::after,
+    &.left::after,
+    &.right::after{
+      display: block;
+      content:'';
+      width:100%;
+      height:100%;
+      border-radius: 50%;
+      position: absolute;
+      left:0;
+      top:0;
+    }
+    &.up::after{
+      background: linear-gradient(
+        180deg,
+        rgba(255, 60, 54, 0.9) 0,
+        transparent 33%,
+        transparent 100%
+      );
+    }
+    &.bottom::after {
+      background: linear-gradient(
+        0deg,
+        rgba(255, 60, 54, 0.9) 0,
+        transparent 33%,
+        transparent 100%
+      );
+    }
+    &.left::after {
+      background: linear-gradient(
+        90deg,
+        rgba(255, 60, 54, 0.9) 0,
+        transparent 33%,
+        transparent 100%
+      );
+    }
+    &.right::after {
+      background: linear-gradient(
+        -90deg,
+        rgba(255, 60, 54, 0.9) 0,
+        transparent 33%,
+        transparent 100%
+      );
+    }
+
+    .top,
+    .middle,
+    .bottom {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 10;
+    }
+    .middle {
+      justify-content: space-between;
+    }
+  }
+}

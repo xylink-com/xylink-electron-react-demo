@@ -1,0 +1,30 @@
+@import '@/assets/style/var.scss';
+
+@mixin btn {
+  display: inline-block;
+  padding: 0 10px;
+  margin-left: 12px;
+  min-width: 80px;
+  height: 32px;
+  background: #FFF;
+  text-align: center;
+  vertical-align: middle;
+  font-size: 12px;
+  cursor: pointer;
+}
+.button {
+  &.primaryBtn {
+    @include btn();
+    background: $primary-btn-color;
+    border: none;
+    color: #FFF;
+    &:focus {
+      background: $primary-btn-color;
+      color: #FFF;
+    }
+    &:hover {
+      background: $primary-btn-hover-color;
+      color:  #FFF;
+    }
+  }
+}

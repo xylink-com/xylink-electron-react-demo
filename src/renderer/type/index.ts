@@ -1,4 +1,4 @@
-import { IModel } from '@xylink/xy-electron-sdk';
+import { IModel ,TemplateModel} from "@xylink/xy-electron-sdk";
 
 /**
  * 静音状态
@@ -60,3 +60,25 @@ export interface ILoginData {
   extUserId?: string;
   displayName?: string;
 }
+
+/**
+ * layout切换布局模板对应文案
+ * @property {TemplateModel} key 布局模板
+ * @property {string} 对应的文案
+ */
+export interface ILayoutItem {
+  key: TemplateModel;
+  text: string;
+}
+
+/**
+ * layout切换布局模板分类
+ *
+ * @property { ILayoutItem[][]} normal 无content常规布局模板
+ * @property { ILayoutItem[][]} content 带content布局模板
+ */
+export interface ILayoutModelMap {
+  normal: ILayoutItem[][];
+  content: ILayoutItem[][];
+}
+
