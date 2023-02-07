@@ -267,13 +267,6 @@ function Meeting() {
       setShareContentStatus(e);
     });
 
-    // 麦克风/摄像头设备变化事件
-    xyRTC.current.on('MediaDeviceEvent', (value: string) => {
-      console.log('device change type:', value);
-
-      setDeviceChangeType(value);
-    });
-
     // 会议控制消息
     // 可以通过此消息获取：会控播放地址/主会场callUri/麦克风状态/是否是强制静音麦克风
     // 自定义布局模式下，主会场callUri需要记录下来，后续requestLayout计算需要使用

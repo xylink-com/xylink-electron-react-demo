@@ -19,15 +19,6 @@ export type IAudio = 'mute' | 'unmute';
 export type TSettingType = 'device' | 'common' | 'feedback' | 'about';
 
 /**
- * 设备类型
- *
- * @value camera 视频输入
- * @value microphone 音频输入
- * @value speaker 音频输出
- */
-export type IDeviceType = 'camera' | 'microphone' | 'speaker';
-
-/**
  * 设置信息
  *
  * @property { string } clientId

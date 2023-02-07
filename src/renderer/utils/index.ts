@@ -14,11 +14,10 @@ export const debounce = function (fn: any, delay: number, atleast: number) {
   let timer: ReturnType<typeof setTimeout> | null = null;
   let previous: number;
 
-  return function () {
+  return function (...args: any[]) {
     const now = +new Date();
     // @ts-ignore
     const context = this;
-    const args = arguments;
 
     timer && clearTimeout(timer);
     if (!previous) {
@@ -38,6 +37,24 @@ export const debounce = function (fn: any, delay: number, atleast: number) {
 };
 
 /**
+ * 非立即执行防抖
+ * @param fn 立即执行函数
+ * @param wait 防抖间隔 ms
+ * @returns 
+ */
+export const debounceNotImmediate = (fn: Function, wait: number) => {
+  let timerId: NodeJS.Timeout | undefined;
+  return function (...args: any[]) {
+    // @ts-ignore
+    var context = this;
+    clearTimeout(timerId);
+    timerId = setTimeout(() => {
+      fn.apply(context, args)
+    }, wait)
+  }
+}
+
+/**
  * 防抖函数
  *
  * @param fn Event function
@@ -46,12 +63,11 @@ export const debounce = function (fn: any, delay: number, atleast: number) {
 export const throttle = function (fn: any, wait: number) {
   let lastTime = 0;
 
-  return function () {
+  return function (...args: any[]) {
     const nowTime = +new Date();
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-ignore
     const context = this;
-    const args = arguments;
 
     if (nowTime - lastTime > wait || !lastTime) {
       fn.apply(context, args);

@@ -7,6 +7,7 @@ import SVG from '@/components/Svg';
 import xyRTC from '@/utils/xyRTC';
 import DeviceSelect from '../DeviceSelect';
 import { message } from 'antd';
+import { UpdateDevice } from '@/type/enum';
 
 interface IProps {
   audio: 'mute' | 'unmute';
@@ -119,7 +120,7 @@ const AudioButton = (props: IProps) => {
         </div>
         <div className="title">{audioObj.audioStatus}</div>
       </DebounceButton>
-      <DeviceSelect type="audio">
+      <DeviceSelect type={UpdateDevice.AUDIO}>
         <div className="arrow">
           <SVG icon="arrow" />
         </div>

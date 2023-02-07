@@ -1,7 +1,7 @@
 import { DEFAULT_SETTING_INFO } from '@/enum';
 import { TSettingType } from '@/type';
 import { MeetingStatus } from '@/type/enum';
-import { CallMode, EventType, IInteractiveToolInfo, ProcessType } from '@xylink/xy-electron-sdk';
+import { CallMode, EventType, IInteractiveToolInfo, ProcessType, IDeviceList } from '@xylink/xy-electron-sdk';
 import { atom } from 'recoil';
 import store from './store';
 
@@ -79,6 +79,16 @@ export const selectedDeviceState = atom({
     camera: '',
     microphone: '',
     speaker: '',
+  },
+});
+
+
+export const deviceListState = atom<IDeviceList>({
+  key: 'deviceList',
+  default: {
+    camera: [],
+    microphone: [],
+    speaker: [],
   },
 });
 

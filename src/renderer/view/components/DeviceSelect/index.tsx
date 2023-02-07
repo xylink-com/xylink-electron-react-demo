@@ -1,43 +1,37 @@
 /**
  * 设备选择
  */
-import { ReactNode, useCallback, useEffect, useRef, useState } from 'react';
-import { Popover } from 'antd';
-import xyRTC from '@/utils/xyRTC';
-import { IDeviceItem, IDeviceType } from '@xylink/xy-electron-sdk';
-import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
+import { ReactNode, useEffect, useState } from 'react';
+import { Popover, message } from 'antd';
+import { IDeviceItem, DeviceTypeKey } from '@xylink/xy-electron-sdk';
+import { useRecoilValue, useSetRecoilState } from 'recoil';
 import {
   currentTabState,
-  deviceChangeState,
   selectedDeviceState,
   settingModalState,
   toolbarState,
 } from '@/utils/state';
+import { debounceNotImmediate } from '@/utils';
+import { UpdateDevice } from '@/type/enum'
+
+import useDeviceSelect from '@/hooks/deviceSelect'
 
 import './index.scss';
 
 interface IProps {
-  type: 'audio' | 'video';
+  type: UpdateDevice;
   children?: ReactNode;
 }
 
 const DeviceSelect = (props: IProps) => {
   const { type } = props;
   const [visible, setVisible] = useState(false);
-  const [cameraList, setCameraList] = useState([]);
-  const [microphoneList, setMicrophoneList] = useState([]);
-  const [speakerList, setSpeakerList] = useState([]);
+
+  const { cameraList, microphoneList, speakerList, switchDevice } = useDeviceSelect()
   const setSettingVisible = useSetRecoilState(settingModalState);
   const setCurrent = useSetRecoilState(currentTabState);
-  const deviceChangeType = useRecoilValue(deviceChangeState);
-  const [selectedDevice, setSelectedDevice] =
-    useRecoilState(selectedDeviceState);
+  const selectedDevice = useRecoilValue(selectedDeviceState);
   const setToolVisible = useSetRecoilState(toolbarState);
-  const selectedDeviceRef = useRef({
-    camera: '',
-    microphone: '',
-    speaker: '',
-  });
 
   useEffect(() => {
     setToolVisible((state) => ({
@@ -47,108 +41,22 @@ const DeviceSelect = (props: IProps) => {
     }));
   }, [visible, setToolVisible]);
 
-  useEffect(() => {
-    selectedDeviceRef.current = selectedDevice;
-  }, [selectedDevice]);
-
-  const onSwitchDevice = useCallback(
-    async (type: IDeviceType, deviceId: string, isSwitch = true) => {
-      if (deviceId) {
-        try {
-          if (isSwitch) {
-            await xyRTC.switchDevice(type, deviceId);
-          }
-
-          setSelectedDevice((selectedDevice) => ({
-            ...selectedDevice,
-            [type]: deviceId,
-          }));
-        } catch (err) {
-          console.log(`switch ${type} device error: `, err);
-        }
-      }
-    },
-    [setSelectedDevice]
-  );
-
-  const updateDevices = useCallback(
-    async (key: IDeviceType, isSwitch = true) => {
-      const list = await xyRTC.getDeviceList(key);
-      const selectedId = updateSelectedDevice(list);
-
-      switch (key) {
-        case 'camera':
-          setCameraList(list);
-          break;
-        case 'microphone':
-          setMicrophoneList(list);
-          break;
-        case 'speaker':
-          setSpeakerList(list);
-          break;
-      }
-
-      if (selectedDeviceRef.current[key] !== selectedId && isSwitch) {
-        onSwitchDevice(key, selectedId, isSwitch);
-      } else {
-        setSelectedDevice((selectedDevice) => ({
-          ...selectedDevice,
-          [key]: selectedId,
-        }));
-      }
-    },
-    [onSwitchDevice]
-  );
-
-  useEffect(() => {
-    (async () => {
-      if (!xyRTC) {
-        return;
-      }
-
-      if (type === 'audio') {
-        await updateDevices('microphone', false);
-        await updateDevices('speaker', false);
-      } else {
-        await updateDevices('camera', false);
-      }
-    })();
-  }, [type, updateDevices]);
-
-  useEffect(() => {
-    // 设备变化
-    if (deviceChangeType) {
-      if (type === 'video' && deviceChangeType === 'camera') {
-        updateDevices('camera');
-      }
-
-      if (type === 'audio' && deviceChangeType !== 'camera') {
-        updateDevices(deviceChangeType as IDeviceType);
-      }
-    }
-  }, [deviceChangeType, type, updateDevices]);
-
-  const updateSelectedDevice = (list: IDeviceItem[]) => {
-    let selectedId = '';
-    const selectedDevice = list.filter((item: IDeviceItem) => item.isSelected);
-
-    if (selectedDevice.length > 0) {
-      selectedId = selectedDevice[0].devId;
-    } else if (list.length > 0) {
-      selectedId = list[0].devId;
-    }
-
-    return selectedId;
-  };
-
   const openSettingModal = () => {
     setVisible(false);
     setSettingVisible(true);
     setCurrent('device');
   };
 
+  useEffect(() => {
+    debounceSwitchSpeakerMessage(selectedDevice.speaker, speakerList, DeviceTypeKey.speaker);
+  }, [selectedDevice.speaker]);
+
+  useEffect(() => {
+    debounceSwitchMicrophoneMessage(selectedDevice.microphone, microphoneList, DeviceTypeKey.microphone);
+  }, [selectedDevice.microphone]);
+
   const content =
-    type === 'audio' ? (
+    type === UpdateDevice.AUDIO ? (
       <>
         <div className="select__item">
           <p>选择麦克风</p>
@@ -157,12 +65,11 @@ const DeviceSelect = (props: IProps) => {
               return (
                 <li
                   key={device.devId}
-                  className={`${
-                    selectedDevice.microphone === device.devId ? 'selected' : ''
-                  }`}
+                  className={`${selectedDevice.microphone === device.devId ? 'selected' : ''
+                    }`}
                   onClick={() => {
                     setVisible(false);
-                    onSwitchDevice('microphone', device.devId);
+                    switchDevice(DeviceTypeKey.microphone, device.devId);
                   }}
                 >
                   {device.devName}
@@ -179,12 +86,11 @@ const DeviceSelect = (props: IProps) => {
               return (
                 <li
                   key={device.devId}
-                  className={`${
-                    selectedDevice.speaker === device.devId ? 'selected' : ''
-                  }`}
+                  className={`${selectedDevice.speaker === device.devId ? 'selected' : ''
+                    }`}
                   onClick={() => {
                     setVisible(false);
-                    onSwitchDevice('speaker', device.devId);
+                    switchDevice(DeviceTypeKey.speaker, device.devId);
                   }}
                 >
                   {device.devName}
@@ -207,12 +113,11 @@ const DeviceSelect = (props: IProps) => {
               return (
                 <li
                   key={device.devId}
-                  className={`${
-                    selectedDevice.camera === device.devId ? 'selected' : ''
-                  }`}
+                  className={`${selectedDevice.camera === device.devId ? 'selected' : ''
+                    }`}
                   onClick={() => {
                     setVisible(false);
-                    onSwitchDevice('camera', device.devId);
+                    switchDevice(DeviceTypeKey.camera, device.devId);
                   }}
                 >
                   {device.devName}
@@ -244,5 +149,20 @@ const DeviceSelect = (props: IProps) => {
     </Popover>
   );
 };
+
+const switchDeviceMessage = (selectedDeviceId: string, deviceList: IDeviceItem[], deviceTypeKey: DeviceTypeKey) => {
+  console.log(`selectedDevice deviceTypeKey ${deviceTypeKey}`, selectedDeviceId)
+
+  const device = deviceList.find(item => item.devId === selectedDeviceId);
+
+  if (device) {
+    message.info(`音频${deviceTypeKey === DeviceTypeKey.speaker ? '输出' : '输入'}设备已自动切换至${device.devName}`, 3);
+  }
+}
+// recoil bug: useEffect依赖recoil state, 状态改变会触发两次，需要节流一下
+// https://github.com/facebookexperimental/Recoil/issues/307
+const debounceSwitchSpeakerMessage = debounceNotImmediate(switchDeviceMessage, 200);
+
+const debounceSwitchMicrophoneMessage = debounceNotImmediate(switchDeviceMessage, 200);
 
 export default DeviceSelect;
