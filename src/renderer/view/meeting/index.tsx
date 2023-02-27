@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
+import { useRecoilState, useRecoilValue, useResetRecoilState, useSetRecoilState } from 'recoil';
 import { message, Modal } from 'antd';
 import { ipcRenderer } from 'electron';
 import XYRTC from '@/utils/xyRTC';
@@ -16,9 +16,10 @@ import {
 } from '@/enum';
 import { KICK_OUT_MAP, SDK_ERROR_MAP } from '@/enum/error';
 import { TEMPLATE } from '@/utils/template';
-import { isMac } from '@/utils/index';
+import { debounce, isMac } from '@/utils/index';
 import { getScreenInfo } from '@/utils/layout';
-import { MeetingStatus, ITemplateModel } from '@/type/enum';
+import { farEndControlSupport } from '@/utils';
+import { MeetingStatus } from '@/type/enum';
 import { useMagicMouse } from '@/utils/magicMouse';
 import Video from '../components/Video';
 import Barrage from '../components/Barrage';
@@ -30,6 +31,7 @@ import AppHeader from '@/components/Header';
 import AudioButton from '../components/AudioButton';
 import Hold from '../components/Hold';
 import VideoButton from '../components/VideoButton';
+import FarEndControl from '../components/FarEndControl';
 import More from '../components/More';
 import PromptInfo from '../components/PromptInfo';
 import SettingModal from '../components/Modal';
@@ -47,7 +49,6 @@ import {
   IScreenInfo,
   ISubTitle,
   ILayout,
-  ITokenInfo,
   IAIFaceRecv,
   IAIFaceInfo,
   IRecordNotification,
@@ -57,6 +58,10 @@ import {
   IReqObj,
   LayoutModel,
   CallMode,
+  IInteractiveToolInfo,
+  ISignInfo,
+  ProcessType,
+  TemplateModel
 } from '@xylink/xy-electron-sdk';
 import {
   callModeState,
@@ -66,7 +71,12 @@ import {
   settingInfoState,
   toolbarState,
   videoState,
+  farEndControlState,
+  interactiveState,
+  signInState
 } from '@/utils/state';
+import SignIn from '../components/SignIn';
+import LayoutSelect from '../components/LayoutSelect';
 
 import './index.scss';
 
@@ -103,8 +113,8 @@ function Meeting() {
   const [facePositionInfo, setFacePositionInfo] = useState(new Map()); // AI Face 位置信息
   const [faceInfo, setFaceInfo] = useState(new Map()); // AI Face 人脸信息
   const [forceFullScreenId, setForceFullScreenId] = useState('');
-  const [templateModel, setTemplateModel] = useState<ITemplateModel>(
-    ITemplateModel.SPEAKER
+  const [templateModel, setTemplateModel] = useState<TemplateModel>(
+    TemplateModel.SPEAKER
   );
   // 自己开启录制的状态
   const [recordStatus, setRecordStatus] = useState(RECORD_STATE_MAP.idel);
@@ -136,9 +146,19 @@ function Meeting() {
   const setCallMode = useSetRecoilState(callModeState);
   const setDeviceChangeType = useSetRecoilState(deviceChangeState);
 
+  // 遥控摄像头
+  const [farEndControl, setFarEndControl] = useRecoilState(farEndControlState);
+  // 签到相关
+  const [{ processType }, setInteractiveState] = useRecoilState(interactiveState);
+  const setSignInState = useSetRecoilState(signInState);
+  const resetInteractive = useResetRecoilState(interactiveState);
+  const resetSignIn = useResetRecoilState(signInState);
+  // 人脸识别
   const facePositionInfoRef = useRef(new Map()); // AI Face 位置信息
   const faceInfoRef = useRef(new Map()); // AI Face 人脸信息
   const faceInfoTimerRef = useRef(new Map()); // 定时清理 Face信息
+
+  const videoStreamRef = useRef<ILayout[]>([]);
 
   useMagicMouse();
 
@@ -198,7 +218,7 @@ function Meeting() {
     });
 
     // 切换布局
-    xyRTC.current.on('TemplateModelChanged', (e: ITemplateModel) => {
+    xyRTC.current.on('TemplateModelChanged', (e: TemplateModel) => {
       console.log('TemplateModelChanged: ', e);
       setTemplateModel(e);
     });
@@ -206,33 +226,11 @@ function Meeting() {
     xyRTC.current.on('VideoStreams', (e: ILayout[]) => {
       const { model } = settingInfo;
 
+      videoStreamRef.current = e;
+
       if (model === LayoutModel.CUSTOM) {
-        // 每次推送都会携带local数据，如果分页不需要展示，则移除local数据
-        if (cachePageInfo.current.currentPage !== 0) {
-          const localIndex = e.findIndex(
-            (item: ILayout) => item.sourceId === LOCAL_VIEW_ID
-          );
-
-          if (localIndex >= 0) {
-            e.splice(localIndex, 1);
-          }
-        }
-
-        const nextTemplateRate = TEMPLATE.GALLERY.rate[e.length] || 0.5625;
-        // 此处无id是container的容器，则使用document.body的size计算screen
-        cacheScreenInfo.current = getScreenInfo(
-          'container',
-          nextTemplateRate,
-          [92, 0]
-        );
-
-        const nextLayout = calculateBaseLayoutList(e);
-
-        console.log('nextLayout:', nextLayout);
-
-        layoutRef.current = nextLayout;
-        setLayout(nextLayout);
-      } else {
+        calcCustomVideoStreamLayout();
+      }else {
         const nextLayout = cloneDeep(e);
 
         layoutRef.current = nextLayout;
@@ -267,13 +265,6 @@ function Meeting() {
       }
 
       setShareContentStatus(e);
-    });
-
-    // 麦克风/摄像头设备变化事件
-    xyRTC.current.on('MediaDeviceEvent', (value: string) => {
-      console.log('device change type:', value);
-
-      setDeviceChangeType(value);
     });
 
     // 会议控制消息
@@ -376,11 +367,6 @@ function Meeting() {
 
     xyRTC.current.on('SDKError', (e: string) => {
       console.log('sdk error: ', e);
-    });
-
-    // token
-    xyRTC.current.on('RefreshTokenResult', (e: ITokenInfo) => {
-      console.log('RefreshTokenResult:', e);
     });
 
     // 人脸坐标消息
@@ -495,11 +481,92 @@ function Meeting() {
       setConfHost(e);
     });
 
+    // 互动工具回调
+    xyRTC.current.on('InteractiveToolInfo', (e: IInteractiveToolInfo) => {
+      setInteractiveState(e);
+    });
+
+    // 签到结果
+    xyRTC.current.on('SubmitSignatureInfosResult', (e: ISignInfo) => {
+      console.log('SubmitSignatureInfosResult:', e);
+      if (e.code !== 0) {
+        message.info('签到失败，请稍候重试');
+        return;
+      }
+
+      message.success('签到成功');
+
+      setSignInState({
+        promp: true,
+        modal: e.code !== 0,
+        isSuccess: e.code === 0
+      })
+    });
+
     return () => {
       // 移除监听事件
       xyRTC.current.removeAllListeners();
     };
   }, []);
+
+  // 自定义布局，需要自己处理窗口变化
+  useEffect(() => {
+    const debounceVideoStreamLayout = debounce(calcCustomVideoStreamLayout, 150, 100);
+
+    if (settingInfo.model === LayoutModel.CUSTOM) {
+      window.addEventListener('resize', debounceVideoStreamLayout);
+    }
+
+    return () => {
+      window.removeEventListener('resize', debounceVideoStreamLayout);
+    }
+  }, [])
+
+  useEffect(() => {
+    const term = layout.find(item => {
+      const isSupportFarControl = farEndControlSupport(item.roster.feccOri).supportSome;
+      const isInBigScreen = item.position.width > (screenInfo.layoutWidth || 0) * 0.5;
+      return isSupportFarControl && isInBigScreen;
+    });
+    setFarEndControl(state => ({
+      ...state,
+      callUri: term?.roster.callUri || '',
+      feccOri: term?.roster.feccOri
+    }))
+  }, [layout]);
+
+  /**
+   * 自定义布局计算screen and layout data
+   */
+  const calcCustomVideoStreamLayout = () => {
+    const e = videoStreamRef.current;
+
+    // 每次推送都会携带local数据，如果分页不需要展示，则移除local数据
+    if (cachePageInfo.current.currentPage !== 0) {
+      const localIndex = e.findIndex(
+        (item: ILayout) => item.sourceId === LOCAL_VIEW_ID
+      );
+
+      if (localIndex >= 0) {
+        e.splice(localIndex, 1);
+      }
+    }
+
+    const nextTemplateRate = TEMPLATE.GALLERY.rate[e.length] || 0.5625;
+    // 此处无id是container的容器，则使用document.body的size计算screen
+    cacheScreenInfo.current = getScreenInfo(
+      'container',
+      nextTemplateRate,
+      [92, 0]
+    );
+
+    const nextLayout = calculateBaseLayoutList(e);
+
+    console.log('nextLayout:', nextLayout);
+
+    layoutRef.current = nextLayout;
+    setLayout(nextLayout);
+  }
 
   const disableRecord = useMemo(() => {
     const { isStartRecord, canRecord, confCanRecord } = recordPermission;
@@ -792,7 +859,7 @@ function Meeting() {
     setPageInfo(DEFAULT_PAGE_INFO);
     setInOutReminder([]);
     setSubTitle(null);
-    setTemplateModel(ITemplateModel.SPEAKER);
+    setTemplateModel(TemplateModel.SPEAKER);
     setFaceType('');
     setCallMode(CallMode.AudioVideo);
     setHandStatus(false);
@@ -805,6 +872,8 @@ function Meeting() {
     setFacePositionInfo(facePositionInfoRef.current);
     setFaceInfo(faceInfoRef.current);
 
+    setFarEndControl((state) => ({ ...state, show: false }));
+
     // 重置录制状态
     setIsRecordPaused(false);
     setRecordStatus(RECORD_STATE_MAP.idel);
@@ -813,6 +882,9 @@ function Meeting() {
       canRecord: true,
       confCanRecord: true,
     });
+
+    resetInteractive();
+    resetSignIn();
 
     clearFaceTimer();
 
@@ -872,9 +944,13 @@ function Meeting() {
   };
 
   // 切换layout
-  const switchLayout = async () => {
+  const switchLayout = async (templateModel?: TemplateModel) => {
+    if (shareContentStatus === 1) {
+      return;
+    }
+
     try {
-      const result = await xyRTC.current.switchLayout();
+      const result = await xyRTC.current.switchLayout(templateModel);
       console.log('switchLayout success: ', result);
 
       // setTemplateModel(result);
@@ -894,7 +970,7 @@ function Meeting() {
 
   const setForceFullScreen = async (id = '') => {
     try {
-      xyRTC.current.forceFullScreen(id);
+      await xyRTC.current.forceFullScreen(id);
     } catch (error) {
       console.log('强制全屏error: ', error);
     }
@@ -1071,10 +1147,20 @@ function Meeting() {
                 </div>
               )}
 
-              <div onClick={switchLayout} className="button layout">
-                <SVG icon="layout" />
-                <div className="title">窗口布局</div>
+              <div
+                className={`button-box ${shareContentStatus === 1 ? 'disabled-button' : ''}`}
+              >
+                <div onClick={() => switchLayout()} className="button layout">
+                  <SVG icon="layout" />
+                  <div className="title">窗口布局</div>
+                </div>
+                <LayoutSelect contentPartCount={confInfo.contentPartCount} templateModel={templateModel} switchLayout={switchLayout}>
+                  <div className="arrow">
+                    <SVG icon="arrow" />
+                  </div>
+                </LayoutSelect>
               </div>
+
 
               <div
                 onClick={recordOperate}
@@ -1116,6 +1202,7 @@ function Meeting() {
               />
             </div>
           </div>
+          {toolbarVisible.show && farEndControl.show && !!farEndControl.callUri && <FarEndControl />}
         </>
       );
     }
@@ -1147,6 +1234,7 @@ function Meeting() {
       {!holdInfo?.isOnhold && renderMeeting()}
 
       <SettingModal />
+      {ProcessType.SIGN_IN === processType && <SignIn />}
     </div>
   );
 }

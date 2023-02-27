@@ -8,6 +8,7 @@ import DeviceSelect from '../DeviceSelect';
 import { useRecoilValue } from 'recoil';
 import { callModeState } from '@/utils/state';
 import { CallMode } from '@xylink/xy-electron-sdk';
+import { UpdateDevice } from '@/type/enum';
 
 interface IProps {
   video: string;
@@ -43,7 +44,7 @@ const VideoButton = (props: IProps) => {
           {video === 'unmuteVideo' ? '关闭摄像头' : '开启摄像头'}
         </div>
       </DebounceButton>
-      <DeviceSelect type="video">
+      <DeviceSelect type={UpdateDevice.VIDEO}>
         <div className="arrow">
           <SVG icon="arrow" />
         </div>

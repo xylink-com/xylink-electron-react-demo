@@ -10,12 +10,8 @@ export enum LoginStatus {
   Logouted = 'Logouted',
 }
 
-export enum ITemplateModel {
-  'SPEAKER' = 'SPEAKER',
-  'GALLERY' = 'GALLERY',
-  'MULTI_PIC_CONTENT_HIGH_PRIORITY' = 'MULTI_PIC_CONTENT_HIGH_PRIORITY',
-  'MULTI_PIC_ACTIVE_HIGH_PRIORITY' = 'MULTI_PIC_ACTIVE_HIGH_PRIORITY',
-  'TWO_PIC_PIP' = 'TWO_PIC_PIP',
-  'CONTENT_ONLY' = 'CONTENT_ONLY',
-  'TWO_PIC_SYMMETRIC' = 'TWO_PIC_SYMMETRIC',
+export enum UpdateDevice{
+  VIDEO = 0b01,
+  AUDIO = 0b10,
+  ALL = 0b11
 }

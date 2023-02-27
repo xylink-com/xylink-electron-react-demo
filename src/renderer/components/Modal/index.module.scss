@@ -1,0 +1,86 @@
+@import '@/assets/style/var.scss';
+.xy-modal-body {
+  width: 420px;
+  padding-bottom: 0;
+  white-space: normal;
+  font-size: 12px;
+  overflow: hidden;
+  :global{
+    .ant-modal-content {
+      padding: 0 20px 24px;
+      background: $bg-color;
+      box-shadow: 0px 0px 20px 0px $shadow-color;
+      border-radius: 3px;
+      overflow: hidden;
+    }
+    .ant-modal-header {
+      padding: 0;
+      position: relative;
+      text-align: center;
+      border: 0;
+    }
+    .ant-modal-title {
+      color: $text-color;
+      line-height: 17px;
+      margin-top: 4px;
+      font-size: 12px;
+    }
+    .ant-modal-body {
+      padding: 0;
+      font-size: 12px;
+    }
+    .ant-modal-close-x {
+      margin: 10px 10px 0 0;
+      width: auto;
+      height: auto;
+      font-size: 12px;
+      line-height: 1;
+    }
+
+    .ant-confirm-btns {
+      display: none;
+      padding: 0 20px 20px;
+      margin-top: 10px;
+    }
+
+    .ant-confirm-body {
+      & > .anticon {
+        display: none;
+      }
+      .ant-confirm-content {
+        margin-left: 0;
+        margin-top: 0;
+        position: relative;
+      }
+    }
+
+    .ant-modal-footer {
+      background: $bg-color;
+      border: 0;
+      padding: 20px 0 0 0;
+
+      button + button {
+        margin-left: 12px;
+      }
+    }
+  }
+}
+
+.xy-modal {
+  padding: 0;
+  text-align: center;
+  white-space: nowrap;
+  &:before {
+    content: '';
+    display: inline-block;
+    height: 100%;
+    vertical-align: middle;
+    width: 0;
+  }
+  .ant-modal {
+    display: inline-block;
+    vertical-align: middle;
+    top: 0;
+    text-align: left;
+  }
+}

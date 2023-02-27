@@ -14,11 +14,10 @@ export const debounce = function (fn: any, delay: number, atleast: number) {
   let timer: ReturnType<typeof setTimeout> | null = null;
   let previous: number;
 
-  return function () {
+  return function (...args: any[]) {
     const now = +new Date();
     // @ts-ignore
     const context = this;
-    const args = arguments;
 
     timer && clearTimeout(timer);
     if (!previous) {
@@ -38,6 +37,24 @@ export const debounce = function (fn: any, delay: number, atleast: number) {
 };
 
 /**
+ * 非立即执行防抖
+ * @param fn 立即执行函数
+ * @param wait 防抖间隔 ms
+ * @returns 
+ */
+export const debounceNotImmediate = (fn: Function, wait: number) => {
+  let timerId: NodeJS.Timeout | undefined;
+  return function (...args: any[]) {
+    // @ts-ignore
+    var context = this;
+    clearTimeout(timerId);
+    timerId = setTimeout(() => {
+      fn.apply(context, args)
+    }, wait)
+  }
+}
+
+/**
  * 防抖函数
  *
  * @param fn Event function
@@ -46,12 +63,11 @@ export const debounce = function (fn: any, delay: number, atleast: number) {
 export const throttle = function (fn: any, wait: number) {
   let lastTime = 0;
 
-  return function () {
+  return function (...args: any[]) {
     const nowTime = +new Date();
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-ignore
     const context = this;
-    const args = arguments;
 
     if (nowTime - lastTime > wait || !lastTime) {
       fn.apply(context, args);
@@ -63,3 +79,35 @@ export const throttle = function (fn: any, wait: number) {
 export const isMac = process.platform === 'darwin';
 export const isWin = process.platform === 'win32';
 export const isDevelopment = process.env.NODE_ENV === 'development';
+
+/**
+ * 判断终端是否支持遥控摄像头
+ * 当前摄像头所支持的指令集, onVideoStreamChanged#SDKVideoStreamInfo.feccOri
+ * (feccOri & 1 << 1) != 0 : 支持水平方向上的转动 (左右)
+ * (feccOri & 1 << 2) != 0 : 支持垂直方向上的转动 (上下)
+ * (feccOri & 1 << 4) != 0 : 支持缩放
+ *
+ * @param {number | undefined} feccOri 终端指令
+ * @return {object} 是否支持水平、垂直、缩放、前三种全部支持
+ */
+export const farEndControlSupport = (feccOri: number | undefined) => {
+  if (typeof feccOri !== 'number') {
+    return {
+      supportHorizontal: false,
+      supportVertical: false,
+      supportZoom: false,
+      supportSome: false
+    }
+  }
+  const supportHorizontal = (feccOri & 1 << 1) != 0;
+  const supportVertical = (feccOri & 1 << 2) != 0;
+  const supportZoom = (feccOri & 1 << 4) != 0;
+  const supportSome = supportHorizontal || supportVertical || supportZoom;
+  return {
+    supportHorizontal,
+    supportVertical,
+    supportZoom,
+    supportSome
+  }
+}
+

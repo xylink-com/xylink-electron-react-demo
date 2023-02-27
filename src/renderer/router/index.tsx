@@ -5,7 +5,6 @@ import Login from '../view/login';
 import JoinMeeting from '../view/join';
 import Meeting from '../view/meeting';
 
-import { RecoilRoot } from 'recoil';
 import '../assets/style/global.scss';
 import '../assets/style/index.scss';
 
@@ -17,7 +16,6 @@ message.config({
 export default function App() {
   return (
     <Router>
-      <RecoilRoot>
         <Routes>
           <Route path="/" element={<Login />} />
           <Route
@@ -37,7 +35,6 @@ export default function App() {
             }
           />
         </Routes>
-      </RecoilRoot>
     </Router>
   );
 }

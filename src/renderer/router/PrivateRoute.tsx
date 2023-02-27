@@ -8,7 +8,6 @@ function PrivateRoute({ children }: { children: JSX.Element }) {
   useEffect(() => {
     // 未登录 返回首页
     const { deviceId } = store.get('xyLoginInfo');
-    // const { accessToken } = tokenInfo || { accessToken: '' };
 
     if (!deviceId) {
       navigate('/');

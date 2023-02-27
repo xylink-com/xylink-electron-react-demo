@@ -3,7 +3,7 @@
  *
  */
 import { useState, useEffect } from 'react';
-import { Popover } from 'antd';
+import { message, Popover } from 'antd';
 import xyRTC from '@/utils/xyRTC';
 import SVG from '@/components/Svg';
 import NumberKeyBoard from '../NumberKeyBoard';
@@ -13,6 +13,7 @@ import {
   settingModalState,
   toolbarState,
   videoState,
+  farEndControlState
 } from '@/utils/state';
 import { CallMode } from '@xylink/xy-electron-sdk';
 
@@ -23,6 +24,7 @@ const More = () => {
   const [visible, setVisible] = useState(false);
   const setSettingVisible = useSetRecoilState(settingModalState);
   const setToolVisible = useSetRecoilState(toolbarState);
+  const [farEndControl, setFarEndControl] = useRecoilState(farEndControlState);
   const videoMuteState = useRecoilValue(videoState);
 
   useEffect(() => {
@@ -40,7 +42,7 @@ const More = () => {
     const mode = callMode === AudioVideo ? AudioOnly : AudioVideo;
 
     xyRTC.switchCallMode(mode);
-    
+
     // 语音模式，需关闭本地摄像头
     // 退出语音模式，如果之前是开启摄像头，此时需要开启
     if (videoMuteState === 'unmuteVideo') {
@@ -49,6 +51,17 @@ const More = () => {
 
     setCallMode(mode);
   };
+
+  const onFarEndControl = ()=>{
+    if(!farEndControl.show && !farEndControl.callUri){
+      message.info('当前没有可以控制的摄像头')
+      return;
+    }
+    setFarEndControl((state) => ({
+      ...state,
+      show: !state.show
+    }))
+  }
 
   const content = (
     <ul className="more-select">
@@ -69,6 +82,11 @@ const More = () => {
         }}
       >
         设置
+      </li>
+      <li
+        onClick={onFarEndControl}
+      >
+        {farEndControl.show ? '退出遥控模式' : '遥控摄像头'}
       </li>
     </ul>
   );

@@ -1,4 +1,4 @@
-import { IModel } from '@xylink/xy-electron-sdk';
+import { IModel ,TemplateModel} from "@xylink/xy-electron-sdk";
 
 /**
  * 静音状态
@@ -17,15 +17,6 @@ export type IAudio = 'mute' | 'unmute';
  * @value about 关于
  */
 export type TSettingType = 'device' | 'common' | 'feedback' | 'about';
-
-/**
- * 设备类型
- *
- * @value camera 视频输入
- * @value microphone 音频输入
- * @value speaker 音频输出
- */
-export type IDeviceType = 'camera' | 'microphone' | 'speaker';
 
 /**
  * 设置信息
@@ -60,3 +51,25 @@ export interface ILoginData {
   extUserId?: string;
   displayName?: string;
 }
+
+/**
+ * layout切换布局模板对应文案
+ * @property {TemplateModel} key 布局模板
+ * @property {string} 对应的文案
+ */
+export interface ILayoutItem {
+  key: TemplateModel;
+  text: string;
+}
+
+/**
+ * layout切换布局模板分类
+ *
+ * @property { ILayoutItem[][]} normal 无content常规布局模板
+ * @property { ILayoutItem[][]} content 带content布局模板
+ */
+export interface ILayoutModelMap {
+  normal: ILayoutItem[][];
+  content: ILayoutItem[][];
+}
+

@@ -1,0 +1,47 @@
+.layout__select {
+  font-size: 12px;
+  color: #fff;
+  padding: 12px 16px;
+  &-head {
+    font-size: 14px;
+    line-height: 18px;
+    font-weight: 500;
+    margin-bottom: 12px;
+  }
+  &-content {
+    display: flex;
+    margin: 0 -8px;
+    .section {
+      min-width: 86px;
+      height: 78px;
+      padding: 12px 16px 8px;
+      display: flex;
+      margin: 0 8px;
+      background: rgba(66, 68, 89, 0.4);
+      border-radius: 2px;
+    }
+    .item {
+      width: 60px;
+      margin: 0 5px;
+      text-align: center;
+      cursor: pointer;
+      .text {
+        font-weight: 400;
+        color: rgba(255, 255, 255, 0.8);
+        line-height: 12px;
+        margin-top: 2px;
+      }
+    }
+  }
+  &-icon {
+    width: 60px;
+    height: 40px;
+  }
+}
+
+.layout-select-popover {
+  max-width: none;
+  .ant-popover-inner-content{
+    padding:  0;
+  }
+}
