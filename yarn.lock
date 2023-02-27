@@ -1120,7 +1120,7 @@
 
 "@electron/get@^1.0.1":
   version "1.14.1"
-  resolved "https://fe-private-npm.xylink.com/@electron%2fget/-/get-1.14.1.tgz#16ba75f02dffb74c23965e72d617adc721d27f40"
+  resolved "https://registry.npmmirror.com/@electron%2fget/-/get-1.14.1.tgz#16ba75f02dffb74c23965e72d617adc721d27f40"
   integrity sha512-BrZYyL/6m0ZXz/lDxy/nlVhQz+WF+iPS6qXolEU8atw7h6v1aYkjwJZ63m+bJMBTxDE66X+r2tPS4a/8C82sZw==
   dependencies:
     debug "^4.1.1"
@@ -1554,7 +1554,7 @@
 
 "@sindresorhus/is@^0.7.0":
   version "0.7.0"
-  resolved "https://fe-private-npm.xylink.com/@sindresorhus%2fis/-/is-0.7.0.tgz#9a06f4f137ee84d7df0460c1fdb1135ffa6c50fd"
+  resolved "https://registry.npmmirror.com/@sindresorhus%2fis/-/is-0.7.0.tgz#9a06f4f137ee84d7df0460c1fdb1135ffa6c50fd"
   integrity sha512-ONhaKPIufzzrlNbqtWFFd+jlnemX6lJAgq9ZeiZtS7I1PIf/la7CW4m83rTXRnVnsMbW2k56pGYu7AUFJD9Pow==
 
 "@sindresorhus/is@^4.0.0":
@@ -2047,7 +2047,7 @@
 
 "@types/node@^14.6.2":
   version "14.18.34"
-  resolved "https://fe-private-npm.xylink.com/@types%2fnode/-/node-14.18.34.tgz#cd2e6fa0dbfb08a62582a7b967558e73c32061ec"
+  resolved "https://registry.npmmirror.com/@types%2fnode/-/node-14.18.34.tgz#cd2e6fa0dbfb08a62582a7b967558e73c32061ec"
   integrity sha512-hcU9AIQVHmPnmjRK+XUUYlILlr9pQrsqSrwov/JK1pnf3GTQowVBhx54FbvM0AU/VXGH4i3+vgXS5EguR7fysA==
 
 "@types/parse-json@^4.0.0":
@@ -2505,10 +2505,10 @@
   resolved "https://registry.yarnpkg.com/@xtuc/long/-/long-4.2.2.tgz#d291c6a4e97989b5c61d9acf396ae4fe133a718d"
   integrity sha512-NuHqBY1PB/D8xU6s/thBgOAiAP7HOYDQ32+BFZILJ8ivkUkAHQnWfn6WhL79Owj1qmUnoN/YPhktdIoucipkAQ==
 
-"@xylink/xy-electron-sdk@^1.0.2-beta.1":
-  version "1.0.2-beta.1"
-  resolved "https://fe-private-npm.xylink.com/@xylink%2fxy-electron-sdk/-/xy-electron-sdk-1.0.2-beta.1.tgz#f4916ec31f949bb2007f3e363a3f938476cb9ac2"
-  integrity sha512-QGHuBtjslgIeVQRWhN9fhTFr7EUGBgJYy5IG8bPVsgk4hGoU8XQN0N/QZ8yAGDITMO4DbXodpsYtR4673Mmgvw==
+"@xylink/xy-electron-sdk@^1.0.2":
+  version "1.0.2"
+  resolved "https://registry.npmjs.org/@xylink/xy-electron-sdk/-/xy-electron-sdk-1.0.2.tgz#2f521a854126207bf41c3ecda1b68bbba2aeb38e"
+  integrity sha512-ok6Ekx5j6UMABNa21/WbPQOk1IZmnEyrIW5MWlBtQj0GLydztYJqLMNZvc1VIAvQ4ciOStkbrApMBq7qIwmRKw==
   dependencies:
     dayjs "^1.11.6"
     download "^8.0.0"
@@ -2794,7 +2794,7 @@ app-builder-lib@23.0.3:
 
 archive-type@^4.0.0:
   version "4.0.0"
-  resolved "https://fe-private-npm.xylink.com/archive-type/-/archive-type-4.0.0.tgz#f92e72233056dfc6969472749c267bdb046b1d70"
+  resolved "https://registry.npmmirror.com/archive-type/-/archive-type-4.0.0.tgz#f92e72233056dfc6969472749c267bdb046b1d70"
   integrity sha1-+S5yIzBW38aWlHJ0nCZ72wRrHXA=
   dependencies:
     file-type "^4.2.0"
@@ -3112,7 +3112,7 @@ binary-extensions@^2.0.0:
 
 bl@^1.0.0:
   version "1.2.3"
-  resolved "https://fe-private-npm.xylink.com/bl/-/bl-1.2.3.tgz#1e8dd80142eac80d7158c9dccc047fb620e035e7"
+  resolved "https://registry.npmmirror.com/bl/-/bl-1.2.3.tgz#1e8dd80142eac80d7158c9dccc047fb620e035e7"
   integrity sha1-Ho3YAULqyA1xWMnczAR/tiDgNec=
   dependencies:
     readable-stream "^2.3.5"
@@ -3174,7 +3174,7 @@ boolbase@^1.0.0:
 
 boolean@^3.0.1:
   version "3.2.0"
-  resolved "https://fe-private-npm.xylink.com/boolean/-/boolean-3.2.0.tgz#9e5294af4e98314494cbb17979fa54ca159f116b"
+  resolved "https://registry.npmmirror.com/boolean/-/boolean-3.2.0.tgz#9e5294af4e98314494cbb17979fa54ca159f116b"
   integrity sha512-d0II/GO9uf9lfUHH2BQsjxzRJZBdsjgsBiW4BvhWk/3qoKwQFjIDVN19PfX8F2D/r9PCMTtLWjYVCFrpeYUzsw==
 
 boxen@^5.0.0:
@@ -3361,7 +3361,7 @@ cacheable-lookup@^5.0.3:
 
 cacheable-request@^2.1.1:
   version "2.1.4"
-  resolved "https://fe-private-npm.xylink.com/cacheable-request/-/cacheable-request-2.1.4.tgz#0d808801b6342ad33c91df9d0b44dc09b91e5c3d"
+  resolved "https://registry.npmmirror.com/cacheable-request/-/cacheable-request-2.1.4.tgz#0d808801b6342ad33c91df9d0b44dc09b91e5c3d"
   integrity sha1-DYCIAbY0KtM8kd+dC0TcCbkeXD0=
   dependencies:
     clone-response "1.0.2"
@@ -3571,7 +3571,7 @@ cli-truncate@^3.1.0:
 
 clipboard@^2.0.11:
   version "2.0.11"
-  resolved "https://fe-private-npm.xylink.com/clipboard/-/clipboard-2.0.11.tgz#62180360b97dd668b6b3a84ec226975762a70be5"
+  resolved "https://registry.npmmirror.com/clipboard/-/clipboard-2.0.11.tgz#62180360b97dd668b6b3a84ec226975762a70be5"
   integrity sha512-C+0bbOqkezLIsmWSvlsXS0Q0bmkugu7jcfMIACB+RDEntIzQIkdr148we28AfSloQLRdZlYL/QYyrq05j/3Faw==
   dependencies:
     good-listener "^1.2.2"
@@ -3756,7 +3756,7 @@ concat-map@0.0.1:
 
 concat-stream@^1.6.2:
   version "1.6.2"
-  resolved "https://fe-private-npm.xylink.com/concat-stream/-/concat-stream-1.6.2.tgz#904bdf194cd3122fc675c77fc4ac3d4ff0fd1a34"
+  resolved "https://registry.npmmirror.com/concat-stream/-/concat-stream-1.6.2.tgz#904bdf194cd3122fc675c77fc4ac3d4ff0fd1a34"
   integrity sha512-27HBghJxjiZtIk3Ycvn/4kbJk/1uZuJFfuPEns6LaEvpvG1f0hTea8lilrouyo9mVc2GWdcEZ8OLoGmSADlrCw==
   dependencies:
     buffer-from "^1.0.0"
@@ -3797,7 +3797,7 @@ conf@^10.1.2:
 
 config-chain@^1.1.11:
   version "1.1.13"
-  resolved "https://fe-private-npm.xylink.com/config-chain/-/config-chain-1.1.13.tgz#fad0795aa6a6cdaff9ed1b68e9dff94372c232f4"
+  resolved "https://registry.npmmirror.com/config-chain/-/config-chain-1.1.13.tgz#fad0795aa6a6cdaff9ed1b68e9dff94372c232f4"
   integrity sha1-+tB5Wqamza/57Rto6d/5Q3LCMvQ=
   dependencies:
     ini "^1.3.4"
@@ -4021,7 +4021,7 @@ cssesc@^3.0.0:
 
 cssfilter@0.0.10:
   version "0.0.10"
-  resolved "https://fe-private-npm.xylink.com/cssfilter/-/cssfilter-0.0.10.tgz#c6d2672632a2e5c83e013e6864a42ce8defd20ae"
+  resolved "https://registry.npmmirror.com/cssfilter/-/cssfilter-0.0.10.tgz#c6d2672632a2e5c83e013e6864a42ce8defd20ae"
   integrity sha1-xtJnJjKi5cg+AT5oZKQs6N79IK4=
 
 cssnano-preset-default@^5.2.11:
@@ -4127,9 +4127,9 @@ dayjs@1.x:
   integrity sha512-xxwlswWOlGhzgQ4TKzASQkUhqERI3egRNqgV4ScR8wlANA/A9tZ7miXa44vTTKEq5l7vWoL5G57bG3zA+Kow0A==
 
 dayjs@^1.11.6:
-  version "1.11.6"
-  resolved "https://fe-private-npm.xylink.com/dayjs/-/dayjs-1.11.6.tgz#2e79a226314ec3ec904e3ee1dd5a4f5e5b1c7afb"
-  integrity sha512-zZbY5giJAinCG+7AGaw0wIhNZ6J8AhWuSXKvuc1KAyMiRsvGQWqh4L+MomvhdAYjN+lqvVCMq1I41e3YHvXkyQ==
+  version "1.11.7"
+  resolved "https://registry.npmjs.org/dayjs/-/dayjs-1.11.7.tgz#4b296922642f70999544d1144a2c25730fce63e2"
+  integrity sha512-+Yw9U6YO5TQohxLcIkrXBeY73WP3ejHWVvx8XCk3gxvQDCTEmS48ZrSZCKciI7Bhl/uCMyxYtE9UqRILmFphkQ==
 
 debounce-fn@^4.0.0:
   version "4.0.0"
@@ -4185,7 +4185,7 @@ decompress-response@^6.0.0:
 
 decompress-tar@^4.0.0, decompress-tar@^4.1.0, decompress-tar@^4.1.1:
   version "4.1.1"
-  resolved "https://fe-private-npm.xylink.com/decompress-tar/-/decompress-tar-4.1.1.tgz#718cbd3fcb16209716e70a26b84e7ba4592e5af1"
+  resolved "https://registry.npmmirror.com/decompress-tar/-/decompress-tar-4.1.1.tgz#718cbd3fcb16209716e70a26b84e7ba4592e5af1"
   integrity sha512-JdJMaCrGpB5fESVyxwpCx4Jdj2AagLmv3y58Qy4GE6HMVjWz1FeVQk1Ct4Kye7PftcdOo/7U7UKzYBJgqnGeUQ==
   dependencies:
     file-type "^5.2.0"
@@ -4194,7 +4194,7 @@ decompress-tar@^4.0.0, decompress-tar@^4.1.0, decompress-tar@^4.1.1:
 
 decompress-tarbz2@^4.0.0:
   version "4.1.1"
-  resolved "https://fe-private-npm.xylink.com/decompress-tarbz2/-/decompress-tarbz2-4.1.1.tgz#3082a5b880ea4043816349f378b56c516be1a39b"
+  resolved "https://registry.npmmirror.com/decompress-tarbz2/-/decompress-tarbz2-4.1.1.tgz#3082a5b880ea4043816349f378b56c516be1a39b"
   integrity sha512-s88xLzf1r81ICXLAVQVzaN6ZmX4A6U4z2nMbOwobxkLoIIfjVMBg7TeguTUXkKeXni795B6y5rnvDw7rxhAq9A==
   dependencies:
     decompress-tar "^4.1.0"
@@ -4205,7 +4205,7 @@ decompress-tarbz2@^4.0.0:
 
 decompress-targz@^4.0.0:
   version "4.1.1"
-  resolved "https://fe-private-npm.xylink.com/decompress-targz/-/decompress-targz-4.1.1.tgz#c09bc35c4d11f3de09f2d2da53e9de23e7ce1eee"
+  resolved "https://registry.npmmirror.com/decompress-targz/-/decompress-targz-4.1.1.tgz#c09bc35c4d11f3de09f2d2da53e9de23e7ce1eee"
   integrity sha512-4z81Znfr6chWnRDNfFNqLwPvm4db3WuZkqV+UgXQzSngG3CEKdBkw5jrv3axjjL96glyiiKjsxJG3X6WBZwX3w==
   dependencies:
     decompress-tar "^4.1.1"
@@ -4214,7 +4214,7 @@ decompress-targz@^4.0.0:
 
 decompress-unzip@^4.0.1:
   version "4.0.1"
-  resolved "https://fe-private-npm.xylink.com/decompress-unzip/-/decompress-unzip-4.0.1.tgz#deaaccdfd14aeaf85578f733ae8210f9b4848f69"
+  resolved "https://registry.npmmirror.com/decompress-unzip/-/decompress-unzip-4.0.1.tgz#deaaccdfd14aeaf85578f733ae8210f9b4848f69"
   integrity sha1-3qrM39FK6vhVePczroIQ+bSEj2k=
   dependencies:
     file-type "^3.8.0"
@@ -4224,7 +4224,7 @@ decompress-unzip@^4.0.1:
 
 decompress@^4.2.1:
   version "4.2.1"
-  resolved "https://fe-private-npm.xylink.com/decompress/-/decompress-4.2.1.tgz#007f55cc6a62c055afa37c07eb6a4ee1b773f118"
+  resolved "https://registry.npmmirror.com/decompress/-/decompress-4.2.1.tgz#007f55cc6a62c055afa37c07eb6a4ee1b773f118"
   integrity sha1-AH9VzGpiwFWvo3wH62pO4bdz8Rg=
   dependencies:
     decompress-tar "^4.0.0"
@@ -4300,7 +4300,7 @@ delayed-stream@~1.0.0:
 
 delegate@^3.1.2:
   version "3.2.0"
-  resolved "https://fe-private-npm.xylink.com/delegate/-/delegate-3.2.0.tgz#b66b71c3158522e8ab5744f720d8ca0c2af59166"
+  resolved "https://registry.npmmirror.com/delegate/-/delegate-3.2.0.tgz#b66b71c3158522e8ab5744f720d8ca0c2af59166"
   integrity sha512-IofjkYBZaZivn0V8nnsMJGBr4jVLxHDheKSW88PyxS5QC4Vo9ZbZVvhzlSxY87fVq3STR6r+4cGepyHkcWOQSw==
 
 delegates@^1.0.0:
@@ -4520,7 +4520,7 @@ dotenv@^9.0.2:
 
 download@^8.0.0:
   version "8.0.0"
-  resolved "https://fe-private-npm.xylink.com/download/-/download-8.0.0.tgz#afc0b309730811731aae9f5371c9f46be73e51b1"
+  resolved "https://registry.npmmirror.com/download/-/download-8.0.0.tgz#afc0b309730811731aae9f5371c9f46be73e51b1"
   integrity sha1-r8CzCXMIEXMarp9Tccn0a+c+UbE=
   dependencies:
     archive-type "^4.0.0"
@@ -4592,7 +4592,7 @@ electron-devtools-installer@^3.2.0:
 
 electron-log@^4.4.8:
   version "4.4.8"
-  resolved "https://fe-private-npm.xylink.com/electron-log/-/electron-log-4.4.8.tgz#fcb9f714dbcaefb6ac7984c4683912c74730248a"
+  resolved "https://registry.npmmirror.com/electron-log/-/electron-log-4.4.8.tgz#fcb9f714dbcaefb6ac7984c4683912c74730248a"
   integrity sha512-QQ4GvrXO+HkgqqEOYbi+DHL7hj5JM+nHi/j+qrN9zeeXVKy8ZABgbu4CnG+BBqDZ2+tbeq9tUC4DZfIWFU5AZA==
 
 electron-notarize@^1.2.1:
@@ -4663,7 +4663,7 @@ electron-to-chromium@^1.4.147:
 
 electron@13.6.9:
   version "13.6.9"
-  resolved "https://fe-private-npm.xylink.com/electron/-/electron-13.6.9.tgz#7bd83cc1662ceaaa09dcd132a7b507cec888b028"
+  resolved "https://registry.npmmirror.com/electron/-/electron-13.6.9.tgz#7bd83cc1662ceaaa09dcd132a7b507cec888b028"
   integrity sha512-Es/sBy85NIuqsO9MW41PUCpwIkeinlTQ7g0ainfnmRAM2rmog3GBxVCaoV5dzEjwTF7TKG1Yr/E7Z3qHmlfWAg==
   dependencies:
     "@electron/get" "^1.0.1"
@@ -4839,7 +4839,7 @@ es-to-primitive@^1.2.1:
 
 es6-error@^4.1.1:
   version "4.1.1"
-  resolved "https://fe-private-npm.xylink.com/es6-error/-/es6-error-4.1.1.tgz#9e3af407459deed47e9a91f9b885a84eb05c561d"
+  resolved "https://registry.npmmirror.com/es6-error/-/es6-error-4.1.1.tgz#9e3af407459deed47e9a91f9b885a84eb05c561d"
   integrity sha512-Um/+FxMr9CISWh0bi5Zv0iOD+4cFh5qLeks1qhAopKVAJw3drgKbKySikp7wGhDL0HPeaja0P5ULZrxLkniUVg==
 
 escalade@^3.1.1:
@@ -5106,7 +5106,7 @@ eslint-plugin-react-hooks@^4.2.0:
 
 eslint-plugin-react-hooks@^4.5.0:
   version "4.6.0"
-  resolved "https://fe-private-npm.xylink.com/eslint-plugin-react-hooks/-/eslint-plugin-react-hooks-4.6.0.tgz#4c3e697ad95b77e93f8646aaa1630c1ba607edd3"
+  resolved "https://registry.npmmirror.com/eslint-plugin-react-hooks/-/eslint-plugin-react-hooks-4.6.0.tgz#4c3e697ad95b77e93f8646aaa1630c1ba607edd3"
   integrity sha512-oFc7Itz9Qxh2x4gNHStv3BqJq54ExXmfC+a1NjAta66IAN87Wu0R/QArgIS9qKzX3dXKPI9H5crl9QchNMY9+g==
 
 eslint-plugin-react@^7.24.0, eslint-plugin-react@^7.29.4:
@@ -5331,14 +5331,14 @@ express@^4.17.3:
 
 ext-list@^2.0.0:
   version "2.2.2"
-  resolved "https://fe-private-npm.xylink.com/ext-list/-/ext-list-2.2.2.tgz#0b98e64ed82f5acf0f2931babf69212ef52ddd37"
+  resolved "https://registry.npmmirror.com/ext-list/-/ext-list-2.2.2.tgz#0b98e64ed82f5acf0f2931babf69212ef52ddd37"
   integrity sha512-u+SQgsubraE6zItfVA0tBuCBhfU9ogSRnsvygI7wht9TS510oLkBRXBsqopeUG/GBOIQyKZO9wjTqIu/sf5zFA==
   dependencies:
     mime-db "^1.28.0"
 
 ext-name@^5.0.0:
   version "5.0.0"
-  resolved "https://fe-private-npm.xylink.com/ext-name/-/ext-name-5.0.0.tgz#70781981d183ee15d13993c8822045c506c8f0a6"
+  resolved "https://registry.npmmirror.com/ext-name/-/ext-name-5.0.0.tgz#70781981d183ee15d13993c8822045c506c8f0a6"
   integrity sha512-yblEwXAbGv1VQDmow7s38W77hzAgJAO50ztBLMcUyUBfxv1HC+LGwtiEN+Co6LtlqT/5uwVOxsD4TNIilWhwdQ==
   dependencies:
     ext-list "^2.0.0"
@@ -5346,7 +5346,7 @@ ext-name@^5.0.0:
 
 extract-zip@^1.0.3:
   version "1.7.0"
-  resolved "https://fe-private-npm.xylink.com/extract-zip/-/extract-zip-1.7.0.tgz#556cc3ae9df7f452c493a0cfb51cc30277940927"
+  resolved "https://registry.npmmirror.com/extract-zip/-/extract-zip-1.7.0.tgz#556cc3ae9df7f452c493a0cfb51cc30277940927"
   integrity sha1-VWzDrp339FLEk6DPtRzDAneUCSc=
   dependencies:
     concat-stream "^1.6.2"
@@ -5425,7 +5425,7 @@ fd-slicer@~1.1.0:
 
 figures@^2.0.0:
   version "2.0.0"
-  resolved "https://fe-private-npm.xylink.com/figures/-/figures-2.0.0.tgz#3ab1a2d2a62c8bfb431a0c94cb797a2fce27c962"
+  resolved "https://registry.npmmirror.com/figures/-/figures-2.0.0.tgz#3ab1a2d2a62c8bfb431a0c94cb797a2fce27c962"
   integrity sha1-OrGi0qYsi/tDGgyUy3l6L84nyWI=
   dependencies:
     escape-string-regexp "^1.0.5"
@@ -5447,27 +5447,27 @@ file-loader@^6.2.0:
 
 file-type@^11.1.0:
   version "11.1.0"
-  resolved "https://fe-private-npm.xylink.com/file-type/-/file-type-11.1.0.tgz#93780f3fed98b599755d846b99a1617a2ad063b8"
+  resolved "https://registry.npmmirror.com/file-type/-/file-type-11.1.0.tgz#93780f3fed98b599755d846b99a1617a2ad063b8"
   integrity sha1-k3gPP+2YtZl1XYRrmaFheirQY7g=
 
 file-type@^3.8.0:
   version "3.9.0"
-  resolved "https://fe-private-npm.xylink.com/file-type/-/file-type-3.9.0.tgz#257a078384d1db8087bc449d107d52a52672b9e9"
+  resolved "https://registry.npmmirror.com/file-type/-/file-type-3.9.0.tgz#257a078384d1db8087bc449d107d52a52672b9e9"
   integrity sha1-JXoHg4TR24CHvESdEH1SpSZyuek=
 
 file-type@^4.2.0:
   version "4.4.0"
-  resolved "https://fe-private-npm.xylink.com/file-type/-/file-type-4.4.0.tgz#1b600e5fca1fbdc6e80c0a70c71c8dba5f7906c5"
+  resolved "https://registry.npmmirror.com/file-type/-/file-type-4.4.0.tgz#1b600e5fca1fbdc6e80c0a70c71c8dba5f7906c5"
   integrity sha1-G2AOX8ofvcboDApwxxyNul95BsU=
 
 file-type@^5.2.0:
   version "5.2.0"
-  resolved "https://fe-private-npm.xylink.com/file-type/-/file-type-5.2.0.tgz#2ddbea7c73ffe36368dfae49dc338c058c2b8ad6"
+  resolved "https://registry.npmmirror.com/file-type/-/file-type-5.2.0.tgz#2ddbea7c73ffe36368dfae49dc338c058c2b8ad6"
   integrity sha1-LdvqfHP/42No365J3DOMBYwritY=
 
 file-type@^6.1.0:
   version "6.2.0"
-  resolved "https://fe-private-npm.xylink.com/file-type/-/file-type-6.2.0.tgz#e50cd75d356ffed4e306dc4f5bcf52a79903a919"
+  resolved "https://registry.npmmirror.com/file-type/-/file-type-6.2.0.tgz#e50cd75d356ffed4e306dc4f5bcf52a79903a919"
   integrity sha512-YPcTBDV+2Tm0VqjybVd32MHdlEGAtuxS3VAYsumFokDSMG+ROT5wawGlnHDoz7bfMcMDt9hxuXvXwoKUx2fkOg==
 
 filelist@^1.0.1:
@@ -5479,12 +5479,12 @@ filelist@^1.0.1:
 
 filename-reserved-regex@^2.0.0:
   version "2.0.0"
-  resolved "https://fe-private-npm.xylink.com/filename-reserved-regex/-/filename-reserved-regex-2.0.0.tgz#abf73dfab735d045440abfea2d91f389ebbfa229"
+  resolved "https://registry.npmmirror.com/filename-reserved-regex/-/filename-reserved-regex-2.0.0.tgz#abf73dfab735d045440abfea2d91f389ebbfa229"
   integrity sha1-q/c9+rc10EVECr/qLZHzieu/oik=
 
 filenamify@^3.0.0:
   version "3.0.0"
-  resolved "https://fe-private-npm.xylink.com/filenamify/-/filenamify-3.0.0.tgz#9603eb688179f8c5d40d828626dcbb92c3a4672c"
+  resolved "https://registry.npmmirror.com/filenamify/-/filenamify-3.0.0.tgz#9603eb688179f8c5d40d828626dcbb92c3a4672c"
   integrity sha512-5EFZ//MsvJgXjBAFJ+Bh2YaCTRF/VP1YOmGrgt+KJ4SFRLjI87EIdwLLuT6wQX0I4F9W41xutobzczjsOKlI/g==
   dependencies:
     filename-reserved-regex "^2.0.0"
@@ -5594,7 +5594,7 @@ fresh@0.5.2:
 
 from2@^2.1.1:
   version "2.3.0"
-  resolved "https://fe-private-npm.xylink.com/from2/-/from2-2.3.0.tgz#8bfb5502bde4a4d36cfdeea007fcca21d7e382af"
+  resolved "https://registry.npmmirror.com/from2/-/from2-2.3.0.tgz#8bfb5502bde4a4d36cfdeea007fcca21d7e382af"
   integrity sha1-i/tVAr3kpNNs/e6gB/zKIdfjgq8=
   dependencies:
     inherits "^2.0.1"
@@ -5602,7 +5602,7 @@ from2@^2.1.1:
 
 fs-constants@^1.0.0:
   version "1.0.0"
-  resolved "https://fe-private-npm.xylink.com/fs-constants/-/fs-constants-1.0.0.tgz#6be0de9be998ce16af8afc24497b9ee9b7ccd9ad"
+  resolved "https://registry.npmmirror.com/fs-constants/-/fs-constants-1.0.0.tgz#6be0de9be998ce16af8afc24497b9ee9b7ccd9ad"
   integrity sha512-y6OAwoSIf7FyjMIv94u+b5rdheZEjzR63GTyZJm5qh4Bi+2YgwLCcI/fPFZkL5PSixOt6ZNKm+w+Hfp/Bciwow==
 
 fs-extra@^10.0.0:
@@ -5616,7 +5616,7 @@ fs-extra@^10.0.0:
 
 fs-extra@^8.1.0:
   version "8.1.0"
-  resolved "https://fe-private-npm.xylink.com/fs-extra/-/fs-extra-8.1.0.tgz#49d43c45a88cd9677668cb7be1b46efdb8d2e1c0"
+  resolved "https://registry.npmmirror.com/fs-extra/-/fs-extra-8.1.0.tgz#49d43c45a88cd9677668cb7be1b46efdb8d2e1c0"
   integrity sha1-SdQ8RaiM2Wd2aMt74bRu/bjS4cA=
   dependencies:
     graceful-fs "^4.2.0"
@@ -5720,12 +5720,12 @@ get-package-type@^0.1.0:
 
 get-stream@3.0.0, get-stream@^3.0.0:
   version "3.0.0"
-  resolved "https://fe-private-npm.xylink.com/get-stream/-/get-stream-3.0.0.tgz#8e943d1358dc37555054ecbe2edb05aa174ede14"
+  resolved "https://registry.npmmirror.com/get-stream/-/get-stream-3.0.0.tgz#8e943d1358dc37555054ecbe2edb05aa174ede14"
   integrity sha1-jpQ9E1jcN1VQVOy+LtsFqhdO3hQ=
 
 get-stream@^2.2.0:
   version "2.3.1"
-  resolved "https://fe-private-npm.xylink.com/get-stream/-/get-stream-2.3.1.tgz#5f38f93f346009666ee0150a054167f91bdd95de"
+  resolved "https://registry.npmmirror.com/get-stream/-/get-stream-2.3.1.tgz#5f38f93f346009666ee0150a054167f91bdd95de"
   integrity sha1-Xzj5PzRgCWZu4BUKBUFn+Rvdld4=
   dependencies:
     object-assign "^4.0.1"
@@ -5791,7 +5791,7 @@ glob@^7.0.0, glob@^7.1.3, glob@^7.1.4, glob@^7.1.6, glob@^7.2.0:
 
 global-agent@^3.0.0:
   version "3.0.0"
-  resolved "https://fe-private-npm.xylink.com/global-agent/-/global-agent-3.0.0.tgz#ae7cd31bd3583b93c5a16437a1afe27cc33a1ab6"
+  resolved "https://registry.npmmirror.com/global-agent/-/global-agent-3.0.0.tgz#ae7cd31bd3583b93c5a16437a1afe27cc33a1ab6"
   integrity sha1-rnzTG9NYO5PFoWQ3oa/ifMM6GrY=
   dependencies:
     boolean "^3.0.1"
@@ -5810,7 +5810,7 @@ global-dirs@^3.0.0:
 
 global-tunnel-ng@^2.7.1:
   version "2.7.1"
-  resolved "https://fe-private-npm.xylink.com/global-tunnel-ng/-/global-tunnel-ng-2.7.1.tgz#d03b5102dfde3a69914f5ee7d86761ca35d57d8f"
+  resolved "https://registry.npmmirror.com/global-tunnel-ng/-/global-tunnel-ng-2.7.1.tgz#d03b5102dfde3a69914f5ee7d86761ca35d57d8f"
   integrity sha1-0DtRAt/eOmmRT17n2GdhyjXVfY8=
   dependencies:
     encodeurl "^1.0.2"
@@ -5832,7 +5832,7 @@ globals@^13.15.0:
 
 globalthis@^1.0.1:
   version "1.0.3"
-  resolved "https://fe-private-npm.xylink.com/globalthis/-/globalthis-1.0.3.tgz#5852882a52b80dc301b0660273e1ed082f0b6ccf"
+  resolved "https://registry.npmmirror.com/globalthis/-/globalthis-1.0.3.tgz#5852882a52b80dc301b0660273e1ed082f0b6ccf"
   integrity sha512-sFdI5LyBiNTHjRd7cGPWapiHWMOXKyuBNX/cWJ3NfzrZQVa8GI/8cofCl74AOVqq9W5kNmguTIzJ/1s2gyI9wA==
   dependencies:
     define-properties "^1.1.3"
@@ -5851,7 +5851,7 @@ globby@^11.0.3, globby@^11.1.0:
 
 good-listener@^1.2.2:
   version "1.2.2"
-  resolved "https://fe-private-npm.xylink.com/good-listener/-/good-listener-1.2.2.tgz#d53b30cdf9313dffb7dc9a0d477096aa6d145c50"
+  resolved "https://registry.npmmirror.com/good-listener/-/good-listener-1.2.2.tgz#d53b30cdf9313dffb7dc9a0d477096aa6d145c50"
   integrity sha1-1TswzfkxPf+33JoNR3CWqm0UXFA=
   dependencies:
     delegate "^3.1.2"
@@ -5875,7 +5875,7 @@ got@^11.7.0:
 
 got@^8.3.1:
   version "8.3.2"
-  resolved "https://fe-private-npm.xylink.com/got/-/got-8.3.2.tgz#1d23f64390e97f776cac52e5b936e5f514d2e937"
+  resolved "https://registry.npmmirror.com/got/-/got-8.3.2.tgz#1d23f64390e97f776cac52e5b936e5f514d2e937"
   integrity sha512-qjUJ5U/hawxosMryILofZCkm3C84PLJS/0grRIpjAwu+Lkxxj5cxeCU25BG0/3mDSpXKTyZr8oh8wIgLaH0QCw==
   dependencies:
     "@sindresorhus/is" "^0.7.0"
@@ -5969,7 +5969,7 @@ has-property-descriptors@^1.0.0:
 
 has-symbol-support-x@^1.4.1:
   version "1.4.2"
-  resolved "https://fe-private-npm.xylink.com/has-symbol-support-x/-/has-symbol-support-x-1.4.2.tgz#1409f98bc00247da45da67cee0a36f282ff26455"
+  resolved "https://registry.npmmirror.com/has-symbol-support-x/-/has-symbol-support-x-1.4.2.tgz#1409f98bc00247da45da67cee0a36f282ff26455"
   integrity sha512-3ToOva++HaW+eCpgqZrCfN51IPB+7bJNVT6CUATzueB5Heb8o6Nam0V3HG5dlDvZU1Gn5QLcbahiKw/XVk5JJw==
 
 has-symbols@^1.0.1, has-symbols@^1.0.2, has-symbols@^1.0.3:
@@ -5979,7 +5979,7 @@ has-symbols@^1.0.1, has-symbols@^1.0.2, has-symbols@^1.0.3:
 
 has-to-string-tag-x@^1.2.0:
   version "1.4.1"
-  resolved "https://fe-private-npm.xylink.com/has-to-string-tag-x/-/has-to-string-tag-x-1.4.1.tgz#a045ab383d7b4b2012a00148ab0aa5f290044d4d"
+  resolved "https://registry.npmmirror.com/has-to-string-tag-x/-/has-to-string-tag-x-1.4.1.tgz#a045ab383d7b4b2012a00148ab0aa5f290044d4d"
   integrity sha512-vdbKfmw+3LoOYVr+mtxHaX5a96+0f3DljYd8JOqvOLsf5mw2Otda2qCDT9qRqLAhrjyQ0h7ual5nOiASpsGNFw==
   dependencies:
     has-symbol-support-x "^1.4.1"
@@ -6090,7 +6090,7 @@ htmlparser2@^6.1.0:
 
 http-cache-semantics@3.8.1:
   version "3.8.1"
-  resolved "https://fe-private-npm.xylink.com/http-cache-semantics/-/http-cache-semantics-3.8.1.tgz#39b0e16add9b605bf0a9ef3d9daaf4843b4cacd2"
+  resolved "https://registry.npmmirror.com/http-cache-semantics/-/http-cache-semantics-3.8.1.tgz#39b0e16add9b605bf0a9ef3d9daaf4843b4cacd2"
   integrity sha512-5ai2iksyV8ZXmnZhHH4rWPoxxistEexSi5936zIQ1bnNTW5VnA85B6P/VpXiRM017IgRvb2kKo1a//y+0wSp3w==
 
 http-cache-semantics@^4.0.0, http-cache-semantics@^4.1.0:
@@ -6346,7 +6346,7 @@ interpret@^2.2.0:
 
 into-stream@^3.1.0:
   version "3.1.0"
-  resolved "https://fe-private-npm.xylink.com/into-stream/-/into-stream-3.1.0.tgz#96fb0a936c12babd6ff1752a17d05616abd094c6"
+  resolved "https://registry.npmmirror.com/into-stream/-/into-stream-3.1.0.tgz#96fb0a936c12babd6ff1752a17d05616abd094c6"
   integrity sha1-lvsKk2wSur1v8XUqF9BWFqvQlMY=
   dependencies:
     from2 "^2.1.1"
@@ -6422,14 +6422,14 @@ is-core-module@^2.2.0, is-core-module@^2.7.0:
 
 is-core-module@^2.8.1:
   version "2.10.0"
-  resolved "https://fe-private-npm.xylink.com/is-core-module/-/is-core-module-2.10.0.tgz#9012ede0a91c69587e647514e1d5277019e728ed"
+  resolved "https://registry.npmmirror.com/is-core-module/-/is-core-module-2.10.0.tgz#9012ede0a91c69587e647514e1d5277019e728ed"
   integrity sha512-Erxj2n/LDAZ7H8WNJXd9tw38GYM3dv8rk8Zcs+jJuxYTW7sozH+SS8NtrSjVL1/vpLvWi1hxy96IzjJ3EHTJJg==
   dependencies:
     has "^1.0.3"
 
 is-core-module@^2.9.0:
   version "2.11.0"
-  resolved "https://fe-private-npm.xylink.com/is-core-module/-/is-core-module-2.11.0.tgz#ad4cb3e3863e814523c96f3f58d26cc570ff0144"
+  resolved "https://registry.npmmirror.com/is-core-module/-/is-core-module-2.11.0.tgz#ad4cb3e3863e814523c96f3f58d26cc570ff0144"
   integrity sha512-RRjxlvLDkD1YJwDbroBHMb+cukurkDWNyHx7D3oNB5x9rb5ogcksMC5wHCadcXoo67gVr/+3GFySh3134zi6rw==
   dependencies:
     has "^1.0.3"
@@ -6493,7 +6493,7 @@ is-lambda@^1.0.1:
 
 is-natural-number@^4.0.1:
   version "4.0.1"
-  resolved "https://fe-private-npm.xylink.com/is-natural-number/-/is-natural-number-4.0.1.tgz#ab9d76e1db4ced51e35de0c72ebecf09f734cde8"
+  resolved "https://registry.npmmirror.com/is-natural-number/-/is-natural-number-4.0.1.tgz#ab9d76e1db4ced51e35de0c72ebecf09f734cde8"
   integrity sha1-q5124dtM7VHjXeDHLr7PCfc0zeg=
 
 is-negative-zero@^2.0.2:
@@ -6525,7 +6525,7 @@ is-obj@^2.0.0:
 
 is-object@^1.0.1:
   version "1.0.2"
-  resolved "https://fe-private-npm.xylink.com/is-object/-/is-object-1.0.2.tgz#a56552e1c665c9e950b4a025461da87e72f86fcf"
+  resolved "https://registry.npmmirror.com/is-object/-/is-object-1.0.2.tgz#a56552e1c665c9e950b4a025461da87e72f86fcf"
   integrity sha1-pWVS4cZlyelQtKAlRh2ofnL4b88=
 
 is-path-inside@^3.0.2:
@@ -6535,7 +6535,7 @@ is-path-inside@^3.0.2:
 
 is-plain-obj@^1.0.0:
   version "1.1.0"
-  resolved "https://fe-private-npm.xylink.com/is-plain-obj/-/is-plain-obj-1.1.0.tgz#71a50c8429dfca773c92a390a4a03b39fcd51d3e"
+  resolved "https://registry.npmmirror.com/is-plain-obj/-/is-plain-obj-1.1.0.tgz#71a50c8429dfca773c92a390a4a03b39fcd51d3e"
   integrity sha1-caUMhCnfync8kqOQpKA7OfzVHT4=
 
 is-plain-obj@^3.0.0:
@@ -6565,7 +6565,7 @@ is-regex@^1.1.4:
 
 is-retry-allowed@^1.1.0:
   version "1.2.0"
-  resolved "https://fe-private-npm.xylink.com/is-retry-allowed/-/is-retry-allowed-1.2.0.tgz#d778488bd0a4666a3be8a1482b9f2baafedea8b4"
+  resolved "https://registry.npmmirror.com/is-retry-allowed/-/is-retry-allowed-1.2.0.tgz#d778488bd0a4666a3be8a1482b9f2baafedea8b4"
   integrity sha1-13hIi9CkZmo76KFIK58rqv7eqLQ=
 
 is-shared-array-buffer@^1.0.2:
@@ -6577,7 +6577,7 @@ is-shared-array-buffer@^1.0.2:
 
 is-stream@^1.1.0:
   version "1.1.0"
-  resolved "https://fe-private-npm.xylink.com/is-stream/-/is-stream-1.1.0.tgz#12d4a3dd4e68e0b79ceb8dbc84173ae80d91ca44"
+  resolved "https://registry.npmmirror.com/is-stream/-/is-stream-1.1.0.tgz#12d4a3dd4e68e0b79ceb8dbc84173ae80d91ca44"
   integrity sha1-EtSj3U5o4Lec6428hBc66A2RykQ=
 
 is-stream@^2.0.0:
@@ -6704,7 +6704,7 @@ istanbul-reports@^3.1.3:
 
 isurl@^1.0.0-alpha5:
   version "1.0.0"
-  resolved "https://fe-private-npm.xylink.com/isurl/-/isurl-1.0.0.tgz#b27f4f49f3cdaa3ea44a0a5b7f3462e6edc39d67"
+  resolved "https://registry.npmmirror.com/isurl/-/isurl-1.0.0.tgz#b27f4f49f3cdaa3ea44a0a5b7f3462e6edc39d67"
   integrity sha512-1P/yWsxPlDtn7QeRD+ULKQPaIaN6yF368GZ2vDfv0AL0NwpStafjWCDDdn0k8wgFMWpVAqG7oJhxHnlud42i9w==
   dependencies:
     has-to-string-tag-x "^1.2.0"
@@ -7206,7 +7206,7 @@ json-buffer@3.0.1, json-buffer@~3.0.1:
 
 json-parse-better-errors@^1.0.1:
   version "1.0.2"
-  resolved "https://fe-private-npm.xylink.com/json-parse-better-errors/-/json-parse-better-errors-1.0.2.tgz#bb867cfb3450e69107c131d1c514bab3dc8bcaa9"
+  resolved "https://registry.npmmirror.com/json-parse-better-errors/-/json-parse-better-errors-1.0.2.tgz#bb867cfb3450e69107c131d1c514bab3dc8bcaa9"
   integrity sha512-mrqyZKfX5EhL7hvqcV6WG1yYjnjeuYDzDhhcAAUrq8Po85NBQBJP+ZDUT75qZQ98IkUoBqdkExkukOU7Ts2wrw==
 
 json-parse-even-better-errors@^2.3.0, json-parse-even-better-errors@^2.3.1:
@@ -7236,7 +7236,7 @@ json-stable-stringify-without-jsonify@^1.0.1:
 
 json-stringify-safe@^5.0.1:
   version "5.0.1"
-  resolved "https://fe-private-npm.xylink.com/json-stringify-safe/-/json-stringify-safe-5.0.1.tgz#1296a2d58fd45f19a0f6ce01d65701e2c735b6eb"
+  resolved "https://registry.npmmirror.com/json-stringify-safe/-/json-stringify-safe-5.0.1.tgz#1296a2d58fd45f19a0f6ce01d65701e2c735b6eb"
   integrity sha1-Epai1Y/UXxmg9s4B1lcB4sc1tus=
 
 json2mq@^0.2.0:
@@ -7260,7 +7260,7 @@ json5@^2.1.2, json5@^2.2.0, json5@^2.2.1:
 
 jsonfile@^4.0.0:
   version "4.0.0"
-  resolved "https://fe-private-npm.xylink.com/jsonfile/-/jsonfile-4.0.0.tgz#8771aae0799b64076b76640fca058f9c10e33ecb"
+  resolved "https://registry.npmmirror.com/jsonfile/-/jsonfile-4.0.0.tgz#8771aae0799b64076b76640fca058f9c10e33ecb"
   integrity sha1-h3Gq4HmbZAdrdmQPygWPnBDjPss=
   optionalDependencies:
     graceful-fs "^4.1.6"
@@ -7294,7 +7294,7 @@ jszip@^3.1.0:
 
 keyv@3.0.0:
   version "3.0.0"
-  resolved "https://fe-private-npm.xylink.com/keyv/-/keyv-3.0.0.tgz#44923ba39e68b12a7cec7df6c3268c031f2ef373"
+  resolved "https://registry.npmmirror.com/keyv/-/keyv-3.0.0.tgz#44923ba39e68b12a7cec7df6c3268c031f2ef373"
   integrity sha512-eguHnq22OE3uVoSYG0LVWNP+4ppamWr9+zWBe1bsNcovIMy6huUJFPgy4mGwCd/rnl3vOLGW1MTlu4c57CT1xA==
   dependencies:
     json-buffer "3.0.0"
@@ -7451,7 +7451,7 @@ listr2@^4.0.5:
 
 load-json-file@^4.0.0:
   version "4.0.0"
-  resolved "https://fe-private-npm.xylink.com/load-json-file/-/load-json-file-4.0.0.tgz#2f5f45ab91e33216234fd53adab668eb4ec0993b"
+  resolved "https://registry.npmmirror.com/load-json-file/-/load-json-file-4.0.0.tgz#2f5f45ab91e33216234fd53adab668eb4ec0993b"
   integrity sha1-L19Fq5HjMhYjT9U62rZo607AmTs=
   dependencies:
     graceful-fs "^4.1.2"
@@ -7576,7 +7576,7 @@ lower-case@^2.0.2:
 
 lowercase-keys@1.0.0:
   version "1.0.0"
-  resolved "https://fe-private-npm.xylink.com/lowercase-keys/-/lowercase-keys-1.0.0.tgz#4e3366b39e7f5457e35f1324bdf6f88d0bfc7306"
+  resolved "https://registry.npmmirror.com/lowercase-keys/-/lowercase-keys-1.0.0.tgz#4e3366b39e7f5457e35f1324bdf6f88d0bfc7306"
   integrity sha1-TjNms55/VFfjXxMkvfb4jQv8cwY=
 
 lowercase-keys@^1.0.0, lowercase-keys@^1.0.1:
@@ -7612,7 +7612,7 @@ lzma-native@^8.0.5:
 
 make-dir@^1.0.0:
   version "1.3.0"
-  resolved "https://fe-private-npm.xylink.com/make-dir/-/make-dir-1.3.0.tgz#79c1033b80515bd6d24ec9933e860ca75ee27f0c"
+  resolved "https://registry.npmmirror.com/make-dir/-/make-dir-1.3.0.tgz#79c1033b80515bd6d24ec9933e860ca75ee27f0c"
   integrity sha512-2w31R7SJtieJJnQtGc7RVL2StM2vGYVfqUOvUDxH6bC6aJTxPxTF0GnIgCyu7tjockiUWAYQRbxa7vKn34s5sQ==
   dependencies:
     pify "^3.0.0"
@@ -7668,7 +7668,7 @@ makeerror@1.0.12:
 
 matcher@^3.0.0:
   version "3.0.0"
-  resolved "https://fe-private-npm.xylink.com/matcher/-/matcher-3.0.0.tgz#bd9060f4c5b70aa8041ccc6f80368760994f30ca"
+  resolved "https://registry.npmmirror.com/matcher/-/matcher-3.0.0.tgz#bd9060f4c5b70aa8041ccc6f80368760994f30ca"
   integrity sha1-vZBg9MW3CqgEHMxvgDaHYJlPMMo=
   dependencies:
     escape-string-regexp "^4.0.0"
@@ -8035,7 +8035,7 @@ normalize-path@^3.0.0, normalize-path@~3.0.0:
 
 normalize-url@2.0.1:
   version "2.0.1"
-  resolved "https://fe-private-npm.xylink.com/normalize-url/-/normalize-url-2.0.1.tgz#835a9da1551fa26f70e92329069a23aa6574d7e6"
+  resolved "https://registry.npmmirror.com/normalize-url/-/normalize-url-2.0.1.tgz#835a9da1551fa26f70e92329069a23aa6574d7e6"
   integrity sha512-D6MUW4K/VzoJ4rJ01JFKxDrtY1v9wrgzCX5f2qj/lzH1m/lW6MhUZFKerVsnyjOhOsYzI9Kqqak+10l4LvLpMw==
   dependencies:
     prepend-http "^2.0.0"
@@ -8054,7 +8054,7 @@ normalize-url@^6.0.1:
 
 npm-conf@^1.1.3:
   version "1.1.3"
-  resolved "https://fe-private-npm.xylink.com/npm-conf/-/npm-conf-1.1.3.tgz#256cc47bd0e218c259c4e9550bf413bc2192aff9"
+  resolved "https://registry.npmmirror.com/npm-conf/-/npm-conf-1.1.3.tgz#256cc47bd0e218c259c4e9550bf413bc2192aff9"
   integrity sha512-Yic4bZHJOt9RCFbRP3GgpqhScOY4HH3V2P8yBj6CeYq118Qr+BLXqT2JvpJ00mryLESpgOxf5XlFv4ZjXxLScw==
   dependencies:
     config-chain "^1.1.11"
@@ -8235,7 +8235,7 @@ ora@^5.1.0:
 
 p-cancelable@^0.4.0:
   version "0.4.1"
-  resolved "https://fe-private-npm.xylink.com/p-cancelable/-/p-cancelable-0.4.1.tgz#35f363d67d52081c8d9585e37bcceb7e0bbcb2a0"
+  resolved "https://registry.npmmirror.com/p-cancelable/-/p-cancelable-0.4.1.tgz#35f363d67d52081c8d9585e37bcceb7e0bbcb2a0"
   integrity sha512-HNa1A8LvB1kie7cERyy21VNeHb2CWJJYqyyC2o3klWFfMGlFmWv2Z7sFgZH8ZiaYL95ydToKTFVXgMV/Os0bBQ==
 
 p-cancelable@^1.0.0:
@@ -8250,19 +8250,19 @@ p-cancelable@^2.0.0:
 
 p-event@^2.1.0:
   version "2.3.1"
-  resolved "https://fe-private-npm.xylink.com/p-event/-/p-event-2.3.1.tgz#596279ef169ab2c3e0cae88c1cfbb08079993ef6"
+  resolved "https://registry.npmmirror.com/p-event/-/p-event-2.3.1.tgz#596279ef169ab2c3e0cae88c1cfbb08079993ef6"
   integrity sha1-WWJ57xaassPgyuiMHPuwgHmZPvY=
   dependencies:
     p-timeout "^2.0.1"
 
 p-finally@^1.0.0:
   version "1.0.0"
-  resolved "https://fe-private-npm.xylink.com/p-finally/-/p-finally-1.0.0.tgz#3fbcfb15b899a44123b34b6dcc18b724336a2cae"
+  resolved "https://registry.npmmirror.com/p-finally/-/p-finally-1.0.0.tgz#3fbcfb15b899a44123b34b6dcc18b724336a2cae"
   integrity sha1-P7z7FbiZpEEjs0ttzBi3JDNqLK4=
 
 p-is-promise@^1.1.0:
   version "1.1.0"
-  resolved "https://fe-private-npm.xylink.com/p-is-promise/-/p-is-promise-1.1.0.tgz#9c9456989e9f6588017b0434d56097675c3da05e"
+  resolved "https://registry.npmmirror.com/p-is-promise/-/p-is-promise-1.1.0.tgz#9c9456989e9f6588017b0434d56097675c3da05e"
   integrity sha1-nJRWmJ6fZYgBewQ01WCXZ1w9oF4=
 
 p-limit@^1.1.0:
@@ -8331,7 +8331,7 @@ p-retry@^4.5.0:
 
 p-timeout@^2.0.1:
   version "2.0.1"
-  resolved "https://fe-private-npm.xylink.com/p-timeout/-/p-timeout-2.0.1.tgz#d8dd1979595d2dc0139e1fe46b8b646cb3cdf038"
+  resolved "https://registry.npmmirror.com/p-timeout/-/p-timeout-2.0.1.tgz#d8dd1979595d2dc0139e1fe46b8b646cb3cdf038"
   integrity sha512-88em58dDVB/KzPEx1X0N3LwFfYZPyDc4B6eF38M1rk9VTZMbxXXgjugz8mmwpS9Ox4BDZ+t6t3QP5+/gazweIA==
   dependencies:
     p-finally "^1.0.0"
@@ -8378,7 +8378,7 @@ parent-module@^1.0.0:
 
 parse-json@^4.0.0:
   version "4.0.0"
-  resolved "https://fe-private-npm.xylink.com/parse-json/-/parse-json-4.0.0.tgz#be35f5425be1f7f6c747184f98a788cb99477ee0"
+  resolved "https://registry.npmmirror.com/parse-json/-/parse-json-4.0.0.tgz#be35f5425be1f7f6c747184f98a788cb99477ee0"
   integrity sha1-vjX1Qlvh9/bHRxhPmKeIy5lHfuA=
   dependencies:
     error-ex "^1.3.1"
@@ -8482,7 +8482,7 @@ pidtree@^0.5.0:
 
 pify@^2.3.0:
   version "2.3.0"
-  resolved "https://fe-private-npm.xylink.com/pify/-/pify-2.3.0.tgz#ed141a6ac043a849ea588498e7dca8b15330e90c"
+  resolved "https://registry.npmmirror.com/pify/-/pify-2.3.0.tgz#ed141a6ac043a849ea588498e7dca8b15330e90c"
   integrity sha1-7RQaasBDqEnqWISY59yosVMw6Qw=
 
 pify@^3.0.0:
@@ -8497,14 +8497,14 @@ pify@^4.0.1:
 
 pinkie-promise@^2.0.0:
   version "2.0.1"
-  resolved "https://fe-private-npm.xylink.com/pinkie-promise/-/pinkie-promise-2.0.1.tgz#2135d6dfa7a358c069ac9b178776288228450ffa"
+  resolved "https://registry.npmmirror.com/pinkie-promise/-/pinkie-promise-2.0.1.tgz#2135d6dfa7a358c069ac9b178776288228450ffa"
   integrity sha1-ITXW36ejWMBprJsXh3YogihFD/o=
   dependencies:
     pinkie "^2.0.0"
 
 pinkie@^2.0.0:
   version "2.0.4"
-  resolved "https://fe-private-npm.xylink.com/pinkie/-/pinkie-2.0.4.tgz#72556b80cfa0d48a974e80e77248e80ed4f7f870"
+  resolved "https://registry.npmmirror.com/pinkie/-/pinkie-2.0.4.tgz#72556b80cfa0d48a974e80e77248e80ed4f7f870"
   integrity sha1-clVrgM+g1IqXToDnckjoDtT3+HA=
 
 pirates@^4.0.4:
@@ -8514,7 +8514,7 @@ pirates@^4.0.4:
 
 pkg-conf@^2.1.0:
   version "2.1.0"
-  resolved "https://fe-private-npm.xylink.com/pkg-conf/-/pkg-conf-2.1.0.tgz#2126514ca6f2abfebd168596df18ba57867f0058"
+  resolved "https://registry.npmmirror.com/pkg-conf/-/pkg-conf-2.1.0.tgz#2126514ca6f2abfebd168596df18ba57867f0058"
   integrity sha1-ISZRTKbyq/69FoWW3xi6V4Z/AFg=
   dependencies:
     find-up "^2.0.0"
@@ -8855,7 +8855,7 @@ process@^0.11.1:
 
 progress@^2.0.3:
   version "2.0.3"
-  resolved "https://fe-private-npm.xylink.com/progress/-/progress-2.0.3.tgz#7e8cf8d8f5b8f239c1bc68beb4eb78567d572ef8"
+  resolved "https://registry.npmmirror.com/progress/-/progress-2.0.3.tgz#7e8cf8d8f5b8f239c1bc68beb4eb78567d572ef8"
   integrity sha512-7PiHtLll5LdnKIMw100I+8xJXR5gW2QwWYkT6iJva0bXitZKa/XMrSbdmg3r2Xnaidz9Qumd0VPaMrZlF9V9sA==
 
 promise-inflight@^1.0.1:
@@ -8890,7 +8890,7 @@ prop-types@^15.8.1:
 
 proto-list@~1.2.1:
   version "1.2.4"
-  resolved "https://fe-private-npm.xylink.com/proto-list/-/proto-list-1.2.4.tgz#212d5bfe1318306a420f6402b8e26ff39647a849"
+  resolved "https://registry.npmmirror.com/proto-list/-/proto-list-1.2.4.tgz#212d5bfe1318306a420f6402b8e26ff39647a849"
   integrity sha1-IS1b/hMYMGpCD2QCuOJv85ZHqEk=
 
 proxy-addr@~2.0.7:
@@ -8940,7 +8940,7 @@ qs@6.10.3:
 
 query-string@^5.0.1:
   version "5.1.1"
-  resolved "https://fe-private-npm.xylink.com/query-string/-/query-string-5.1.1.tgz#a78c012b71c17e05f2e3fa2319dd330682efb3cb"
+  resolved "https://registry.npmmirror.com/query-string/-/query-string-5.1.1.tgz#a78c012b71c17e05f2e3fa2319dd330682efb3cb"
   integrity sha512-gjWOsm2SoGlgLEdAGt7a6slVOk9mGiXmPFMqrEhLQ68rhQuBnpfs3+EmlvqKyxnCo9/PPlF+9MtY02S1aFg+Jw==
   dependencies:
     decode-uri-component "^0.2.0"
@@ -9467,7 +9467,7 @@ readdirp@~3.6.0:
 
 rechoir@^0.6.2:
   version "0.6.2"
-  resolved "https://fe-private-npm.xylink.com/rechoir/-/rechoir-0.6.2.tgz#85204b54dba82d5742e28c96756ef43af50e3384"
+  resolved "https://registry.npmmirror.com/rechoir/-/rechoir-0.6.2.tgz#85204b54dba82d5742e28c96756ef43af50e3384"
   integrity sha1-hSBLVNuoLVdC4oyWdW70OvUOM4Q=
   dependencies:
     resolve "^1.1.6"
@@ -9640,7 +9640,7 @@ resolve.exports@^1.1.0:
 
 resolve@^1.1.6:
   version "1.22.1"
-  resolved "https://fe-private-npm.xylink.com/resolve/-/resolve-1.22.1.tgz#27cb2ebb53f91abb49470a928bba7558066ac177"
+  resolved "https://registry.npmmirror.com/resolve/-/resolve-1.22.1.tgz#27cb2ebb53f91abb49470a928bba7558066ac177"
   integrity sha512-nBpuuYuY5jFsli/JIs1oldw6fOQCBioohqWZg/2hiaOybXOft4lonv85uDOKXdf8rhyK159cxU5cDcK/NKk8zw==
   dependencies:
     is-core-module "^2.9.0"
@@ -9715,7 +9715,7 @@ rimraf@^3.0.0, rimraf@^3.0.2:
 
 roarr@^2.15.3:
   version "2.15.4"
-  resolved "https://fe-private-npm.xylink.com/roarr/-/roarr-2.15.4.tgz#f5fe795b7b838ccfe35dc608e0282b9eba2e7afd"
+  resolved "https://registry.npmmirror.com/roarr/-/roarr-2.15.4.tgz#f5fe795b7b838ccfe35dc608e0282b9eba2e7afd"
   integrity sha1-9f55W3uDjM/jXcYI4Cgrnrouev0=
   dependencies:
     boolean "^3.0.1"
@@ -9854,7 +9854,7 @@ scroll-into-view-if-needed@^2.2.25:
 
 seek-bzip@^1.0.5:
   version "1.0.6"
-  resolved "https://fe-private-npm.xylink.com/seek-bzip/-/seek-bzip-1.0.6.tgz#35c4171f55a680916b52a07859ecf3b5857f21c4"
+  resolved "https://registry.npmmirror.com/seek-bzip/-/seek-bzip-1.0.6.tgz#35c4171f55a680916b52a07859ecf3b5857f21c4"
   integrity sha1-NcQXH1WmgJFrUqB4WezztYV/IcQ=
   dependencies:
     commander "^2.8.1"
@@ -9866,7 +9866,7 @@ select-hose@^2.0.0:
 
 select@^1.1.2:
   version "1.1.2"
-  resolved "https://fe-private-npm.xylink.com/select/-/select-1.1.2.tgz#0e7350acdec80b1108528786ec1d4418d11b396d"
+  resolved "https://registry.npmmirror.com/select/-/select-1.1.2.tgz#0e7350acdec80b1108528786ec1d4418d11b396d"
   integrity sha1-DnNQrN7ICxEIUoeG7B1EGNEbOW0=
 
 selfsigned@^2.0.1:
@@ -9878,7 +9878,7 @@ selfsigned@^2.0.1:
 
 semver-compare@^1.0.0:
   version "1.0.0"
-  resolved "https://fe-private-npm.xylink.com/semver-compare/-/semver-compare-1.0.0.tgz#0dee216a1c941ab37e9efb1788f6afc5ff5537fc"
+  resolved "https://registry.npmmirror.com/semver-compare/-/semver-compare-1.0.0.tgz#0dee216a1c941ab37e9efb1788f6afc5ff5537fc"
   integrity sha1-De4hahyUGrN+nvsXiPavxf9VN/w=
 
 semver-diff@^3.1.1:
@@ -9938,7 +9938,7 @@ send@0.18.0:
 
 serialize-error@^7.0.1:
   version "7.0.1"
-  resolved "https://fe-private-npm.xylink.com/serialize-error/-/serialize-error-7.0.1.tgz#f1360b0447f61ffb483ec4157c737fab7d778e18"
+  resolved "https://registry.npmmirror.com/serialize-error/-/serialize-error-7.0.1.tgz#f1360b0447f61ffb483ec4157c737fab7d778e18"
   integrity sha1-8TYLBEf2H/tIPsQVfHN/q313jhg=
   dependencies:
     type-fest "^0.13.1"
@@ -10024,7 +10024,7 @@ shell-quote@^1.7.3:
 
 shelljs@^0.8.4:
   version "0.8.5"
-  resolved "https://fe-private-npm.xylink.com/shelljs/-/shelljs-0.8.5.tgz#de055408d8361bed66c669d2f000538ced8ee20c"
+  resolved "https://registry.npmmirror.com/shelljs/-/shelljs-0.8.5.tgz#de055408d8361bed66c669d2f000538ced8ee20c"
   integrity sha512-TiwcRcrkhHvbrZbnRcFYMLl30Dfov3HKqzp5tO5b4pt6G/SezKcYhmDg15zXVBswHmctSAQKznqNW2LO5tTDow==
   dependencies:
     glob "^7.0.0"
@@ -10047,7 +10047,7 @@ signal-exit@^3.0.2, signal-exit@^3.0.3, signal-exit@^3.0.7:
 
 signale@^1.4.0:
   version "1.4.0"
-  resolved "https://fe-private-npm.xylink.com/signale/-/signale-1.4.0.tgz#c4be58302fb0262ac00fc3d886a7c113759042f1"
+  resolved "https://registry.npmmirror.com/signale/-/signale-1.4.0.tgz#c4be58302fb0262ac00fc3d886a7c113759042f1"
   integrity sha512-iuh+gPf28RkltuJC7W5MRi6XAjTDCAPC/prJUpQoG4vIP3MJZ+GTydVnodXA7pwvTKb2cA0m9OFZW/cdWy/I/w==
   dependencies:
     chalk "^2.3.2"
@@ -10132,21 +10132,21 @@ socks@^2.6.2:
 
 sort-keys-length@^1.0.0:
   version "1.0.1"
-  resolved "https://fe-private-npm.xylink.com/sort-keys-length/-/sort-keys-length-1.0.1.tgz#9cb6f4f4e9e48155a6aa0671edd336ff1479a188"
+  resolved "https://registry.npmmirror.com/sort-keys-length/-/sort-keys-length-1.0.1.tgz#9cb6f4f4e9e48155a6aa0671edd336ff1479a188"
   integrity sha1-nLb09OnkgVWmqgZx7dM2/xR5oYg=
   dependencies:
     sort-keys "^1.0.0"
 
 sort-keys@^1.0.0:
   version "1.1.2"
-  resolved "https://fe-private-npm.xylink.com/sort-keys/-/sort-keys-1.1.2.tgz#441b6d4d346798f1b4e49e8920adfba0e543f9ad"
+  resolved "https://registry.npmmirror.com/sort-keys/-/sort-keys-1.1.2.tgz#441b6d4d346798f1b4e49e8920adfba0e543f9ad"
   integrity sha1-RBttTTRnmPG05J6JIK37oOVD+a0=
   dependencies:
     is-plain-obj "^1.0.0"
 
 sort-keys@^2.0.0:
   version "2.0.0"
-  resolved "https://fe-private-npm.xylink.com/sort-keys/-/sort-keys-2.0.0.tgz#658535584861ec97d730d6cf41822e1f56684128"
+  resolved "https://registry.npmmirror.com/sort-keys/-/sort-keys-2.0.0.tgz#658535584861ec97d730d6cf41822e1f56684128"
   integrity sha1-ZYU1WEhh7JfXMNbPQYIuH1ZoQSg=
   dependencies:
     is-plain-obj "^1.0.0"
@@ -10220,7 +10220,7 @@ spdy@^4.0.2:
 
 sprintf-js@^1.1.2:
   version "1.1.2"
-  resolved "https://fe-private-npm.xylink.com/sprintf-js/-/sprintf-js-1.1.2.tgz#da1765262bf8c0f571749f2ad6c26300207ae673"
+  resolved "https://registry.npmmirror.com/sprintf-js/-/sprintf-js-1.1.2.tgz#da1765262bf8c0f571749f2ad6c26300207ae673"
   integrity sha512-VE0SOVEHCk7Qc8ulkWw3ntAzXuqf7S2lvwQaDLRnUeIEaKNQJzV6BwmLKhOqT61aGhfUMrXeaBk+oDGCzvhcug==
 
 sprintf-js@~1.0.2:
@@ -10269,7 +10269,7 @@ statuses@2.0.1:
 
 strict-uri-encode@^1.0.0:
   version "1.1.0"
-  resolved "https://fe-private-npm.xylink.com/strict-uri-encode/-/strict-uri-encode-1.1.0.tgz#279b225df1d582b1f54e65addd4352e18faa0713"
+  resolved "https://registry.npmmirror.com/strict-uri-encode/-/strict-uri-encode-1.1.0.tgz#279b225df1d582b1f54e65addd4352e18faa0713"
   integrity sha1-J5siXfHVgrH1TmWt3UNS4Y+qBxM=
 
 string-argv@^0.3.1:
@@ -10380,7 +10380,7 @@ strip-bom@^4.0.0:
 
 strip-dirs@^2.0.0:
   version "2.1.0"
-  resolved "https://fe-private-npm.xylink.com/strip-dirs/-/strip-dirs-2.1.0.tgz#4987736264fc344cf20f6c34aca9d13d1d4ed6c5"
+  resolved "https://registry.npmmirror.com/strip-dirs/-/strip-dirs-2.1.0.tgz#4987736264fc344cf20f6c34aca9d13d1d4ed6c5"
   integrity sha512-JOCxOeKLm2CAS73y/U4ZeZPTkE+gNVCzKt7Eox84Iej1LT/2pTWYpZKJuxwQpvX1LiZb1xokNR7RLfuBAa7T3g==
   dependencies:
     is-natural-number "^4.0.1"
@@ -10409,7 +10409,7 @@ strip-json-comments@~2.0.1:
 
 strip-outer@^1.0.0:
   version "1.0.1"
-  resolved "https://fe-private-npm.xylink.com/strip-outer/-/strip-outer-1.0.1.tgz#b2fd2abf6604b9d1e6013057195df836b8a9d631"
+  resolved "https://registry.npmmirror.com/strip-outer/-/strip-outer-1.0.1.tgz#b2fd2abf6604b9d1e6013057195df836b8a9d631"
   integrity sha512-k55yxKHwaXnpYGsOzg4Vl8+tDrWylxDEpknGjhTiZB8dFRU5rTo9CAzeycivxV3s+zlTKwrs6WxMxR95n26kwg==
   dependencies:
     escape-string-regexp "^1.0.2"
@@ -10429,7 +10429,7 @@ stylehacks@^5.1.0:
 
 sumchecker@^3.0.1:
   version "3.0.1"
-  resolved "https://fe-private-npm.xylink.com/sumchecker/-/sumchecker-3.0.1.tgz#6377e996795abb0b6d348e9b3e1dfb24345a8e42"
+  resolved "https://registry.npmmirror.com/sumchecker/-/sumchecker-3.0.1.tgz#6377e996795abb0b6d348e9b3e1dfb24345a8e42"
   integrity sha1-Y3fplnlauwttNI6bPh37JDRajkI=
   dependencies:
     debug "^4.1.0"
@@ -10508,7 +10508,7 @@ tapable@^2.0.0, tapable@^2.1.1, tapable@^2.2.0:
 
 tar-stream@^1.5.2:
   version "1.6.2"
-  resolved "https://fe-private-npm.xylink.com/tar-stream/-/tar-stream-1.6.2.tgz#8ea55dab37972253d9a9af90fdcd559ae435c555"
+  resolved "https://registry.npmmirror.com/tar-stream/-/tar-stream-1.6.2.tgz#8ea55dab37972253d9a9af90fdcd559ae435c555"
   integrity sha512-rzS0heiNf8Xn7/mpdSVVSMAWAoy9bfb1WOTYC78Z0UQKeKa/CWS8FOq0lKGNa8DWKAn9gxjCvMLYc5PGXYlK2A==
   dependencies:
     bl "^1.0.0"
@@ -10599,12 +10599,12 @@ thunky@^1.0.2:
 
 timed-out@^4.0.1:
   version "4.0.1"
-  resolved "https://fe-private-npm.xylink.com/timed-out/-/timed-out-4.0.1.tgz#f32eacac5a175bea25d7fab565ab3ed8741ef56f"
+  resolved "https://registry.npmmirror.com/timed-out/-/timed-out-4.0.1.tgz#f32eacac5a175bea25d7fab565ab3ed8741ef56f"
   integrity sha1-8y6srFoXW+ol1/q1Zas+2HQe9W8=
 
 tiny-emitter@^2.0.0:
   version "2.1.0"
-  resolved "https://fe-private-npm.xylink.com/tiny-emitter/-/tiny-emitter-2.1.0.tgz#1d1a56edfc51c43e863cbb5382a72330e3555423"
+  resolved "https://registry.npmmirror.com/tiny-emitter/-/tiny-emitter-2.1.0.tgz#1d1a56edfc51c43e863cbb5382a72330e3555423"
   integrity sha512-NB6Dk1A9xgQPMoGqC5CVXn123gWyte215ONT5Pp5a0yt4nlEoO1ZWeCwpncaekPHXO60i47ihFnZPiRPjRMq4Q==
 
 tmp-promise@^3.0.2:
@@ -10628,7 +10628,7 @@ tmpl@1.0.5:
 
 to-buffer@^1.1.1:
   version "1.1.1"
-  resolved "https://fe-private-npm.xylink.com/to-buffer/-/to-buffer-1.1.1.tgz#493bd48f62d7c43fcded313a03dcadb2e1213a80"
+  resolved "https://registry.npmmirror.com/to-buffer/-/to-buffer-1.1.1.tgz#493bd48f62d7c43fcded313a03dcadb2e1213a80"
   integrity sha512-lx9B5iv7msuFYE3dytT+KE5tap+rNYw+K4jVkb9R/asAb+pbBSM17jtunHplhBe6RRJdZx3Pn2Jph24O32mOVg==
 
 to-fast-properties@^2.0.0:
@@ -10686,7 +10686,7 @@ tree-kill@^1.2.2:
 
 trim-repeated@^1.0.0:
   version "1.0.0"
-  resolved "https://fe-private-npm.xylink.com/trim-repeated/-/trim-repeated-1.0.0.tgz#e3646a2ea4e891312bf7eace6cfb05380bc01c21"
+  resolved "https://registry.npmmirror.com/trim-repeated/-/trim-repeated-1.0.0.tgz#e3646a2ea4e891312bf7eace6cfb05380bc01c21"
   integrity sha1-42RqLqTokTEr9+rObPsFOAvAHCE=
   dependencies:
     escape-string-regexp "^1.0.2"
@@ -10770,7 +10770,7 @@ tsutils@^3.21.0:
 
 tunnel@^0.0.6:
   version "0.0.6"
-  resolved "https://fe-private-npm.xylink.com/tunnel/-/tunnel-0.0.6.tgz#72f1314b34a5b192db012324df2cc587ca47f92c"
+  resolved "https://registry.npmmirror.com/tunnel/-/tunnel-0.0.6.tgz#72f1314b34a5b192db012324df2cc587ca47f92c"
   integrity sha512-1h/Lnq9yajKY2PEbBadPXj3VxsDDu844OnaAo52UVmIzIvwwtBPIuNvkjuzBlTWpfJyUbG3ez0KSBibQkj4ojg==
 
 type-check@^0.4.0, type-check@~0.4.0:
@@ -10794,7 +10794,7 @@ type-detect@4.0.8:
 
 type-fest@^0.13.1:
   version "0.13.1"
-  resolved "https://fe-private-npm.xylink.com/type-fest/-/type-fest-0.13.1.tgz#0172cb5bce80b0bd542ea348db50c7e21834d934"
+  resolved "https://registry.npmmirror.com/type-fest/-/type-fest-0.13.1.tgz#0172cb5bce80b0bd542ea348db50c7e21834d934"
   integrity sha1-AXLLW86AsL1ULqNI21DH4hg02TQ=
 
 type-fest@^0.20.2:
@@ -10829,7 +10829,7 @@ typedarray-to-buffer@^3.1.5:
 
 typedarray@^0.0.6:
   version "0.0.6"
-  resolved "https://fe-private-npm.xylink.com/typedarray/-/typedarray-0.0.6.tgz#867ac74e3864187b1d3d47d996a78ec5c8830777"
+  resolved "https://registry.npmmirror.com/typedarray/-/typedarray-0.0.6.tgz#867ac74e3864187b1d3d47d996a78ec5c8830777"
   integrity sha1-hnrHTjhkGHsdPUfZlqeOxciDB3c=
 
 typescript@^4.6.4:
@@ -10849,7 +10849,7 @@ unbox-primitive@^1.0.2:
 
 unbzip2-stream@^1.0.9:
   version "1.4.3"
-  resolved "https://fe-private-npm.xylink.com/unbzip2-stream/-/unbzip2-stream-1.4.3.tgz#b0da04c4371311df771cdc215e87f2130991ace7"
+  resolved "https://registry.npmmirror.com/unbzip2-stream/-/unbzip2-stream-1.4.3.tgz#b0da04c4371311df771cdc215e87f2130991ace7"
   integrity sha1-sNoExDcTEd93HNwhXofyEwmRrOc=
   dependencies:
     buffer "^5.2.1"
@@ -10975,7 +10975,7 @@ url-parse-lax@^3.0.0:
 
 url-to-options@^1.0.1:
   version "1.0.1"
-  resolved "https://fe-private-npm.xylink.com/url-to-options/-/url-to-options-1.0.1.tgz#1505a03a289a48cbd7a434efbaeec5055f5633a9"
+  resolved "https://registry.npmmirror.com/url-to-options/-/url-to-options-1.0.1.tgz#1505a03a289a48cbd7a434efbaeec5055f5633a9"
   integrity sha1-FQWgOiiaSMvXpDTvuu7FBV9WM6k=
 
 utf8-byte-length@^1.0.1:
@@ -11385,7 +11385,7 @@ xmlchars@^2.2.0:
 
 xss@^1.0.14:
   version "1.0.14"
-  resolved "https://fe-private-npm.xylink.com/xss/-/xss-1.0.14.tgz#4f3efbde75ad0d82e9921cc3c95e6590dd336694"
+  resolved "https://registry.npmmirror.com/xss/-/xss-1.0.14.tgz#4f3efbde75ad0d82e9921cc3c95e6590dd336694"
   integrity sha512-og7TEJhXvn1a7kzZGQ7ETjdQVS2UfZyTlsEdDOqvQF7GoxNfY+0YLCzBy1kPdsDDx4QuNAonQPddpsn6Xl/7sw==
   dependencies:
     commander "^2.20.3"
@@ -11393,7 +11393,7 @@ xss@^1.0.14:
 
 xtend@^4.0.0:
   version "4.0.2"
-  resolved "https://fe-private-npm.xylink.com/xtend/-/xtend-4.0.2.tgz#bb72779f5fa465186b1f438f674fa347fdb5db54"
+  resolved "https://registry.npmmirror.com/xtend/-/xtend-4.0.2.tgz#bb72779f5fa465186b1f438f674fa347fdb5db54"
   integrity sha1-u3J3n1+kZRhrH0OPZ0+jR/2121Q=
 
 y18n@^5.0.5:
