@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import xyRTC from '@/utils/xyRTC';
 import { Button, message, Input } from 'antd';
 
@@ -12,22 +12,38 @@ const Feedback = (props: IProps) => {
   const [uploadLoading, setUploadLoading] = useState(false);
   const [content, setContent] = useState('');
 
+
+  useEffect(()=>{
+    xyRTC.on('LogUploadResult', uploadResult);
+
+    return () => {
+      xyRTC.off('LogUploadResult', uploadResult);
+    };
+  },[])
+
+  const uploadResult = (event: any) => {
+    const { code } = event;
+
+    if (code === 'XYSDK:960000') {
+      message.info('提交成功');
+
+      setContent('');
+      props.onClose && props.onClose();
+      setUploadLoading(false);
+    }
+  };
+
   const upload = () => {
     setUploadLoading(true);
 
     try {
       xyRTC.logUpload(content);
-
-      message.info('提交成功');
-
-      setContent('');
-
-      props.onClose && props.onClose();
     } catch (err) {
       message.info('提交失败');
+      setContent('');
+      props.onClose && props.onClose();
+      setUploadLoading(false);
     }
-
-    setUploadLoading(false);
   };
 
   return (

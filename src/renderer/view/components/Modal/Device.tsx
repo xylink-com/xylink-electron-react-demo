@@ -11,7 +11,7 @@ import {
   callState,
   selectedDeviceState,
 } from '@/utils/state';
-import { MeetingStatus, UpdateDevice } from '@/type/enum';
+import { MeetingStatus } from '@/type/enum';
 import useDeviceSelect from '@/hooks/deviceSelect'
 import { DeviceTypeKey } from '@xylink/xy-electron-sdk';
 
@@ -120,7 +120,7 @@ const Device = () => {
                 style={{ width: 300 }}
                 value={selectedDevice.camera}
                 onSelect={(val: string) => {
-                  switchDevice('camera', val);
+                  switchDevice(DeviceTypeKey.camera, val);
                 }}
               >
                 {cameraList.map(({ devId, devName }) => {

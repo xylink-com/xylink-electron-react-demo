@@ -1,7 +1,7 @@
-import { ILayoutModelMap } from '@/type';
+import { ILanguageList, ILayoutModelMap } from '@/type';
 import { ACCOUNT, SERVER } from '@/config';
 import { MeetingStatus } from '@/type/enum';
-import { LayoutModel, TemplateModel } from '@xylink/xy-electron-sdk';
+import { DeviceTypeKey, LayoutModel, TemplateModel } from '@xylink/xy-electron-sdk';
 
 // 服务协议
 export const XYLINK_AGREEMENT_URL =
@@ -172,3 +172,27 @@ export const LAYOUT_MODEL_MAP: ILayoutModelMap = {
     ]
   ]
 };
+
+/**
+ * 同传字幕操作按钮
+ */
+export const languageList: ILanguageList ={
+  local: {
+    Chinese: '简体中文',
+    English: 'English',
+  },
+  show: {
+    Chinese: '简体中文',
+    English: 'English',
+    ChineseAndEnglish: '中英双语',
+  },
+};
+
+/**
+ * 设备类型命名
+ */
+export const DeviceNameMap = {
+  [DeviceTypeKey.speaker]: '音频输出',
+  [DeviceTypeKey.microphone]: '音频输入',
+  [DeviceTypeKey.camera]: '视频',
+}

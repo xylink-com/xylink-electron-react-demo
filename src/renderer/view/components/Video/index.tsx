@@ -6,27 +6,20 @@
  */
 
 import { useRef, useEffect, useMemo } from 'react';
-import {
-  IAIFaceRecv,
-  IFacePosition,
-  ILayout,
-  Render,
-  FaceType,
-} from '@xylink/xy-electron-sdk';
-import xyRTC from '@/utils/xyRTC';
-import { useRecoilValue } from 'recoil';
-import { broadCastState, faceTypeState } from '@/utils/state';
-
+import { ILayout, Render, XYRTC, XYSlaveRTC } from '@xylink/xy-electron-sdk';
+import xyRTCInstance from '@/utils/xyRTC';
 import './index.scss';
+
+import FaceInfo from './faceInfo';
+import { getSrcByDeviceType } from '@/utils';
 
 interface IProps {
   item: ILayout;
   index: string;
   templateModel?: string;
   isShowFaceInfo?: boolean;
-  faceInfo?: any;
-  facePositionInfo?: IAIFaceRecv;
   toggleForceFullScreen?: () => void;
+  xyRTC?: XYRTC | XYSlaveRTC;
 }
 
 const Video = (props: IProps) => {
@@ -34,14 +27,10 @@ const Video = (props: IProps) => {
     item,
     index,
     templateModel,
-    isShowFaceInfo = false,
-    faceInfo,
-    facePositionInfo,
+    isShowFaceInfo,
     toggleForceFullScreen,
+    xyRTC = xyRTCInstance,
   } = props;
-
-  const faceType = useRecoilValue(faceTypeState);
-  const broadCast = useRecoilValue(broadCastState);
 
   const videoRef = useRef<HTMLCanvasElement>(null);
   const canvasInfo = useRef<any>(null);
@@ -107,7 +96,7 @@ const Video = (props: IProps) => {
 
   // 视频状态，由state控制
   const renderVideoStatus = () => {
-    const { state } = item.roster;
+    const { state, dt } = item.roster;
 
     if (
       state === 0 ||
@@ -116,10 +105,26 @@ const Video = (props: IProps) => {
       state === 4 ||
       state === 8
     ) {
+      const itemWidth = item.position.width;
+      const srcUrl = getSrcByDeviceType(dt)
+  
+      // 视频暂停默认头像大小
+      let avatarWidth = 56;
+      if (itemWidth > 480) {
+        avatarWidth = 88;
+      } else if (itemWidth > 320) {
+        avatarWidth = 72;
+      }
+
       return (
         <div className="video-bg">
           <div className="center">
-            <div>视频暂停</div>
+          <img
+              className="avatar"
+              src={srcUrl}
+              alt="avatar"
+              style={{ width: avatarWidth }}
+            />
           </div>
           {renderVideoName()}
         </div>
@@ -151,155 +156,6 @@ const Video = (props: IProps) => {
     return renderVideoName();
   };
 
-  const getFacePosition = (position: IFacePosition) => {
-    const w = item.position.width;
-    const h = item.position.height;
-    const _videoWidth = item.roster.videoWidth || 0;
-    const _videoHeight = item.roster.videoHeight || 0;
-
-    let nW = w;
-    let nH = h;
-
-    let xOffset = 0;
-    let yOffset = 0;
-
-    if (_videoHeight > 0 && _videoWidth > 0) {
-      const scale = w / h;
-      const vScale = _videoWidth / _videoHeight;
-
-      if (vScale >= scale) {
-        if (_videoWidth >= w) {
-          nH = _videoHeight / (_videoWidth / w);
-        } else {
-          nH = _videoHeight * (w / _videoWidth);
-        }
-
-        yOffset = (h - nH) / 2;
-      } else {
-        if (_videoHeight >= h) {
-          nW = _videoWidth / (_videoHeight / h);
-        } else {
-          nW = _videoWidth * (h / _videoHeight);
-        }
-
-        xOffset = (w - nW) / 2;
-      }
-    }
-
-    const a = 10000; // 缩放系数
-
-    const x1 = (position.left * nW) / a + xOffset;
-    const y1 = (position.top * nH) / a + yOffset;
-
-    const x2 = (position.right * nW) / a + xOffset;
-    const y2 = (position.bottom * nH) / a + yOffset;
-
-    let startX = x1;
-
-    if (item.sourceId === 'LocalPreviewID') {
-      startX = w - x2;
-    }
-
-    return {
-      startX,
-      startY: y1,
-      width: x2 - x1,
-      height: y2 - y1,
-    };
-  };
-
-  const renderFaceInfo = () => {
-    if (
-      !(
-        isShowFaceInfo &&
-        item.roster.state === 5 &&
-        !item.roster.isContent &&
-        facePositionInfo
-      )
-    ) {
-      return;
-    }
-
-    const { calluri = '', type, positionArr = [] } = facePositionInfo;
-    const isDetect = faceType === FaceType.Detect;
-    const isElectronicBadge = faceType === FaceType.EletronicBadge;
-    const positionLen = positionArr.length;
-
-    return positionArr.map((position: IFacePosition, index: number) => {
-      const { faceId } = position;
-      const { userName, userTitle = '' } = faceInfo.get(faceId) || {};
-
-      const { startX, startY, width, height } = getFacePosition(position) || {};
-
-      const key = calluri + index;
-
-      // 电子铭牌 一个人， 固定显示铭牌信息
-      if (broadCast) {
-        const style =
-          positionLen === 1
-            ? { left: '20%', bottom: '12%' }
-            : { left: startX + 'px', top: startY + height + 20 + 'px' };
-
-        if (userName) {
-          return (
-            <div key={key} className="face-card" style={style}>
-              <div className="face-user-name">{userName}</div>
-              {userTitle && <div className="face-user-title">{userTitle}</div>}
-            </div>
-          );
-        }
-
-        return <div key={key} />;
-      }
-
-      // 扫描模式
-      // 电子铭牌模式  电子铭牌 多人，在face底部20px
-      if (isDetect || isElectronicBadge) {
-        const style = {
-          width: width + 'px',
-          height: height + 'px',
-          left: startX + 'px',
-          top: startY + 'px',
-        };
-
-        const detectStyle = {
-          width: width + 'px',
-          height: height + 'px',
-          backgroundSize: `${width}px ${height}px`,
-        };
-
-        const badgeStyle = {
-          marginTop: height + 20 + 'px',
-        };
-
-        return (
-          <div key={key} className="face-scan" style={style}>
-            {isDetect && userName && (
-              <div className="face-scan-name">
-                <div className="face-user-name">{userName}</div>
-                {userTitle && (
-                  <div className="face-user-title">{userTitle}</div>
-                )}
-              </div>
-            )}
-            {isDetect && <div className="face-detect" style={detectStyle} />}
-
-            {isElectronicBadge && userName && (
-              <div key={key} className="face-card" style={badgeStyle}>
-                <div className="face-user-name">{userName}</div>
-                {userTitle && (
-                  <div className="face-user-title">{userTitle}</div>
-                )}
-              </div>
-            )}
-          </div>
-        );
-      }
-
-      return null;
-    });
-  };
-
   const isActiveSpeaker = useMemo(() => {
     return !!item.roster.isActiveSpeaker && templateModel === 'GALLERY';
   }, [item.roster.isActiveSpeaker, templateModel]);
@@ -311,7 +167,7 @@ const Video = (props: IProps) => {
       onDoubleClick={toggleForceFullScreen}
     >
       {/* 人脸识别 */}
-      {renderFaceInfo()}
+      {isShowFaceInfo && <FaceInfo item={item}></FaceInfo>}
 
       <div className="video">
         <div className="video-content">

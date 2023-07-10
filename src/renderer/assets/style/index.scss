@@ -8,11 +8,22 @@
   align-items: center;
 
   .left {
-    width: 480px;
+    flex: 1;
     height: 100%;
-    background: url('@/assets/img/left_bg.png') no-repeat;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .left-bg {
+    width: 264px;
+    height: 150px;
+    // background: url('@/assets/img/left_bg.png') no-repeat;
+    background: url('@/assets/img/yiyong.png') no-repeat;
     background-size: 100% 100%;
   }
+
   .right {
     width: 480px;
     height: 100%;
@@ -22,7 +33,7 @@
   .section-content {
     position: relative;
     height: 100%;
-    padding: 73px 70px 0 70px;
+    padding: 66px 70px 0 70px;
     display: flex;
     flex-direction: column;
   }
@@ -61,6 +72,10 @@
   }
   .xy-checkbox {
     margin-bottom: 12px;
+  }
+
+  .mb30 {
+    margin-bottom: 30px;
   }
 
   .declare {

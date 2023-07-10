@@ -1,7 +1,15 @@
 import { DEFAULT_SETTING_INFO } from '@/enum';
 import { TSettingType } from '@/type';
-import { MeetingStatus } from '@/type/enum';
-import { CallMode, EventType, IInteractiveToolInfo, ProcessType, IDeviceList } from '@xylink/xy-electron-sdk';
+import { MeetingStatus, ShowLanguage } from '@/type/enum';
+import {
+  CallMode,
+  EventType,
+  IInteractiveToolInfo,
+  ProcessType,
+  IAIFaceInfo,
+  IAIFaceRecv, 
+  IDeviceList
+} from '@xylink/xy-electron-sdk';
 import { atom } from 'recoil';
 import store from './store';
 
@@ -147,9 +155,9 @@ export const deviceChangeState = atom({
  * @property {number} feccOri - 支持遥控摄像头的终端的指令标识
  */
 export const farEndControlState = atom<{
-  show: boolean,
+  show: boolean;
   callUri: string;
-  feccOri?: number
+  feccOri?: number;
 }>({
   key: 'farEndControl',
   default: {
@@ -209,3 +217,38 @@ export const signInState = atom({
     isSuccess: false,
   }
 })
+
+
+/**
+ * 同传字幕展示的语言
+ */
+export const captionShowLanguageState = atom({
+  key: 'captionShowLanguage',
+  default: ShowLanguage.CHINESE
+})
+
+
+/**
+ * 是否开启同传字幕
+ */
+export const captionIsStartState = atom({
+  key: 'captionIsStart',
+  default: false
+})
+
+
+/**
+ * AI Face 人脸信息
+ */
+export const faceInfoMapState = atom<Map<number, IAIFaceInfo>>({
+  key: 'faceInfoMap',
+  default: new Map(),
+});
+
+/**
+ * AI Face 位置信息
+ */
+export const facePositionInfoMapState = atom<Map<string, IAIFaceRecv>>({
+  key: 'facePositionInfoMap',
+  default: new Map(),
+});

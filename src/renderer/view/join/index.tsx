@@ -222,7 +222,7 @@ const JoinMeeting = () => {
             开启摄像头
           </Checkbox>
         </Form.Item>
-        <Form.Item name="muteAudio" className="xy-checkbox">
+        <Form.Item name="muteAudio" className="xy-checkbox mb30">
           <Checkbox
             checked={!info.muteAudio}
             onChange={(e) => {
@@ -233,7 +233,7 @@ const JoinMeeting = () => {
           </Checkbox>
         </Form.Item>
 
-        <Row justify="center" className="xy-form-bottom">
+        <Row justify="center" className="">
           <Button
             disabled={verifyDisabled}
             className={`xy-btn  ${verifyDisabled ? 'disabled-btn' : ''}`}

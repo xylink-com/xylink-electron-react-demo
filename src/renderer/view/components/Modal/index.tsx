@@ -61,7 +61,7 @@ const Setting = () => {
         closable={false}
         visible={visible}
         footer={null}
-        width={720}
+        width={660}
         centered={true}
         onCancel={onCancel}
         destroyOnClose={true}
@@ -71,7 +71,7 @@ const Setting = () => {
 
           <div className="setting__header">
             <Menu
-              style={{ width: 200 }}
+              style={{ width: 170 }}
               selectedKeys={[current]}
               mode="vertical"
               onClick={(e: MenuInfo) => {
