@@ -3,6 +3,9 @@
  * @authors Luo-jinghui (luojinghui424@gmail.com)
  * @date  2020-04-28 17:26:40
  */
+
+import { TerminalType } from "@xylink/xy-electron-sdk";
+
 /**
  * 节流函数
  *
@@ -109,5 +112,38 @@ export const farEndControlSupport = (feccOri: number | undefined) => {
     supportZoom,
     supportSome
   }
+}
+
+
+/**
+ * 获取设备的默认头像链接
+ * 
+ * @param terminalType 终端设备类型
+ * @returns {string} avatar链接
+ */
+export const getSrcByDeviceType = (terminalType: TerminalType) => {
+  let iconName = 'default';
+  switch (terminalType) {
+    case TerminalType.TVBOX:
+      iconName = 'tvbox'
+      break;
+    case TerminalType.H323GW:
+      iconName = 'h323'
+      break;
+    case TerminalType.BRUCE:
+      iconName = 'bruce'
+      break;
+    case TerminalType.TEL:
+      iconName = 'tel'
+      break;
+    case TerminalType.SHUTTLE:
+      iconName = 'shtl'
+      break;
+    case TerminalType.HARD:
+      iconName = 'nemo'
+      break;
+  }
+
+  return require(`@/assets/img/device/${iconName}.png`)
 }
 

@@ -45,7 +45,7 @@
     height: 100%;
     box-sizing: border-box;
     position: relative;
-    color: #ddd;
+    color: #FFF;
     font-size: 12px;
 
     display: flex;
@@ -54,13 +54,14 @@
 
     .video-status {
       position: absolute;
-      bottom: 4px;
-      left: 4px;
-      background-color: rgba(42, 46, 51, 0.8);
-      border-radius: 3px;
+      bottom: 0px;
+      left: 0px;
+      background: rgba(20, 20, 20, 0.6);
+      border-radius: 0px 2px 0px 0px;
+      max-width: 90%;
+      height: 21px;
       display: flex;
       align-items: center;
-      max-width: 90%;
     }
 
     .name {
@@ -79,7 +80,7 @@
       align-items: center;
       justify-content: center;
       flex-direction: column;
-      background: url('@/assets/img/meeting_bg.png') center center no-repeat;
+      background: linear-gradient(315deg, #282828 0%, #3D3D3D 100%);
       background-size: cover;
     }
 
@@ -100,6 +101,9 @@
       flex-direction: column;
       position: relative;
       z-index: 1;
+      .avatar {
+        height: auto;
+      }
     }
 
     .displayname {
@@ -114,11 +118,11 @@
     }
     .audio-muted-status {
       background: url('./img/audio_mute.png') center center no-repeat;
-      background-size: 60%;
+      background-size: 16px;
     }
     .audio-unmuted-status {
       background: url('./img/audio_unmute.png') center center no-repeat;
-      background-size: 60%;
+      background-size: 16px;
     }
   }
 }
@@ -168,19 +172,10 @@
   position: absolute;
   z-index: 999;
   width: 200px;
-  height: 36px;
-  font-size: 14px;
-  padding: 0 10px;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  background: linear-gradient(
-    270deg,
-    rgba(32, 145, 222, 0) 0%,
-    rgba(32, 145, 222, 0.6) 30%,
-    #2091de 100%
-  );
 }
 
 
@@ -215,21 +210,53 @@
 }
 
 .face-user-name {
+  position: relative;
   width: 100%;
+  height: 30px;
+  line-height: 30px;
+  padding: 0 8px;
+  font-size: 12px;
+  font-weight: 500;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
   color: #fff;
+  background: linear-gradient(270deg,
+      rgba(32, 145, 222, 0) 0%,
+      rgba(32, 145, 222, 0.6) 30%,
+      #2091de 100%);
+
+  &::before {
+    position: absolute;
+    left: 0;
+    bottom: 0;
+    width: 100%;
+    height: 1px;
+    content: '';
+
+    background: linear-gradient(246deg,
+        rgba(255, 255, 255, 0) 0%,
+        rgba(255, 255, 255, 0) 27%,
+        rgba(136, 228, 255, 0.9) 52%,
+        rgba(255, 255, 255, 0) 79%,
+        rgba(255, 255, 255, 0) 100%);
+  }
 }
 
 .face-user-title {
-  font-size: 12px;
-  width: 120%;
-  margin-left: -5%;
+  font-size: 10px;
+  width: 100%;
+  height: 20px;
+  line-height: 20px;
+  padding: 0 8px;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
-  transform: scale(0.8);
+  color: #fff;
+  background: linear-gradient(270deg,
+      rgba(0, 106, 162, 0) 0%,
+      rgba(0, 106, 162, 0.4) 27%,
+      #006aa2 100%);
 }
 
 .local-video {

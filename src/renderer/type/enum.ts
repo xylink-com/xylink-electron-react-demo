@@ -15,3 +15,16 @@ export enum UpdateDevice{
   AUDIO = 0b10,
   ALL = 0b11
 }
+
+// 设备管理遍历 ALL表示同时具有VIDEO和AUDIO两种属性
+export enum ShowLanguage {
+  CHINESE = 'Chinese',
+  ENGLISH = 'English',
+  CHINESE_AND_ENGLISH = 'ChineseAndEnglish'
+}
+
+export enum LocalLanguage{
+  CHINESE = 'Chinese',
+  ENGLISH = 'English',
+}
+

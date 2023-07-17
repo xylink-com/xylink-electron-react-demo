@@ -4,7 +4,7 @@
 import { ipcRenderer } from 'electron';
 import { IpcRendererEvent } from 'electron/renderer';
 import { ReactNode, useEffect, useState } from 'react';
-import { isMac } from '@/utils';
+import { isWin } from '@/utils';
 import SVG from '../Svg';
 import './index.scss';
 
@@ -51,7 +51,7 @@ const AppHeader = (props: IProps) => {
     <div className={`app-header ${className}`}>
       <div className="app-header-content">{props.children}</div>
 
-      {!isMac && isOpt && (
+      {isWin && isOpt && (
         <div className="app-opt-bar">
           <span className="opt-item app-minus" onClick={appMinusHandler}>
             <SVG icon="min" />

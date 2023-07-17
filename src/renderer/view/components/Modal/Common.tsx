@@ -229,7 +229,7 @@ const Common = () => {
         </>
       )}
 
-      <div className="item">
+      {/* <div className="item">
         <div className="key">本地分辨率</div>
         <div className="value">
           <Select
@@ -246,7 +246,7 @@ const Common = () => {
             })}
           </Select>
         </div>
-      </div>
+      </div> */}
 
       {/* mac 暂不支持 */}
       {!isMac && (

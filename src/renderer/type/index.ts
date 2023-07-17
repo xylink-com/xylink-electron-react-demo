@@ -1,4 +1,5 @@
 import { IModel ,TemplateModel} from "@xylink/xy-electron-sdk";
+import { LocalLanguage, ShowLanguage } from "./enum";
 
 /**
  * 静音状态
@@ -73,3 +74,14 @@ export interface ILayoutModelMap {
   content: ILayoutItem[][];
 }
 
+/**
+ * 同传字幕本地语言和展示语言
+ */
+export interface ILanguageList {
+  local: {
+    [key in LocalLanguage]: string;
+  };
+  show: {
+    [key in ShowLanguage]: string;
+  };
+}

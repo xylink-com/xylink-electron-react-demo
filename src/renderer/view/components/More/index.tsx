@@ -49,6 +49,11 @@ const More = () => {
       xyRTC.muteCamera(mode === AudioOnly);
     }
 
+    // 开启语音模式时，停止遥控摄像头操作
+    if (mode === AudioOnly && farEndControl.show) {
+      setFarEndControl((state) => ({ ...state, show: false, callUri: '' }));
+    }
+
     setCallMode(mode);
   };
 
@@ -57,6 +62,12 @@ const More = () => {
       message.info('当前没有可以控制的摄像头')
       return;
     }
+
+    if (callMode === CallMode.AudioOnly) {
+      message.info('语音模式下，不支持遥控摄像头操作');
+      return;
+    }
+    
     setFarEndControl((state) => ({
       ...state,
       show: !state.show

@@ -1,6 +1,11 @@
 import { useState, useEffect, useRef, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useRecoilState, useRecoilValue, useResetRecoilState, useSetRecoilState } from 'recoil';
+import {
+  useRecoilState,
+  useRecoilValue,
+  useResetRecoilState,
+  useSetRecoilState,
+} from 'recoil';
 import { message, Modal } from 'antd';
 import { ipcRenderer } from 'electron';
 import XYRTC from '@/utils/xyRTC';
@@ -61,7 +66,7 @@ import {
   IInteractiveToolInfo,
   ISignInfo,
   ProcessType,
-  TemplateModel
+  TemplateModel,
 } from '@xylink/xy-electron-sdk';
 import {
   callModeState,
@@ -73,10 +78,15 @@ import {
   videoState,
   farEndControlState,
   interactiveState,
-  signInState
+  signInState,
+  faceInfoMapState,
+  facePositionInfoMapState,
+  broadCastState,
 } from '@/utils/state';
 import SignIn from '../components/SignIn';
 import LayoutSelect from '../components/LayoutSelect';
+import CaptionButton from '../components/SubtitleButton';
+import Captions from '../components/Subtitles';
 
 import './index.scss';
 
@@ -110,8 +120,6 @@ function Meeting() {
   const [pageInfo, setPageInfo] = useState(DEFAULT_PAGE_INFO);
   const [subTitle, setSubTitle] = useState<ISubTitle | null>(null);
   const [inOutReminder, setInOutReminder] = useState<IInOutReminder[]>([]);
-  const [facePositionInfo, setFacePositionInfo] = useState(new Map()); // AI Face 位置信息
-  const [faceInfo, setFaceInfo] = useState(new Map()); // AI Face 人脸信息
   const [forceFullScreenId, setForceFullScreenId] = useState('');
   const [templateModel, setTemplateModel] = useState<TemplateModel>(
     TemplateModel.SPEAKER
@@ -135,7 +143,7 @@ function Meeting() {
   // 会控下发主会场
   const [chirmanUri, setChirmanUri] = useState('');
   // 是否是主持人
-  const [confHost, setConfHost] = useState({meetingId:"", isHost: false});
+  const [confHost, setConfHost] = useState({ meetingId: '', isHost: false });
   // 会议状态
   const [meetingState, setMeetingState] = useRecoilState(callState);
   // Toolbar显示隐藏状态
@@ -149,10 +157,19 @@ function Meeting() {
   // 遥控摄像头
   const [farEndControl, setFarEndControl] = useRecoilState(farEndControlState);
   // 签到相关
-  const [{ processType }, setInteractiveState] = useRecoilState(interactiveState);
+  const [{ processType }, setInteractiveState] =
+    useRecoilState(interactiveState);
   const setSignInState = useSetRecoilState(signInState);
   const resetInteractive = useResetRecoilState(interactiveState);
   const resetSignIn = useResetRecoilState(signInState);
+
+  // 支持同声传译
+  const [supportAiCaption, setSupportAiCaption] = useState(false);
+  // 人脸识别
+  const setFacePositionInfo = useSetRecoilState(facePositionInfoMapState); // AI Face 位置信息
+  const setFaceInfo = useSetRecoilState(faceInfoMapState); // AI Face 人脸信息
+  const broadCast = useRecoilValue(broadCastState);
+
   // 人脸识别
   const facePositionInfoRef = useRef(new Map()); // AI Face 位置信息
   const faceInfoRef = useRef(new Map()); // AI Face 人脸信息
@@ -174,6 +191,15 @@ function Meeting() {
     };
   }, []);
 
+  // 检查是否支持同传字幕
+  useEffect(() => {
+    const supportAiCaptionResultCallback = (e: boolean) => {
+      setSupportAiCaption(e);
+    };
+
+    xyRTC.current.on('SupportAiCaptionResult', supportAiCaptionResultCallback);
+  }, []);
+
   useEffect(() => {
     setVideo(
       store.get('xyMeetingInfo').muteVideo ? 'muteVideo' : 'unmuteVideo'
@@ -188,15 +214,24 @@ function Meeting() {
 
       if (state === 'Connected') {
         if (meetingState !== MeetingStatus.MEETING) {
+          xyRTC.current.checkAiCaptionSupport();
           setMeetingState(MeetingStatus.MEETING);
 
           setVideo(
             store.get('xyMeetingInfo').muteVideo ? 'muteVideo' : 'unmuteVideo'
           );
         }
+
+        xyRTC.current.broadcastEletronicBadge(broadCast);
       } else if (state === 'Disconnected') {
         if (error !== 'XYSDK:969001') {
           message.info(SDK_ERROR_MAP[error] || reason);
+
+          // token过期退出登录
+          if (error === 'XYSDK:964104') {
+            xyRTC.current.logout();
+            navigate('/');
+          }
         } else {
           message.info(reason);
         }
@@ -230,7 +265,7 @@ function Meeting() {
 
       if (model === LayoutModel.CUSTOM) {
         calcCustomVideoStreamLayout();
-      }else {
+      } else {
         const nextLayout = cloneDeep(e);
 
         layoutRef.current = nextLayout;
@@ -499,8 +534,8 @@ function Meeting() {
       setSignInState({
         promp: true,
         modal: e.code !== 0,
-        isSuccess: e.code === 0
-      })
+        isSuccess: e.code === 0,
+      });
     });
 
     return () => {
@@ -511,7 +546,11 @@ function Meeting() {
 
   // 自定义布局，需要自己处理窗口变化
   useEffect(() => {
-    const debounceVideoStreamLayout = debounce(calcCustomVideoStreamLayout, 150, 100);
+    const debounceVideoStreamLayout = debounce(
+      calcCustomVideoStreamLayout,
+      150,
+      100
+    );
 
     if (settingInfo.model === LayoutModel.CUSTOM) {
       window.addEventListener('resize', debounceVideoStreamLayout);
@@ -519,20 +558,23 @@ function Meeting() {
 
     return () => {
       window.removeEventListener('resize', debounceVideoStreamLayout);
-    }
-  }, [])
+    };
+  }, []);
 
   useEffect(() => {
-    const term = layout.find(item => {
-      const isSupportFarControl = farEndControlSupport(item.roster.feccOri).supportSome;
-      const isInBigScreen = item.position.width > (screenInfo.layoutWidth || 0) * 0.5;
+    const term = layout.find((item) => {
+      const isSupportFarControl = farEndControlSupport(
+        item.roster.feccOri
+      ).supportSome;
+      const isInBigScreen =
+        item.position.width > (screenInfo.layoutWidth || 0) * 0.5;
       return isSupportFarControl && isInBigScreen;
     });
-    setFarEndControl(state => ({
+    setFarEndControl((state) => ({
       ...state,
       callUri: term?.roster.callUri || '',
-      feccOri: term?.roster.feccOri
-    }))
+      feccOri: term?.roster.feccOri,
+    }));
   }, [layout]);
 
   /**
@@ -566,7 +608,7 @@ function Meeting() {
 
     layoutRef.current = nextLayout;
     setLayout(nextLayout);
-  }
+  };
 
   const disableRecord = useMemo(() => {
     const { isStartRecord, canRecord, confCanRecord } = recordPermission;
@@ -887,6 +929,7 @@ function Meeting() {
     resetSignIn();
 
     clearFaceTimer();
+    setSupportAiCaption(false);
 
     xyRTC.current.endCall();
 
@@ -1012,8 +1055,6 @@ function Meeting() {
         const mediaGroupId = isContent ? 1 : 0;
         const key = callUri + mediaGroupId;
 
-        const positionInfo = facePositionInfo.get(callUri);
-
         // 非对称布局 ， 大屏显示 人脸信息
         // 对称布局，最多四画面显示 人脸信息, 会中5人以上，有一人content only,或将一人onHold变为4人需识别
         const isShowFaceInfo =
@@ -1028,8 +1069,6 @@ function Meeting() {
             item={val}
             templateModel={templateModel}
             isShowFaceInfo={isShowFaceInfo}
-            faceInfo={faceInfo}
-            facePositionInfo={positionInfo}
             toggleForceFullScreen={() => toggleForceFullScreen(val.id)}
           ></Video>
         );
@@ -1119,6 +1158,7 @@ function Meeting() {
             onMouseEnter={onMouseEnter}
             onMouseLeave={onMouseLeave}
           >
+            {supportAiCaption && <Captions />}
             <div
               className={`middle ${toolbarVisible.show ? 'visible' : 'hidden'}`}
             >
@@ -1127,7 +1167,7 @@ function Meeting() {
               <div onClick={openMeetingControlWin} className={`button host`}>
                 <SVG icon="meeting_host" />
                 <div className="title">
-                {confHost?.isHost ? '主持会议' : '参会者'}
+                  {confHost?.isHost ? '主持会议' : '参会者'}
                 </div>
                 <div className="tag">{confInfo?.visibleEpCount || 1}</div>
               </div>
@@ -1148,19 +1188,24 @@ function Meeting() {
               )}
 
               <div
-                className={`button-box ${shareContentStatus === 1 ? 'disabled-button' : ''}`}
+                className={`button-box ${
+                  shareContentStatus === 1 ? 'disabled-button' : ''
+                }`}
               >
                 <div onClick={() => switchLayout()} className="button layout">
                   <SVG icon="layout" />
                   <div className="title">窗口布局</div>
                 </div>
-                <LayoutSelect contentPartCount={confInfo.contentPartCount} templateModel={templateModel} switchLayout={switchLayout}>
+                <LayoutSelect
+                  contentPartCount={confInfo.contentPartCount}
+                  templateModel={templateModel}
+                  switchLayout={switchLayout}
+                >
                   <div className="arrow">
                     <SVG icon="arrow" />
                   </div>
                 </LayoutSelect>
               </div>
-
 
               <div
                 onClick={recordOperate}
@@ -1195,6 +1240,8 @@ function Meeting() {
                 setHandStatus={setHandStatus}
               />
 
+              {supportAiCaption && <CaptionButton />}
+
               <EndCall
                 stopMeeting={() => {
                   hangup(false);
@@ -1202,7 +1249,9 @@ function Meeting() {
               />
             </div>
           </div>
-          {toolbarVisible.show && farEndControl.show && !!farEndControl.callUri && <FarEndControl />}
+          {toolbarVisible.show &&
+            farEndControl.show &&
+            !!farEndControl.callUri && <FarEndControl />}
         </>
       );
     }

@@ -13,7 +13,7 @@ import {
 } from '@/utils/state';
 import { debounceNotImmediate } from '@/utils';
 import { UpdateDevice } from '@/type/enum'
-
+import { DeviceNameMap } from '@/enum';
 import useDeviceSelect from '@/hooks/deviceSelect'
 
 import './index.scss';
@@ -54,6 +54,10 @@ const DeviceSelect = (props: IProps) => {
   useEffect(() => {
     debounceSwitchMicrophoneMessage(selectedDevice.microphone, microphoneList, DeviceTypeKey.microphone);
   }, [selectedDevice.microphone]);
+
+  useEffect(() => {
+    debounceSwitchCameraMessage(selectedDevice.camera, cameraList, DeviceTypeKey.camera);
+  }, [selectedDevice.camera]);
 
   const content =
     type === UpdateDevice.AUDIO ? (
@@ -156,7 +160,7 @@ const switchDeviceMessage = (selectedDeviceId: string, deviceList: IDeviceItem[]
   const device = deviceList.find(item => item.devId === selectedDeviceId);
 
   if (device) {
-    message.info(`音频${deviceTypeKey === DeviceTypeKey.speaker ? '输出' : '输入'}设备已自动切换至${device.devName}`, 3);
+    message.info(`${DeviceNameMap[deviceTypeKey]}设备已自动切换至${device.devName}`, 3);
   }
 }
 // recoil bug: useEffect依赖recoil state, 状态改变会触发两次，需要节流一下
@@ -164,5 +168,7 @@ const switchDeviceMessage = (selectedDeviceId: string, deviceList: IDeviceItem[]
 const debounceSwitchSpeakerMessage = debounceNotImmediate(switchDeviceMessage, 200);
 
 const debounceSwitchMicrophoneMessage = debounceNotImmediate(switchDeviceMessage, 200);
+
+const debounceSwitchCameraMessage = debounceNotImmediate(switchDeviceMessage, 200);
 
 export default DeviceSelect;
