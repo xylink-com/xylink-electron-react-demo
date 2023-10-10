@@ -2511,10 +2511,10 @@
   resolved "https://registry.yarnpkg.com/@xtuc/long/-/long-4.2.2.tgz#d291c6a4e97989b5c61d9acf396ae4fe133a718d"
   integrity sha512-NuHqBY1PB/D8xU6s/thBgOAiAP7HOYDQ32+BFZILJ8ivkUkAHQnWfn6WhL79Owj1qmUnoN/YPhktdIoucipkAQ==
 
-"@xylink/xy-electron-sdk@^3.10.0-beta.1":
-  version "3.10.0-beta.1"
-  resolved "https://fe-private-npm.xylink.com/@xylink%2fxy-electron-sdk/-/xy-electron-sdk-3.10.0-beta.1.tgz#2f300f6873449cf402d67b6e85776b74a68a2956"
-  integrity sha512-BEBCAU49DH54LjzhTzlQx9O0Q6pjlf/BITdGVAZ1JypDL+pDk9IJlLf9hadqtwSFh46BjEDza5Zr9e9gg1dW+w==
+"@xylink/xy-electron-sdk@3.10.0-beta.2":
+  version "3.10.0-beta.2"
+  resolved "https://registry.npmjs.org/@xylink/xy-electron-sdk/-/xy-electron-sdk-3.10.0-beta.2.tgz#df3693ee05f1cb51a71bcdce2b0651913b2f3cee"
+  integrity sha512-i+uH3DGCRPR376RpAwRL5KMzRu2NP7n03vFz28/DCw2Spo+H+Rq74LbwiRQGpkFv0BYuGGANqVt/gFK+2nBDAQ==
   dependencies:
     dayjs "^1.11.6"
     download "^8.0.0"

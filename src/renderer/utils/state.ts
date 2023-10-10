@@ -181,9 +181,7 @@ export const farEndControlState = atom<{
  * @property {webViewUrl} webViewUrl - h5页面url
  * @property {number} endUtcTime - 结束时间
  */
-export const interactiveState = atom<
-  IInteractiveToolInfo & { lastProcessType: ProcessType }
->({
+export const interactiveState = atom<IInteractiveToolInfo>({
   key: 'interactiveTool',
   default: {
     copywriting: {
@@ -200,12 +198,10 @@ export const interactiveState = atom<
     eventType: EventType.RESULT_CLOSE,
     meetingId: '',
     processType: ProcessType.NONE,
-    lastProcessType: ProcessType.NONE,
-    startWebViewUrl: '',
+    webViewUrl: '',
     resultWebViewUrl: '',
     questionnaireId: '',
-    business: '',
-    isSupport: false,
+    business: ''
   },
 });
 

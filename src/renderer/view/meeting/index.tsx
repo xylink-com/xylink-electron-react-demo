@@ -236,10 +236,8 @@ function Meeting() {
       if (state === 'Connected') {
         if (meetingState !== 'meeting') {
           // xyRTC.current.checkAiCaptionSupport();
-          xyRTC.current.startAudioCapture();
 
           setMeetingState(MeetingStatus.MEETING);
-          checkHostMeetingPermission();
           setVideo(
             store.get('xyMeetingInfo').muteVideo ? 'muteVideo' : 'unmuteVideo'
           );
@@ -466,12 +464,10 @@ function Meeting() {
 
     // 会控下发 关闭摄像头操作
     xyRTC.current.on('MeetingMuteQuery', (e: IMeetingMuteQuery) => {
-      if (e.isMuteCamera) {
-        message.info('主持人已关闭您的摄像头');
+      message.info('主持人已关闭您的摄像头');
 
-        setVideo('muteVideo');
-        xyRTC.current.muteCamera(true);
-      }
+      setVideo('muteVideo');
+      xyRTC.current.muteCamera(true);
     });
 
     // 自己开启录制状态改变
@@ -509,16 +505,6 @@ function Meeting() {
       console.log('LogUploadResult:', e);
     });
 
-    // 是否有主持权限
-    xyRTC.current.on('HostAuthority', (e: boolean) => {
-      console.log('HostAuthority:', e);
-
-      setConfHost({
-        isHost: e,
-        meetingId: ''
-      });
-    });
-
     // 会控主持人回调
     xyRTC.current.on('ConfHostChanged', (e: IConfHost) => {
       console.log('ConfHostChanged:', e);
@@ -528,16 +514,13 @@ function Meeting() {
 
     // 互动工具回调
     xyRTC.current.on('InteractiveToolInfo', (e: IInteractiveToolInfo) => {
-      setInteractiveState({
-        ...e,
-        lastProcessType : lastProcessType.current
-      });
+      setInteractiveState(e);
     });
 
     // 签到结果
     xyRTC.current.on('SubmitSignatureInfosResult', (e: ISignInfo) => {
       console.log('SubmitSignatureInfosResult:', e);
-      if (e.code !== SUCCESS_CODE) {
+      if (e.code !== 0) {
         message.info('签到失败，请稍候重试');
         return;
       }
@@ -556,15 +539,6 @@ function Meeting() {
       xyRTCTemp.removeAllListeners();
     };
   }, []);
-
-  useEffect(() => {
-    // 等候室不能占用麦克风
-    if (holdInfo.isOnhold) {
-      xyRTC.current.stopAudioCapture();
-    } else if (meetingState === MeetingStatus.MEETING) {
-      xyRTC.current.startAudioCapture();
-    }
-  }, [holdInfo.isOnhold]);
 
   // 自定义布局，需要自己处理窗口变化
   useEffect(() => {
@@ -929,8 +903,6 @@ function Meeting() {
     setSupportAiCaption(false);
     console.log('endCall stop')
 
-    xyRTC.current.stopAudioCapture();
-
     xyRTC.current.endCall();
 
     // 关闭会控弹框
@@ -1072,12 +1044,6 @@ function Meeting() {
   const openMeetingControlWin = () => {
     xyRTC.current.getConfMgmtUrl();
   };
-
-  const checkHostMeetingPermission = ()=>{
-    const {meetingNumber, meetingId} = store.get('xyMeetingInfo');
-
-    xyRTC.current.checkHostMeetingPermission(meetingNumber, meetingId)
-  }
 
   const renderLayout = () => {
     const layoutLen = layout.length;
@@ -1306,8 +1272,7 @@ function Meeting() {
 
       <SettingModal />
       <ContentThumbnail />
-      {/* {ProcessType.SIGN_IN === processType && <SignIn />} */}
-      <SignIn />
+      {ProcessType.SIGN_IN === processType && <SignIn />}
     </div>
   );
 }
