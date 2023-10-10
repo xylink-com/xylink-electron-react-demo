@@ -196,3 +196,11 @@ export const DeviceNameMap = {
   [DeviceTypeKey.microphone]: '音频输入',
   [DeviceTypeKey.camera]: '视频',
 }
+
+export const SUCCESS_CODE = 'XYSDK:969001';
+
+/** 共享缩略图分页大小 */
+export const CONTENT_PAGE_SIZE = 1000000;
+
+/** 轮询更新共享弹窗中的缩略图列表，如果传 0，则不做轮询 */
+export const CONTENT_LOOP_INTERVAL = 2000;

@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <style>
+    html,
+    body {
+      margin: 0;
+      padding: 0;
+      background: transparent;
+    }
+
+    .container {
+      margin: 0px;
+      padding: 0px;
+      width: 100vw;
+      height: 100vh;
+      pointer-events: none;
+      position: relative;
+      background: transparent;
+    }
+
+    .line {
+      background: #3876ff;
+      -webkit-app-region: drag;
+      cursor: move;
+      position: absolute;
+      pointer-events: auto;
+    }
+
+    .line1 {
+      height: 24px;
+      top: 0;
+      left: 0;
+      right: 0;
+    }
+    .line2 {
+      height: 4px;
+      bottom: 0;
+      left: 0;
+      right: 0;
+    }
+    .line3 {
+      width: 4px;
+      bottom: 0;
+      left: 0;
+      top: 0;
+    }
+    .line4 {
+      width: 4px;
+      bottom: 0;
+      right: 0;
+      top: 0;
+    }
+    #center {
+      position: absolute;
+      left: 4px;
+      bottom: 4px;
+      right: 4px;
+      top: 24px;
+      pointer-events: auto;
+    }
+  </style>
+  <body>
+    <div class="container">
+      <div class="line line1"></div>
+      <div class="line line2"></div>
+      <div class="line line3"></div>
+      <div class="line line4"></div>
+      <div id="center"></div>
+    </div>
+  </body>
+
+  <script>
+    const $ = document.querySelector.bind(document);
+    const centerElm = $('#center');
+
+    const ipcRenderer = require('electron').ipcRenderer;
+    centerElm.addEventListener(
+      'mouseenter',
+      () => {
+        console.log('enter');
+        ipcRenderer.send('ignoreMouseEvent', true);
+      },
+      false
+    );
+    centerElm.addEventListener(
+      'mouseleave',
+      () => {
+        console.log('leave');
+        ipcRenderer.send('ignoreMouseEvent', false);
+      },
+      false
+    );
+  </script>
+</html>

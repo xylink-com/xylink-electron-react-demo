@@ -1,13 +1,5 @@
 import { useState, useEffect, useRef, useMemo } from 'react';
-import { useNavigate } from 'react-router-dom';
-import {
-  useRecoilState,
-  useRecoilValue,
-  useResetRecoilState,
-  useSetRecoilState,
-} from 'recoil';
 import { message, Modal } from 'antd';
-import { ipcRenderer } from 'electron';
 import XYRTC from '@/utils/xyRTC';
 import cloneDeep from 'clone-deep';
 import store from '@/utils/store';
@@ -16,32 +8,29 @@ import {
   DEFAULT_PAGE_INFO,
   DEFAULT_CONF_INFO,
   LOCAL_VIEW_ID,
-  RECORD_STATE_MAP,
   DEFAULT_MEETING_INFO,
+  SUCCESS_CODE,
 } from '@/enum';
 import { KICK_OUT_MAP, SDK_ERROR_MAP } from '@/enum/error';
+import Video from '../components/Video';
+import Barrage from '../components/Barrage';
+import InOutReminder from '../components/InOutReminder';
 import { TEMPLATE } from '@/utils/template';
 import { debounce, isMac } from '@/utils/index';
 import { getScreenInfo } from '@/utils/layout';
 import { farEndControlSupport } from '@/utils';
-import { MeetingStatus } from '@/type/enum';
-import { useMagicMouse } from '@/utils/magicMouse';
-import Video from '../components/Video';
-import Barrage from '../components/Barrage';
-import InOutReminder from '../components/InOutReminder';
+import { ipcRenderer } from 'electron';
 import MeetingHeader from '../components/Header';
 import MeetingLoading from '../components/Loading';
 import SVG from '@/components/Svg';
+import { useNavigate } from 'react-router-dom';
 import AppHeader from '@/components/Header';
+import { MeetingStatus } from '@/type/enum';
+import { IAudio } from '@/type';
 import AudioButton from '../components/AudioButton';
 import Hold from '../components/Hold';
 import VideoButton from '../components/VideoButton';
 import FarEndControl from '../components/FarEndControl';
-import More from '../components/More';
-import PromptInfo from '../components/PromptInfo';
-import SettingModal from '../components/Modal';
-import EndCall from '../components/EndCall';
-import { IAudio } from '@/type';
 import {
   IAudioStatus,
   ICallState,
@@ -55,19 +44,24 @@ import {
   ISubTitle,
   ILayout,
   IAIFaceRecv,
-  IAIFaceInfo,
-  IRecordNotification,
   IRecordStateChange,
   IRestApiResult,
   IConfHost,
   IReqObj,
   LayoutModel,
+  IAppWindowCaptureState,
   CallMode,
   IInteractiveToolInfo,
   ISignInfo,
   ProcessType,
   TemplateModel,
+  ContentCaptureType,
+  RecordStatus,
+  ShareContentState,
+  IMeetingMuteQuery
 } from '@xylink/xy-electron-sdk';
+import More from '../components/More';
+import PromptInfo from '../components/PromptInfo';
 import {
   callModeState,
   callState,
@@ -79,16 +73,31 @@ import {
   farEndControlState,
   interactiveState,
   signInState,
-  faceInfoMapState,
-  facePositionInfoMapState,
   broadCastState,
+  shareContentType,
+  contentSharingIsPaused,
+  contentSharingIsManualPaused,
+  contentThumbnailModalState,
+  cloudRecordInfo,
+  holdInfoState,
+  AIFaceMapState,
 } from '@/utils/state';
+import {
+  useRecoilState,
+  useRecoilValue,
+  useResetRecoilState,
+  useSetRecoilState,
+} from 'recoil';
+import SettingModal from '../components/Modal';
+import { useMagicMouse } from '@/utils/magicMouse';
+import EndCall from '../components/EndCall';
 import SignIn from '../components/SignIn';
 import LayoutSelect from '../components/LayoutSelect';
-import CaptionButton from '../components/SubtitleButton';
+// import CaptionButton from '../components/SubtitleButton';
 import Captions from '../components/Subtitles';
 
 import './index.scss';
+import ContentThumbnail from '../components/ContentThumbnail';
 
 const { confirm } = Modal;
 
@@ -118,6 +127,7 @@ function Meeting() {
   const [shareContentStatus, setShareContentStatus] = useState(0);
   const [disableContent, setDisableContent] = useState(false);
   const [pageInfo, setPageInfo] = useState(DEFAULT_PAGE_INFO);
+  // 会控弹幕
   const [subTitle, setSubTitle] = useState<ISubTitle | null>(null);
   const [inOutReminder, setInOutReminder] = useState<IInOutReminder[]>([]);
   const [forceFullScreenId, setForceFullScreenId] = useState('');
@@ -125,35 +135,24 @@ function Meeting() {
     TemplateModel.SPEAKER
   );
   // 自己开启录制的状态
-  const [recordStatus, setRecordStatus] = useState(RECORD_STATE_MAP.idel);
-  // 其它端是否录制暂停中
-  const [isRecordPaused, setIsRecordPaused] = useState(false);
-  // 录制权限相关
-  const [recordPermission, setRecordPermission] = useState({
-    isStartRecord: false, // 是否已经开启录制，我们真正需要的是远端是否开启录制
-    canRecord: true, // 录制开关
-    confCanRecord: true, // 会控中开启关闭录制权限
-  });
-  // 会议人数信息
+  const [{recordStatus, isSelfRecord}, setCloudRecordInfo] = useRecoilState(cloudRecordInfo);
+  const resetCloudRecordInfo = useResetRecoilState(cloudRecordInfo);
+  const [confCanRecord, setConfCanRecord] = useState(true);
+
   const [confInfo, setConfInfo] = useState<IConfInfo>(DEFAULT_CONF_INFO);
-  // 等候室信息
-  const [holdInfo, setHoldInfo] = useState<IOnHoldInfo>({
-    isOnhold: false,
-  });
+  const [holdInfo, setHoldInfo] = useRecoilState(holdInfoState);
   // 会控下发主会场
   const [chirmanUri, setChirmanUri] = useState('');
-  // 是否是主持人
   const [confHost, setConfHost] = useState({ meetingId: '', isHost: false });
-  // 会议状态
+
   const [meetingState, setMeetingState] = useRecoilState(callState);
-  // Toolbar显示隐藏状态
-  const [toolbarVisible, setToolVisible] = useRecoilState(toolbarState);
-  // 设置页面信息
   const settingInfo = useRecoilValue(settingInfoState);
+
+  const [sharingIsManualPaused, setSharingIsManualPaused] = useRecoilState(contentSharingIsManualPaused);
+  const [toolbarVisible, setToolVisible] = useRecoilState(toolbarState);
   const setFaceType = useSetRecoilState(faceTypeState);
   const setCallMode = useSetRecoilState(callModeState);
   const setDeviceChangeType = useSetRecoilState(deviceChangeState);
-
   // 遥控摄像头
   const [farEndControl, setFarEndControl] = useRecoilState(farEndControlState);
   // 签到相关
@@ -162,24 +161,47 @@ function Meeting() {
   const setSignInState = useSetRecoilState(signInState);
   const resetInteractive = useResetRecoilState(interactiveState);
   const resetSignIn = useResetRecoilState(signInState);
-
   // 支持同声传译
   const [supportAiCaption, setSupportAiCaption] = useState(false);
   // 人脸识别
-  const setFacePositionInfo = useSetRecoilState(facePositionInfoMapState); // AI Face 位置信息
-  const setFaceInfo = useSetRecoilState(faceInfoMapState); // AI Face 人脸信息
+  const setAIFaceMap = useSetRecoilState(AIFaceMapState);
+  const setContentThumbnailVisible = useSetRecoilState(
+    contentThumbnailModalState
+  );
   const broadCast = useRecoilValue(broadCastState);
-
+  const setContentIsPaused = useSetRecoilState(contentSharingIsPaused);
+  const setContentType = useSetRecoilState(shareContentType);
   // 人脸识别
-  const facePositionInfoRef = useRef(new Map()); // AI Face 位置信息
-  const faceInfoRef = useRef(new Map()); // AI Face 人脸信息
-  const faceInfoTimerRef = useRef(new Map()); // 定时清理 Face信息
+  const AIFaceMapRef = useRef(new Map());
+  const AIFaceTimerRef = useRef(new Map());
 
   const videoStreamRef = useRef<ILayout[]>([]);
 
-  useMagicMouse();
+  const lastProcessType = useRef<ProcessType>(ProcessType.NONE);
+  // 共享状态
+  const shareContentStatusRef = useRef(0);
 
+  useMagicMouse();
   const navigate = useNavigate();
+
+  const disableRecord = useMemo(() => {
+    // 会控禁用录制， 录制状态时disable, 别人正在处理录制中或者暂停状态，这三种情况禁止开启录制
+    if (
+      !confCanRecord ||
+      recordStatus === RecordStatus.DISABLE ||
+      ([RecordStatus.ACTING_BY_OTHERS, RecordStatus.PAUSE_BY_OTHERS].includes(
+        recordStatus
+      ) &&
+        !isSelfRecord)
+    ) {
+      return true;
+    }
+    return false;
+  }, [confCanRecord, recordStatus, isSelfRecord]);
+
+  useEffect(()=>{
+    lastProcessType.current = processType;
+  },[processType]);
 
   useEffect(() => {
     // mac
@@ -205,18 +227,19 @@ function Meeting() {
       store.get('xyMeetingInfo').muteVideo ? 'muteVideo' : 'unmuteVideo'
     );
 
-    xyRTC.current.setLogLevel('INFO');
+    const xyRTCTemp = xyRTC.current;
 
-    // 呼叫状态
     xyRTC.current.on('CallState', (e: ICallState) => {
       console.log('call state e: ', e, meetingState);
       const { state, reason, error } = e;
 
       if (state === 'Connected') {
-        if (meetingState !== MeetingStatus.MEETING) {
-          xyRTC.current.checkAiCaptionSupport();
-          setMeetingState(MeetingStatus.MEETING);
+        if (meetingState !== 'meeting') {
+          // xyRTC.current.checkAiCaptionSupport();
+          xyRTC.current.startAudioCapture();
 
+          setMeetingState(MeetingStatus.MEETING);
+          checkHostMeetingPermission();
           setVideo(
             store.get('xyMeetingInfo').muteVideo ? 'muteVideo' : 'unmuteVideo'
           );
@@ -224,9 +247,9 @@ function Meeting() {
 
         xyRTC.current.broadcastEletronicBadge(broadCast);
       } else if (state === 'Disconnected') {
-        if (error !== 'XYSDK:969001') {
+        if (error !== SUCCESS_CODE) {
+          console.log('error', error, SDK_ERROR_MAP[error])
           message.info(SDK_ERROR_MAP[error] || reason);
-
           // token过期退出登录
           if (error === 'XYSDK:964104') {
             xyRTC.current.logout();
@@ -282,6 +305,18 @@ function Meeting() {
       setForceFullScreenId(id);
     });
 
+    xyRTC.current.on('AppWindowCaptureState', (e: IAppWindowCaptureState) => {
+      console.log('AppWindowCaptureState:', e);
+      if (e.isClosed) { // app 如果被关闭，则停止共享
+        xyRTC.current.stopSendContent();
+        message.info('由于共享应用已被关闭，屏幕共享已停止');
+      } else {
+        if (!sharingIsManualPaused) { // 如果手动暂停了，则不处理终端下发的暂停状态
+          setContentIsPaused(e.isPaused);
+        }
+      }
+    });
+
     xyRTC.current.on('KickOut', (e: string) => {
       console.log('demo get kick out message: ', e);
 
@@ -292,14 +327,24 @@ function Meeting() {
       message.info(`${KICK_OUT_MAP[e] || '未知异常，重新登录'}`);
     });
 
-    xyRTC.current.on('ContentState', (e: number) => {
-      if (e === 1) {
-        message.info(`您正在分享Content内容`);
-      } else if (e === 0) {
-        message.info(`已结束分享内容`);
-      }
+    xyRTC.current.on('ContentState', (e: ShareContentState) => {
+      const lastShareContentStatus = shareContentStatusRef.current;
+      const { IDLE, SENDING, RECEIVING } = ShareContentState;
 
-      setShareContentStatus(e);
+      if (e === IDLE || e === SENDING || e === RECEIVING) {
+        shareContentStatusRef.current = e;
+        setShareContentStatus(e);
+      }
+      if (e === SENDING) {
+        message.info(`您正在分享Content内容`);
+      } else if (e === IDLE && lastShareContentStatus !== IDLE) {
+        message.info(`已结束分享内容`);
+        setContentIsPaused(false);
+        setContentType(ContentCaptureType.INVALID);
+        ipcRenderer.send('closeScreenRegionShare');
+        // 防止远端顶掉共享导致没有停止捕获
+        xyRTC.current.stopShareContent();
+      }
     });
 
     // 会议控制消息
@@ -308,7 +353,7 @@ function Meeting() {
     xyRTC.current.on('ConfControl', (e: IConfControl) => {
       console.log('meeting control message: ', e);
 
-      const { disableMute, disableContent, disableRecord, chirmanUri } = e;
+      const { disableMute, disableContent, disableRecord, feccIsDisabled, chirmanUri } = e;
 
       // 强制静音
       setDisableAudio(disableMute);
@@ -317,10 +362,11 @@ function Meeting() {
       setDisableContent(disableContent);
 
       // 会控控制录制权限
-      setRecordPermission((permission) => ({
-        ...permission,
-        confCanRecord: !disableRecord,
-      }));
+      setConfCanRecord(!disableRecord);
+
+      // 会控禁止遥控摄像头权限
+      setFarEndControl(state=>({...state,disabled: feccIsDisabled}));
+
       // 会控触发主会场
       setChirmanUri(chirmanUri);
     });
@@ -404,96 +450,50 @@ function Meeting() {
       console.log('sdk error: ', e);
     });
 
-    // 人脸坐标消息
+    // 人脸识别消息
     xyRTC.current.on('AIFaceRecv', (e: IAIFaceRecv) => {
-      const { calluri, positionArr = [] } = e || {};
 
-      const faceIds: number[] = [];
+      const { calluri  } = e || {};
 
-      // 获取人脸信息(名称等)
-      positionArr.forEach((position) => {
-        if (position.faceId > -1) {
-          const info = faceInfoRef.current.get(position.faceId);
-
-          if (!info) {
-            faceIds.push(position.faceId);
-          }
-        }
-      });
-
-      if (faceIds.length > 0) xyRTC.current.getFaceInfo(faceIds);
-
-      // 设置人脸位置信息
-      facePositionInfoRef.current.set(calluri, e);
-
-      setFacePositionInfo(new Map(facePositionInfoRef.current));
+      // 设置人脸识别信息
+      AIFaceMapRef.current.set(calluri, e);
+      setAIFaceMap(new Map(AIFaceMapRef.current));
 
       // 定时清理
       updateFaceTimer(calluri);
     });
 
-    // getFaceInfo 对应的 人脸具体信息
-    xyRTC.current.on('AIFaceInfo', (e: IAIFaceInfo[]) => {
-      e.forEach((info) => {
-        faceInfoRef.current.set(info.userId, info);
-      });
-
-      setFaceInfo(new Map(faceInfoRef.current));
-    });
 
     // 会控下发 关闭摄像头操作
-    xyRTC.current.on('MeetingMuteQuery', () => {
-      message.info('主持人已关闭您的摄像头');
+    xyRTC.current.on('MeetingMuteQuery', (e: IMeetingMuteQuery) => {
+      if (e.isMuteCamera) {
+        message.info('主持人已关闭您的摄像头');
 
-      setVideo('muteVideo');
-      xyRTC.current.muteCamera(true);
-    });
-
-    // 别人开启或关闭云端录制
-    xyRTC.current.on('RecordStatusNotification', (e: IRecordNotification) => {
-      // 是否已经开启录制
-      setRecordPermission((permission) => ({
-        ...permission,
-        isStartRecord: e.isStart,
-      }));
-
-      if (e.status) {
-        // 这种是是录制状态改变暂停或录制中，可以是本地或者远端
-        // RECORDING_STATE_ACTING/RECORDING_STATE_PAUSED
-        setIsRecordPaused(e.status === 'RECORDING_STATE_PAUSED');
+        setVideo('muteVideo');
+        xyRTC.current.muteCamera(true);
       }
     });
 
     // 自己开启录制状态改变
     xyRTC.current.on('RecordingStateChanged', (e: IRecordStateChange) => {
-      // 本地开启关闭录制后，RecordStatusNotification没有最后一次上报，因此只能手动处理了
-      // RecordingStateChanged触发，远端肯定没有开启录制
-      setRecordPermission((permission) => ({
-        ...permission,
-        isStartRecord: false,
-      }));
+      console.log('RecordingStateChanged: ', e);
 
-      // 本地开启关闭录制后，RecordStatusNotification没有最后一次上报，因此只能手动处理了
-      // RecordingStateChanged触发，远端肯定没有录制暂停
-      setIsRecordPaused(false);
-
-      if (e.reason === 'XYSDK:963902') {
-        setRecordPermission((permission) => ({
-          ...permission,
-          canRecord: false,
-        }));
-
-        return;
+      // 录制过程中，由于本人和会控都有可能操作，所以需要自己区分是否是本人在录制
+      let isSelfRecord: boolean | undefined;
+      if(e.recordState === RecordStatus.ACTING){
+        isSelfRecord = true;
+      }else if(e.recordState === RecordStatus.IDLE || e.recordState === RecordStatus.IDLE_BY_OTHERS){
+        isSelfRecord = false;
       }
 
-      setRecordStatus(e.recordState);
+      setCloudRecordInfo((prev)=>{
+        return {
+          isSelfRecord: isSelfRecord ?? prev.isSelfRecord,
+          recordStatus: e.recordState
+        }
+      });
 
-      if (e.reason !== 'STATE:200') {
-        message.info(e.message);
-        return;
-      }
-
-      if (e.recordState === RECORD_STATE_MAP.idel) {
+      if (e.recordState === RecordStatus.IDLE) {
         message.info('云端录制完成，录制视频已保存到云会议室管理员的文件夹中');
       }
     });
@@ -509,6 +509,16 @@ function Meeting() {
       console.log('LogUploadResult:', e);
     });
 
+    // 是否有主持权限
+    xyRTC.current.on('HostAuthority', (e: boolean) => {
+      console.log('HostAuthority:', e);
+
+      setConfHost({
+        isHost: e,
+        meetingId: ''
+      });
+    });
+
     // 会控主持人回调
     xyRTC.current.on('ConfHostChanged', (e: IConfHost) => {
       console.log('ConfHostChanged:', e);
@@ -518,13 +528,16 @@ function Meeting() {
 
     // 互动工具回调
     xyRTC.current.on('InteractiveToolInfo', (e: IInteractiveToolInfo) => {
-      setInteractiveState(e);
+      setInteractiveState({
+        ...e,
+        lastProcessType : lastProcessType.current
+      });
     });
 
     // 签到结果
     xyRTC.current.on('SubmitSignatureInfosResult', (e: ISignInfo) => {
       console.log('SubmitSignatureInfosResult:', e);
-      if (e.code !== 0) {
+      if (e.code !== SUCCESS_CODE) {
         message.info('签到失败，请稍候重试');
         return;
       }
@@ -533,16 +546,25 @@ function Meeting() {
 
       setSignInState({
         promp: true,
-        modal: e.code !== 0,
-        isSuccess: e.code === 0,
+        modal: false,
+        isSuccess: true,
       });
     });
 
     return () => {
       // 移除监听事件
-      xyRTC.current.removeAllListeners();
+      xyRTCTemp.removeAllListeners();
     };
   }, []);
+
+  useEffect(() => {
+    // 等候室不能占用麦克风
+    if (holdInfo.isOnhold) {
+      xyRTC.current.stopAudioCapture();
+    } else if (meetingState === MeetingStatus.MEETING) {
+      xyRTC.current.startAudioCapture();
+    }
+  }, [holdInfo.isOnhold]);
 
   // 自定义布局，需要自己处理窗口变化
   useEffect(() => {
@@ -570,6 +592,7 @@ function Meeting() {
         item.position.width > (screenInfo.layoutWidth || 0) * 0.5;
       return isSupportFarControl && isInBigScreen;
     });
+
     setFarEndControl((state) => ({
       ...state,
       callUri: term?.roster.callUri || '',
@@ -610,28 +633,6 @@ function Meeting() {
     setLayout(nextLayout);
   };
 
-  const disableRecord = useMemo(() => {
-    const { isStartRecord, canRecord, confCanRecord } = recordPermission;
-
-    // RecordStatusNotification上报时，isStartRecord可能是本地录制的状态，而我们只关心远端是否开启录制，因此
-    // 用(isStartRecord && recordStatus !== RECORD_STATE_MAP.acting) 判断远端是否开启了录制
-    if (
-      (isStartRecord && recordStatus !== RECORD_STATE_MAP.acting) ||
-      !canRecord ||
-      !confCanRecord
-    ) {
-      return true;
-    }
-
-    if (
-      ![RECORD_STATE_MAP.idel, RECORD_STATE_MAP.acting].includes(recordStatus)
-    ) {
-      return true;
-    }
-
-    return false;
-  }, [recordPermission, recordStatus]);
-
   const disabledPage = useMemo(() => {
     if (settingInfo.model === LayoutModel.CUSTOM) {
       return false;
@@ -668,28 +669,29 @@ function Meeting() {
       enableHidden: true,
     }));
   };
+
   // 定时清理face position
   const updateFaceTimer = (calluri: string) => {
-    let timer = faceInfoTimerRef.current.get(calluri);
+    let timer = AIFaceTimerRef.current.get(calluri);
 
     if (timer) {
       clearTimeout(timer);
     }
 
     timer = setTimeout(() => {
-      facePositionInfoRef.current?.delete(calluri);
-      faceInfoTimerRef.current?.delete(calluri);
+      AIFaceMapRef.current?.delete(calluri);
+      AIFaceTimerRef.current?.delete(calluri);
 
-      setFacePositionInfo(new Map(facePositionInfoRef.current));
+      setAIFaceMap(new Map(AIFaceMapRef.current));
     }, 3000);
 
-    faceInfoTimerRef.current.set(calluri, timer);
+    AIFaceTimerRef.current.set(calluri, timer);
   };
 
   const clearFaceTimer = () => {
-    for (const [key, value] of faceInfoTimerRef.current) {
+    for (const [key, value] of AIFaceTimerRef.current) {
       if (value) clearTimeout(value);
-      if (key) faceInfoTimerRef.current?.delete(key);
+      if (key) AIFaceTimerRef.current?.delete(key);
     }
   };
 
@@ -862,6 +864,7 @@ function Meeting() {
   };
 
   const hangup = (isConfirm = true) => {
+
     if (isConfirm) {
       confirm({
         title: '提示',
@@ -893,6 +896,12 @@ function Meeting() {
     });
   };
 
+  // 重置录制状态
+  const resetRecordStatus = () => {
+    resetCloudRecordInfo();
+    setConfCanRecord(true);
+  };
+
   const endMeeting = () => {
     setAudio('mute');
     setVideo('muteVideo');
@@ -906,30 +915,21 @@ function Meeting() {
     setCallMode(CallMode.AudioVideo);
     setHandStatus(false);
     setDeviceChangeType('');
+    setConfHost({ isHost: false, meetingId: '' });
 
-    facePositionInfoRef.current = new Map();
-    faceInfoRef.current = new Map();
+    AIFaceMapRef.current = new Map();
+    setAIFaceMap(AIFaceMapRef.current);
 
     setConferenceInfo(DEFAULT_MEETING_INFO);
-    setFacePositionInfo(facePositionInfoRef.current);
-    setFaceInfo(faceInfoRef.current);
-
     setFarEndControl((state) => ({ ...state, show: false }));
-
-    // 重置录制状态
-    setIsRecordPaused(false);
-    setRecordStatus(RECORD_STATE_MAP.idel);
-    setRecordPermission({
-      isStartRecord: false,
-      canRecord: true,
-      confCanRecord: true,
-    });
-
+    resetRecordStatus();
     resetInteractive();
     resetSignIn();
-
     clearFaceTimer();
     setSupportAiCaption(false);
+    console.log('endCall stop')
+
+    xyRTC.current.stopAudioCapture();
 
     xyRTC.current.endCall();
 
@@ -937,6 +937,12 @@ function Meeting() {
     ipcRenderer.send('meetingControlWin', false);
 
     ipcRenderer.send('exit-fullscreen');
+
+    ipcRenderer.send('closeScreenRegionShare');
+
+    if (shareContentStatus === ShareContentState.SENDING) {
+      stopShareContent();
+    }
 
     navigate('/join');
 
@@ -946,6 +952,8 @@ function Meeting() {
   };
 
   const stopShareContent = () => {
+    setContentIsPaused(false);
+    setSharingIsManualPaused(false);
     xyRTC.current.stopSendContent();
   };
 
@@ -955,9 +963,10 @@ function Meeting() {
       return;
     }
 
-    const withDesktopAudio = store.get('xyWithDesktopAudio');
+    // const withDesktopAudio = store.get('xyWithDesktopAudio');
 
-    xyRTC.current.startSendContent(withDesktopAudio);
+    // xyRTC.current.startSendContent(withDesktopAudio);
+    setContentThumbnailVisible(true);
   };
 
   // 开启/关闭摄像头
@@ -979,9 +988,11 @@ function Meeting() {
       return;
     }
 
-    if (recordStatus === RECORD_STATE_MAP.idel) {
+    // 录制空闲时可以开启录制
+    if ([RecordStatus.IDLE, RecordStatus.IDLE_BY_OTHERS].includes(recordStatus)) {
       xyRTC.current.startCloudRecord();
-    } else if (recordStatus === RECORD_STATE_MAP.acting) {
+    } else if (isSelfRecord) {
+      // 本人录制中
       xyRTC.current.stopCloudRecord();
     }
   };
@@ -991,7 +1002,6 @@ function Meeting() {
     if (shareContentStatus === 1) {
       return;
     }
-
     try {
       const result = await xyRTC.current.switchLayout(templateModel);
       console.log('switchLayout success: ', result);
@@ -1009,6 +1019,12 @@ function Meeting() {
     store.set('xyLoginInfo', DEFAULT_LOGIN_INFO);
 
     navigate('/');
+  };
+
+  const { layoutWidth, layoutHeight } = screenInfo;
+  const layoutStyle = {
+    width: `${layoutWidth}px`,
+    height: `${layoutHeight}px`,
   };
 
   const setForceFullScreen = async (id = '') => {
@@ -1032,17 +1048,36 @@ function Meeting() {
     setForceFullScreen(forceFullScreenId ? '' : id);
   };
 
-  const openMeetingControlWin = () => {
-    // 会控链接
-    const { members } = xyRTC.current.getConfMgmtUrl();
-
+  const onHostMeetingUrl =  (e: any) => {
+    console.log('HostMeetingUrl: ', e);
+    const { members, pc } = e;
     const conferenceInfo = store.get('xyMeetingInfo');
     const { meetingNumber = '' } = conferenceInfo || {};
+    const url = confHost?.isHost ? pc : members;
 
-    if (members) {
-      ipcRenderer.send('meetingControlWin', { url: members, meetingNumber });
+    if (url) {
+      ipcRenderer.send('meetingControlWin', { url, meetingNumber });
     }
+  }
+
+  useEffect(() => {
+    // 会控链接
+    xyRTC.current.on('HostMeetingUrl',onHostMeetingUrl);
+
+    return ()=>{
+      xyRTC.current.off('HostMeetingUrl', onHostMeetingUrl)
+    }
+  }, [confHost?.isHost]);
+
+  const openMeetingControlWin = () => {
+    xyRTC.current.getConfMgmtUrl();
   };
+
+  const checkHostMeetingPermission = ()=>{
+    const {meetingNumber, meetingId} = store.get('xyMeetingInfo');
+
+    xyRTC.current.checkHostMeetingPermission(meetingNumber, meetingId)
+  }
 
   const renderLayout = () => {
     const layoutLen = layout.length;
@@ -1079,20 +1114,17 @@ function Meeting() {
   };
 
   const renderMeeting = () => {
-    const { layoutWidth, layoutHeight } = screenInfo;
-    const layoutStyle = {
-      width: `${layoutWidth}px`,
-      height: `${layoutHeight}px`,
-    };
-
+    const isLocalRecording =
+      (recordStatus === RecordStatus.ACTING ||
+        RecordStatus.ACTING_BY_OTHERS === recordStatus ||
+        recordStatus === RecordStatus.PAUSE_BY_OTHERS) &&
+      isSelfRecord;
     if (meetingState === 'meeting') {
       return (
         <>
-          <div className="meeting-content">
+          <div id="meeting-content" className={`meeting-content ${!isMac ? 'margin30': ''}`}>
             <PromptInfo
-              recordPermission={recordPermission}
-              isRecordPaused={isRecordPaused}
-              recordStatus={recordStatus}
+              confCanRecord={confCanRecord}
               forceFullScreenId={forceFullScreenId}
               setForceFullScreen={setForceFullScreen}
               isLocalShareContent={shareContentStatus === 1}
@@ -1169,7 +1201,7 @@ function Meeting() {
                 <div className="title">
                   {confHost?.isHost ? '主持会议' : '参会者'}
                 </div>
-                <div className="tag">{confInfo?.visibleEpCount || 1}</div>
+                <div className="tag">{confInfo?.participantCount || 1}</div>
               </div>
 
               {shareContentStatus === 1 ? (
@@ -1210,22 +1242,12 @@ function Meeting() {
               <div
                 onClick={recordOperate}
                 className={`button ${
-                  recordStatus === RECORD_STATE_MAP.acting
-                    ? 'pause_record'
-                    : 'record'
+                  isLocalRecording ? 'pause_record' : 'record'
                 } ${disableRecord ? 'disabled-button' : ''}`}
               >
-                <SVG
-                  icon={
-                    recordStatus === RECORD_STATE_MAP.acting
-                      ? 'record_stop'
-                      : 'record'
-                  }
-                />
+                <SVG icon={isLocalRecording ? 'record_stop' : 'record'} />
                 <div className="title">
-                  {recordStatus === RECORD_STATE_MAP.acting
-                    ? '停止录制'
-                    : '开始录制'}
+                  {isLocalRecording ? '停止录制' : '开始录制'}
                 </div>
               </div>
 
@@ -1240,7 +1262,7 @@ function Meeting() {
                 setHandStatus={setHandStatus}
               />
 
-              {supportAiCaption && <CaptionButton />}
+              {/* {supportAiCaption && <CaptionButton />} */}
 
               <EndCall
                 stopMeeting={() => {
@@ -1267,12 +1289,12 @@ function Meeting() {
         }`}
         appCloseHandler={appCloseHandler}
       >
-        {meetingState === MeetingStatus.MEETING && (
+        {meetingState === 'meeting' && (
           <MeetingHeader conferenceInfo={conferenceInfo} holdInfo={holdInfo} />
         )}
       </AppHeader>
 
-      {meetingState === MeetingStatus.CALLING && (
+      {meetingState === 'calling' && (
         <MeetingLoading conferenceInfo={conferenceInfo} stopMeeting={hangup} />
       )}
 
@@ -1283,7 +1305,9 @@ function Meeting() {
       {!holdInfo?.isOnhold && renderMeeting()}
 
       <SettingModal />
-      {ProcessType.SIGN_IN === processType && <SignIn />}
+      <ContentThumbnail />
+      {/* {ProcessType.SIGN_IN === processType && <SignIn />} */}
+      <SignIn />
     </div>
   );
 }

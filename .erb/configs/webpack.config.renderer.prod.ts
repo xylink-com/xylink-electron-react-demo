@@ -14,7 +14,6 @@ import baseConfig from './webpack.config.base';
 import webpackPaths from './webpack.paths';
 import checkNodeEnv from '../scripts/check-node-env';
 import deleteSourceMaps from '../scripts/delete-source-maps';
-import os from 'os';
 
 checkNodeEnv('production');
 deleteSourceMaps();
@@ -151,6 +150,23 @@ const configuration: webpack.Configuration = {
       },
       isBrowser: false,
       isDevelopment: process.env.NODE_ENV !== 'production',
+    }),
+
+    /**
+     * 区域共享篮筐代码量很少，单独一个页面，也无需注射冗余js
+     */
+    new HtmlWebpackPlugin({
+      inject: false,
+      filename: path.join('screenRegionShare.html'),
+      template: path.join(webpackPaths.srcRendererPath, 'screenRegionShare.html'),
+      minify: {
+        removeAttributeQuotes: true,
+        removeComments: true,
+      },
+      isBrowser: false,
+      env: process.env.NODE_ENV,
+      isDevelopment: process.env.NODE_ENV !== 'production',
+      nodeModules: webpackPaths.appNodeModulesPath,
     }),
   ],
 };

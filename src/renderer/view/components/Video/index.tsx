@@ -6,10 +6,10 @@
  */
 
 import { useRef, useEffect, useMemo } from 'react';
-import { ILayout, Render, XYRTC, XYSlaveRTC } from '@xylink/xy-electron-sdk';
+import { ILayout, XYRTC, XYSlaveRTC } from '@xylink/xy-electron-sdk';
 import xyRTCInstance from '@/utils/xyRTC';
-import './index.scss';
 
+import './index.scss';
 import FaceInfo from './faceInfo';
 import { getSrcByDeviceType } from '@/utils';
 
@@ -18,8 +18,8 @@ interface IProps {
   index: string;
   templateModel?: string;
   isShowFaceInfo?: boolean;
-  toggleForceFullScreen?: () => void;
   xyRTC?: XYRTC | XYSlaveRTC;
+  toggleForceFullScreen?: () => void;
 }
 
 const Video = (props: IProps) => {
@@ -28,22 +28,12 @@ const Video = (props: IProps) => {
     index,
     templateModel,
     isShowFaceInfo,
-    toggleForceFullScreen,
     xyRTC = xyRTCInstance,
+    toggleForceFullScreen,
   } = props;
 
   const videoRef = useRef<HTMLCanvasElement>(null);
   const canvasInfo = useRef<any>(null);
-
-  useEffect(() => {
-    // 有sourceId后，才需要调用渲染函数setVideoRender
-    if (props.item.sourceId) {
-      // 此副作用受sourceId的影响，在其变动时，重新执行此 setVideoRender 方法
-      // 此方法是动态绑定sourceId和canvas元素，SDK内部会启动定时器按照屏幕刷新率30帧/s的方法获取流数据并通过webgl渲染
-      // 此方法设置完成后，第三方不需要关注流的渲染，关注业务逻辑即可
-      xyRTC.setVideoRender(props.item.sourceId, index);
-    }
-  }, [props.item.sourceId, index, xyRTC]);
 
   useEffect(() => {
     if (videoRef.current) {
@@ -78,6 +68,16 @@ const Video = (props: IProps) => {
       }
     }
   }, [props.item]);
+
+  useEffect(() => {
+    // 有sourceId后，才需要调用渲染函数setVideoRender
+    if (props.item.sourceId) {
+      // 此副作用受sourceId的影响，在其变动时，重新执行此 setVideoRender 方法
+      // 此方法是动态绑定sourceId和canvas元素，SDK内部会启动定时器按照屏幕刷新率30帧/s的方法获取流数据并通过webgl渲染
+      // 此方法设置完成后，第三方不需要关注流的渲染，关注业务逻辑即可
+      xyRTC.setVideoRender(props.item.sourceId, index);
+    }
+  }, [props.item.sourceId, index, xyRTC]);
 
   const renderVideoName = () => {
     return (
@@ -119,7 +119,7 @@ const Video = (props: IProps) => {
       return (
         <div className="video-bg">
           <div className="center">
-          <img
+            <img
               className="avatar"
               src={srcUrl}
               alt="avatar"
@@ -187,3 +187,4 @@ const Video = (props: IProps) => {
 };
 
 export default Video;
+

@@ -4,12 +4,11 @@
  * 2. 看本地，本地点开电子铭牌，显示电子铭牌，本地未打开电子铭牌，根据本地是否打开人脸信息显示
  */
 import { memo, useCallback } from 'react';
-import { IFacePosition, ILayout, FaceType } from '@xylink/xy-electron-sdk';
+import { IFacePosition, ILayout, FaceType, IAIFaceInfo } from '@xylink/xy-electron-sdk';
 import { useRecoilValue } from 'recoil';
 import {
+  AIFaceMapState,
   broadCastState,
-  faceInfoMapState,
-  facePositionInfoMapState,
   faceTypeState,
 } from '@/utils/state';
 import { LOCAL_VIEW_ID } from '@/enum';
@@ -20,8 +19,7 @@ interface IProps {
 
 const FaceInfo = (props: IProps) => {
   const { item } = props;
-  const faceInfo = useRecoilValue(faceInfoMapState); // 人脸名称等信息
-  const facePositionInfoMap = useRecoilValue(facePositionInfoMapState); // 人脸位置等信息
+  const AIFaceMap = useRecoilValue(AIFaceMapState); // 人脸位置等信息
   const faceType = useRecoilValue(faceTypeState); // 远端人脸 显示类型
   const broadCast = useRecoilValue(broadCastState); // 是否广播本地电子铭牌
 
@@ -91,11 +89,11 @@ const FaceInfo = (props: IProps) => {
     ]
   );
 
-  const facePositionInfo = facePositionInfoMap.get(item.roster.callUri);
+  const AIFace = AIFaceMap.get(item.roster.callUri);
 
   // 未开启摄像、content、无人脸信息 以上情况不显示
   if (
-    !(item.roster.state === 5 && !item.roster.isContent && facePositionInfo)
+    !(item.roster.state === 5 && !item.roster.isContent && AIFace)
   ) {
     return null;
   }
@@ -104,12 +102,12 @@ const FaceInfo = (props: IProps) => {
     calluri = '',
     type,
     isLocal = false,
-    positionArr = [],
-  } = facePositionInfo;
+    faceInfoArr = [],
+  } = AIFace;
   const isRemoteElectronicBadge = type === 2; // 远端打开了电子铭牌
   const isDetect = faceType === FaceType.Detect;
   const isElectronicBadge = faceType === FaceType.EletronicBadge;
-  const positionLen = positionArr.length;
+  const positionLen = faceInfoArr.length;
 
   // 本地/远端开启电子铭牌，显示电子铭牌
   const isBroadCast =
@@ -117,17 +115,16 @@ const FaceInfo = (props: IProps) => {
 
   return (
     <>
-      {positionArr.map((position: IFacePosition, index: number) => {
+      {faceInfoArr.map((faceInfo: IAIFaceInfo, index: number) => {
         const key = calluri + index;
-        const { faceId } = position;
-        const { userName = '', userTitle = '' } = faceInfo.get(faceId) || {};
+        const { userName = '', userTitle = '' } = faceInfo|| {};
 
         if (!userName) {
           return null;
         }
 
         const { startX, startY, width, height } =
-          getFacePosition(position) || {};
+          getFacePosition(faceInfo.position) || {};
 
         const style = {
           width: width + 'px',

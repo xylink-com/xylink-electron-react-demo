@@ -1,4 +1,4 @@
-import { IModel ,TemplateModel} from "@xylink/xy-electron-sdk";
+import { ContentCaptureType, IAppThumbnail, IModel, IMonitorThumbnail, RecordStatus, TemplateModel } from "@xylink/xy-electron-sdk";
 import { LocalLanguage, ShowLanguage } from "./enum";
 
 /**
@@ -51,6 +51,10 @@ export interface ILoginData {
   extID?: string;
   extUserId?: string;
   displayName?: string;
+  authCode?: string,
+  isTempUser?: boolean,
+  channelId?: string,
+  token?: string
 }
 
 /**
@@ -84,4 +88,26 @@ export interface ILanguageList {
   show: {
     [key in ShowLanguage]: string;
   };
+}
+
+/**
+ * 录制详情
+ * 
+ * @property recordStatus 录制状态
+ * @property isSelfRecord 是否是本地录制
+ */
+export interface ICloudRecordInfo{
+  recordStatus: RecordStatus;
+  isSelfRecord: boolean;
+}
+
+/**
+ * 共享详情
+ */
+export interface IContentInfo {
+  key: React.Key; // 是不是屏幕区域共享
+  screenRegionSharing?: boolean;
+  type: ContentCaptureType;
+  info: IAppThumbnail | IMonitorThumbnail;
+  name: React.ReactNode;
 }
