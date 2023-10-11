@@ -34,10 +34,14 @@ const Device = () => {
   const speakerLevelTimer = useRef<ReturnType<typeof setInterval> | null>(null);
 
   useEffect(() => {
+    // 会外使用麦克风需要用户自己处理麦克风采集
+    if (!isInMeeting) {
+      xyRTC.startAudioCapture();
+    }
     return () => {
       // 会外 离开此页面时，释放音频
       if (!isInMeeting) {
-        xyRTC.releaseAudioFocus();
+        xyRTC.stopAudioCapture();
       }
     };
   }, [isInMeeting]);

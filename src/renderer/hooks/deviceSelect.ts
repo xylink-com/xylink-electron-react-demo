@@ -1,20 +1,29 @@
 import xyRTC from '@/utils/xyRTC';
 import { useEffect, useMemo } from 'react';
-import { useRecoilState, useSetRecoilState } from 'recoil';
+import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
 
 import {
   selectedDeviceState,
   deviceListState,
+  callState,
 } from '@/utils/state';
 import { IDeviceList, ICurrentDevice, DeviceTypeKey } from '@xylink/xy-electron-sdk';
+import { MeetingStatus } from '@/type/enum';
 
 const useDeviceSelect = () => {
   const setSelectedDevice = useSetRecoilState(selectedDeviceState);
   const [deviceList, setDeviceList] = useRecoilState(deviceListState);
+  const meetingState = useRecoilValue(callState);
+
+  const isInMeeting = meetingState === MeetingStatus.MEETING;
 
   const currentDeviceCallback = (currentDevice: Partial<ICurrentDevice>) => {
     console.log('currentDeviceCallback currentDevice: ', currentDevice);
     setSelectedDevice((prevState: ICurrentDevice) => ({ ...prevState, ...currentDevice }));
+     // 会外使用麦克风需要用户自己处理麦克风采集，设备更新需要重新捕获麦克风
+     if(currentDevice.microphone && !isInMeeting){
+      xyRTC.startAudioCapture();
+    }
   }
   const deviceCallback = (deviceList: Partial<IDeviceList>) => {
     console.log('deviceCallback deviceList: ', deviceList)

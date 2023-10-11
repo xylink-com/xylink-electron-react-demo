@@ -176,8 +176,6 @@ function Meeting() {
   const AIFaceTimerRef = useRef(new Map());
 
   const videoStreamRef = useRef<ILayout[]>([]);
-
-  const lastProcessType = useRef<ProcessType>(ProcessType.NONE);
   // 共享状态
   const shareContentStatusRef = useRef(0);
 
@@ -198,10 +196,6 @@ function Meeting() {
     }
     return false;
   }, [confCanRecord, recordStatus, isSelfRecord]);
-
-  useEffect(()=>{
-    lastProcessType.current = processType;
-  },[processType]);
 
   useEffect(() => {
     // mac
