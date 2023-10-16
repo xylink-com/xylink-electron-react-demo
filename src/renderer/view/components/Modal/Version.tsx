@@ -8,10 +8,10 @@ const Version = () => {
   const [about, setAbout] = useState({ version: '', update: '' });
 
   useEffect(() => {
-    const splitData = xyRTC.getVersion()?.split('- build on');
+    const { version, buildTime} = xyRTC.getVersion();
     const about = {
-      version: splitData[0],
-      update: splitData[1],
+      version,
+      update: buildTime,
     };
 
     setAbout(about);

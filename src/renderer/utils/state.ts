@@ -1,20 +1,22 @@
 import { DEFAULT_SETTING_INFO } from '@/enum';
-import { TSettingType } from '@/type';
+import { ICloudRecordInfo, TSettingType } from '@/type';
 import { MeetingStatus, ShowLanguage } from '@/type/enum';
 import {
   CallMode,
   EventType,
   IInteractiveToolInfo,
   ProcessType,
-  IAIFaceInfo,
-  IAIFaceRecv, 
-  IDeviceList
+  IAIFaceRecv,
+  IDeviceList,
+  ContentCaptureType,
+  RecordStatus,
+  IOnHoldInfo,
 } from '@xylink/xy-electron-sdk';
 import { atom } from 'recoil';
 import store from './store';
 
 /**
- * 会议状态 xyLogin/externalLogin/logined/calling/meeting
+ * 会议账号 xyLogin/externalLogin/logined/calling/meeting
  *
  */
 export const callState = atom({
@@ -90,7 +92,6 @@ export const selectedDeviceState = atom({
   },
 });
 
-
 export const deviceListState = atom<IDeviceList>({
   key: 'deviceList',
   default: {
@@ -158,11 +159,13 @@ export const farEndControlState = atom<{
   show: boolean;
   callUri: string;
   feccOri?: number;
+  disabled: boolean;
 }>({
   key: 'farEndControl',
   default: {
     show: false, // 是否显示
     callUri: '',
+    disabled: false,
   },
 });
 
@@ -187,7 +190,7 @@ export const interactiveState = atom<IInteractiveToolInfo>({
       dialogSubContent: '',
       dialogTitle: '',
       notifyContent: '',
-      notifyLabel: ''
+      notifyLabel: '',
     },
     duration: 0,
     endAuto: false,
@@ -196,6 +199,7 @@ export const interactiveState = atom<IInteractiveToolInfo>({
     meetingId: '',
     processType: ProcessType.NONE,
     webViewUrl: '',
+    resultWebViewUrl: '',
     questionnaireId: '',
     business: ''
   },
@@ -218,7 +222,6 @@ export const signInState = atom({
   }
 })
 
-
 /**
  * 同传字幕展示的语言
  */
@@ -236,19 +239,64 @@ export const captionIsStartState = atom({
   default: false
 })
 
-
 /**
- * AI Face 人脸信息
+ * AI Face 人脸识别信息
  */
-export const faceInfoMapState = atom<Map<number, IAIFaceInfo>>({
-  key: 'faceInfoMap',
+export const AIFaceMapState = atom<Map<string, IAIFaceRecv>>({
+  key: 'AIFaceMap',
   default: new Map(),
 });
 
 /**
- * AI Face 位置信息
+ * 共享内容列表弹窗
  */
-export const facePositionInfoMapState = atom<Map<string, IAIFaceRecv>>({
-  key: 'facePositionInfoMap',
-  default: new Map(),
+export const contentThumbnailModalState =  atom({
+  key: 'contentThumbnailModal',
+  default: false,
+});
+
+/**
+ * 共享状态（暂停/共享中）
+ */
+export const contentSharingIsPaused = atom({
+  key: 'contentSharingState',
+  default: false,
+});
+
+/**
+ * 是不是手动暂停
+ */
+export const contentSharingIsManualPaused = atom({
+  key: 'contentSharingManualState',
+  default: false,
+});
+
+/**
+ * 共享类型
+*/
+export const shareContentType = atom<ContentCaptureType>({
+  key: 'shareContentType',
+  default: ContentCaptureType.INVALID,
+});
+
+/**
+ * 录制状态
+ */
+
+export const cloudRecordInfo = atom<ICloudRecordInfo>({
+  key: 'cloudRecordInfo',
+  default:{
+    recordStatus: RecordStatus.IDLE,
+    isSelfRecord: false
+  },
+});
+
+/**
+ * 等候室状态
+ */
+export const holdInfoState = atom<IOnHoldInfo>({
+  key: 'holdInfo',
+  default:{
+    isOnhold: false
+  },
 });

@@ -7,14 +7,17 @@ const PROTOCOL = 'xylink-electron';
 
 export let resolveHtmlPath: (htmlFileName: string, hashName?: string) => string;
 
-export const isMac = process.platform === 'darwin';
-export const isWin = process.platform === 'win32';
-export const isDevelopment = process.env.NODE_ENV === 'development';
+const { platform, env } = process;
+
+export const isMac = platform === 'darwin';
+export const isWin = platform === 'win32';
+export const isLinux = platform === 'linux';
+export const isDevelopment = env.NODE_ENV === 'development';
 
 if (isDevelopment) {
   const port = process.env.PORT || 1212;
   resolveHtmlPath = (htmlFileName: string, hashName = '') => {
-    const url = `http://localhost:${port}#${hashName}`;
+    const url = `http://localhost:${port}/${htmlFileName}#${hashName}`;
 
     return url;
   };

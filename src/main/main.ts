@@ -1,5 +1,6 @@
 import {
   app,
+  screen,
   BrowserWindow,
   globalShortcut,
   ipcMain,
@@ -43,10 +44,15 @@ log.info('process info:', {
   app: app.getAppPath(),
 });
 
+const width = 960;
+const height = 600;
+
 // 主窗口引用
 let mainWindow: BrowserWindow | null = null;
 // 会控窗口
 let meetingControlWindow: BrowserWindow | null = null;
+// 区域共享弹窗
+let screenRegionShareWindow: BrowserWindow | null = null;
 
 const icon = getAssetPath('logo512.png');
 
@@ -138,18 +144,17 @@ ipcMain.on('relaunch', () => {
 });
 
 // 打开会控弹窗
+// 打开会控弹窗
 ipcMain.on('meetingControlWin', (event, arg) => {
-  if (!arg) {
-    if (meetingControlWindow) {
-      meetingControlWindow.close();
-      meetingControlWindow = null;
-    }
+  if (meetingControlWindow) {
+    meetingControlWindow.close();
+    meetingControlWindow = null;
   }
 
   if (arg && arg.url) {
     meetingControlWindow = new BrowserWindow({
-      width: 1000,
-      height: 700,
+      width,
+      height,
       frame: true,
       title: arg.meetingNumber,
       icon,
@@ -168,6 +173,109 @@ ipcMain.on('meetingControlWin', (event, arg) => {
   }
 });
 
+/**
+ * 计算区域共享弹窗位置的物理像素
+ * @returns {Rectangle}
+ */
+function getContentWindowPhysicalRect() {
+  let rect = { x: 0, y: 0, width: 0, height: 0 };
+  if (screenRegionShareWindow) {
+    const { x, y, width, height } = screenRegionShareWindow.getContentBounds();
+    rect = screen.dipToScreenRect(null, {
+      x: Math.ceil(x + 4) + 1,
+      y: Math.ceil(y + 24) + 1,
+      width: Math.floor(width - 8) - 1,
+      height: Math.floor(height - 28) - 1,
+    });
+  }
+  return rect;
+}
+
+/**
+ * 更新区域共享的位置信息
+ */
+function updateContentRegion() {
+  mainWindow?.webContents.send('updateDisplayRegion', getContentWindowPhysicalRect());
+}
+
+/**
+ * screenRegionShare.html中用到，区域共享时监听鼠标是否在篮筐上，从而决定是否让弹窗可以点击穿透
+ */
+ipcMain.on('ignoreMouseEvent',(event, ignore)=>{
+  if(ignore){
+    screenRegionShareWindow?.setIgnoreMouseEvents(true, { forward: true });
+  }else{
+    screenRegionShareWindow?.setIgnoreMouseEvents(false);
+  }
+});
+
+// 关闭区域共享
+ipcMain.on('closeScreenRegionShare', (event, arg) => {
+  screenRegionShareWindow?.close();
+});
+
+// 区域共享
+ipcMain.on('screenRegionShare', (event, arg) => {
+  if (screenRegionShareWindow) {
+    screenRegionShareWindow.close();
+    screenRegionShareWindow = null;
+  }
+
+  const { workAreaSize } = screen.getPrimaryDisplay();
+  console.log('workAreaSize ===> ', workAreaSize);
+
+  screenRegionShareWindow = new BrowserWindow({
+    width: 800,
+    height: 600,
+    frame: false,
+    transparent: true,
+    minHeight: Math.ceil(workAreaSize.height * 0.3),
+    minWidth:  Math.ceil(workAreaSize.width * 0.3),
+    movable: true,
+    resizable: true,
+    minimizable: false,
+    maximizable: false,
+    fullscreenable: false,
+    closable: true,
+    webPreferences: {
+      nodeIntegration: true,
+      contextIsolation: false // 否则页面无法用require
+    }
+  });
+
+  // 区域共享弹窗不显示在任务栏中，禁止用户手动关闭弹窗
+  screenRegionShareWindow.setSkipTaskbar(true);
+
+  // 区域共享弹窗始终在所有应用的最上层
+  screenRegionShareWindow.setAlwaysOnTop(true, 'screen-saver');
+
+  // screenRegionShareWindow.loadURL(resolveHtmlPath('index.html','/screenRegionShare'));
+  screenRegionShareWindow.loadURL(resolveHtmlPath('screenRegionShare.html'));
+
+  mainWindow?.webContents.send('startRegionShare', getContentWindowPhysicalRect());
+
+  screenRegionShareWindow.on('close', () => {
+    screenRegionShareWindow = null;
+  });
+
+  screenRegionShareWindow.on('resized', () => {
+    updateContentRegion();
+  });
+
+  // 移动之前，应该先把共享暂停，然后 moved 之后再
+  screenRegionShareWindow.on('will-move', () => {
+    mainWindow?.webContents.send('regionSharingWindowWillChange');
+  });
+
+  screenRegionShareWindow.on('will-resize', () => {
+    mainWindow?.webContents.send('regionSharingWindowWillChange');
+  });
+
+  screenRegionShareWindow.on('moved', () => {
+    updateContentRegion();
+  });
+});
+
 // 创建主窗口
 function createMainWindow() {
   const window = new BrowserWindow({
@@ -178,7 +286,8 @@ function createMainWindow() {
     webPreferences: {
       nodeIntegration: true,
       contextIsolation: false,
-      enableRemoteModule: true,
+      // electron 20 以上默认开启了沙盒模式，js会报错
+      sandbox: false,
     },
     title: '',
     center: true,
