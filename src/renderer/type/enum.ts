@@ -28,3 +28,13 @@ export enum LocalLanguage{
   ENGLISH = 'English',
 }
 
+/**
+ * 背景图类型
+ * 
+ * @value COSTOM 自定义背景
+ * @value PRESET 预置背景
+*/
+export enum IVirtualBgType {
+  COSTOM,
+  PRESET,
+}

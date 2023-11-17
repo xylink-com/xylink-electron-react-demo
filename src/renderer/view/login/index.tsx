@@ -7,18 +7,24 @@ import { useNavigate } from 'react-router-dom';
 import { Form, Input, Row, Button, Checkbox, message } from 'antd';
 import { CheckboxChangeEvent } from 'antd/lib/checkbox';
 import xyRTC from '@/utils/xyRTC';
+import { shell } from 'electron';
 import store from '@/utils/store';
 import {
   DEFAULT_LOGIN_INFO,
   DEFAULT_USER_INFO,
   PRIVACY_AGREEMENT_URL,
   XYLINK_AGREEMENT_URL,
+  IVideoEffectTabPaneType,
 } from '@/enum';
+import { useSetRecoilState } from 'recoil';
 import { LoginStatus, MeetingStatus } from '@/type/enum';
 import Section from '@/components/Section';
 import Setting from '../components/Setting';
 import { SDK_ERROR_MAP } from '@/enum/error';
-import { shell } from 'electron';
+import { bgManager } from '@/utils/virtualBgManager';
+import videoEffectStore from '@/utils/videoEffectStore';
+import { initVideoEffect } from '@/utils/initVideoEffect';
+import { videoEffectTab, unLogin } from '@/utils/state';
 import { ILoginState } from '@xylink/xy-electron-sdk';
 import { ILoginData } from '@/type';
 
@@ -28,6 +34,8 @@ const { XY, EXTERNAL } = MeetingStatus;
 
 const Login = () => {
   const navigate = useNavigate();
+  const setVideoEffectTab = useSetRecoilState(videoEffectTab);
+  const setIsUnLogin = useSetRecoilState(unLogin);
   const [userInfo, setUserInfo] = useState(() => {
     const cacheUserInfo = store.get('xyUserInfo');
 
@@ -40,12 +48,27 @@ const Login = () => {
   const [verifyDisabled, setVerifyDisabled] = useState(true);
 
   useEffect(() => {
+    setIsUnLogin(true);
+    // 重置虚拟背景，美颜等效果
+    initVideoEffect.reset();
+    setVideoEffectTab(IVideoEffectTabPaneType.VIRTUAL_BG);
+
     const loginStateHandler = (e: ILoginState) => {
       const { state, info, error } = e;
 
       if (state === LoginStatus.Logined) {
         store.set('xyLoginInfo', info);
 
+        // 更新虚拟背景和美颜的 userId，绑定三方账号
+        if (info) {
+          const userId = `${info.userId}`;
+
+          bgManager.setUser(userId);
+          videoEffectStore.setUser(userId);
+        }
+
+        setIsUnLogin(false);
+        initVideoEffect.init();  // 初始化虚拟背景
         navigate('join');
       } else if (state === LoginStatus.Logouted) {
         if (error === 'XYSDK:969001') {
@@ -110,7 +133,7 @@ const Login = () => {
 
       xyRTC.login(phone, password);
     } else {
-      const { extID, extUserId, displayName } = e;
+      const { extID = '', extUserId = '', displayName = '' } = e;
 
       xyRTC.loginExternalAccount(extID, extUserId, displayName);
     }

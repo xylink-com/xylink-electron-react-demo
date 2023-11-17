@@ -103,3 +103,8 @@
   color: $primary-color;
   cursor: pointer;
 }
+
+// 视频镜像
+.xy-video-flip {
+  transform: rotateY(180deg);
+}

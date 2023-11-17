@@ -14,13 +14,12 @@ import {
   DEFAULT_SETTING_INFO,
   LAYOUT_MODE_LIST,
   LAYOUT_MODE_MAP,
-  RESOLUTION_LIST,
 } from '@/enum';
 import store from '@/utils/store';
 import xyRTC from '@/utils/xyRTC';
 import { ipcRenderer } from 'electron';
 import { CheckboxChangeEvent } from 'antd/lib/checkbox';
-import { useRecoilState, useRecoilValue } from 'recoil';
+import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
 import {
   broadCastState,
   callState,
@@ -29,7 +28,7 @@ import {
   withDesktopAudioState,
   localResolutionState,
 } from '@/utils/state';
-import { FaceType, IModel } from '@xylink/xy-electron-sdk';
+import { FaceType, IModel, TFaceType } from '@xylink/xy-electron-sdk';
 import { MeetingStatus } from '@/type/enum';
 import { RuleObject } from 'antd/lib/form';
 import { StoreValue } from 'antd/lib/form/interface';
@@ -41,8 +40,7 @@ const { Option } = Select;
 const Common = () => {
   const [settingInfo, setSettingInfo] = useRecoilState(settingInfoState);
   const meetingState = useRecoilValue(callState);
-  const [selectedResolution, setSelectedResolution] =
-    useRecoilState(localResolutionState);
+  const setSelectedResolution = useSetRecoilState(localResolutionState);
   const [faceType, setFaceType] = useRecoilState(faceTypeState);
   const [withDesktopAudio, setWithDesktopAudio] = useRecoilState(
     withDesktopAudioState
@@ -123,7 +121,7 @@ const Common = () => {
 
     setFaceType(enable ? FaceType.EletronicBadge : '');
 
-    xyRTC?.enableFaceDetectMode(faceType, enable);
+    xyRTC?.enableFaceDetectMode(faceType as TFaceType, enable);
   };
 
   // 选择人脸信息展示模式

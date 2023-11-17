@@ -1,6 +1,5 @@
 /**
  * 会中底部按钮"更多" 包含设置和键盘功能
- *
  */
 import { useState, useEffect } from 'react';
 import { message, Popover } from 'antd';
@@ -13,6 +12,7 @@ import {
   settingModalState,
   toolbarState,
   videoState,
+  currentTabState,
   farEndControlState
 } from '@/utils/state';
 import { CallMode } from '@xylink/xy-electron-sdk';
@@ -22,6 +22,7 @@ import './index.scss';
 const More = () => {
   const [callMode, setCallMode] = useRecoilState(callModeState);
   const [visible, setVisible] = useState(false);
+  const setCurrentTabState = useSetRecoilState(currentTabState);
   const setSettingVisible = useSetRecoilState(settingModalState);
   const setToolVisible = useSetRecoilState(toolbarState);
   const [farEndControl, setFarEndControl] = useRecoilState(farEndControlState);
@@ -85,6 +86,15 @@ const More = () => {
         }}
       >
         <NumberKeyBoard>键盘</NumberKeyBoard>
+      </li>
+      <li
+        onClick={() => {
+          setVisible(false);
+          setSettingVisible(true);
+          setCurrentTabState('video-effect');
+        }}
+      >
+        虚拟背景和美颜
       </li>
       <li
         onClick={() => {

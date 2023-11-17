@@ -1,4 +1,4 @@
-import { DEFAULT_SETTING_INFO } from '@/enum';
+import { DEFAULT_SETTING_INFO, IVideoEffectTabPaneType } from '@/enum';
 import { ICloudRecordInfo, TSettingType } from '@/type';
 import { MeetingStatus, ShowLanguage } from '@/type/enum';
 import {
@@ -299,4 +299,28 @@ export const holdInfoState = atom<IOnHoldInfo>({
   default:{
     isOnhold: false
   },
+});
+
+/**
+ * 是否开启本地视频镜像
+ */
+export const localVideoFlip = atom<boolean>({
+  key: 'localVideoFlip',
+  default: store.get('xyOpenLocalVideoFlip'),
+});
+
+/**
+ * 滤镜、美颜、虚拟背景 Tab 
+ */
+export const videoEffectTab = atom<IVideoEffectTabPaneType>({
+  key: 'videoEffectTabPaneKey',
+  default: IVideoEffectTabPaneType.VIRTUAL_BG,
+});
+
+/**
+ * 是否未登录
+ */
+export const unLogin = atom<boolean>({
+  key: 'unLogin',
+  default: true,
 });

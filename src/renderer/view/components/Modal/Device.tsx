@@ -3,14 +3,16 @@
  */
 import xyRTC from '@/utils/xyRTC';
 import { useState, useEffect, useRef } from 'react';
-import { useRecoilValue } from 'recoil';
-import { Button, Select } from 'antd';
+import { useRecoilValue, useRecoilState } from 'recoil';
+import { Button, Select, Switch } from 'antd';
 import { AudioOutlined, SoundOutlined } from '@ant-design/icons';
 import path from 'path';
 import {
   callState,
+  localVideoFlip,
   selectedDeviceState,
 } from '@/utils/state';
+import store from '@/utils/store';
 import { MeetingStatus } from '@/type/enum';
 import useDeviceSelect from '@/hooks/deviceSelect'
 import { DeviceTypeKey } from '@xylink/xy-electron-sdk';
@@ -28,6 +30,7 @@ const Device = () => {
   const [testSpeakerStatus, setTestSpeakerStatus] = useState(false);
   const [micLevel, setMicLevel] = useState(0); // 音频输入级别
   const [speakerLevel, setSpeakerLevel] = useState(0); // 音频输出级别
+  const [videoFlip, setVideoFlip] = useRecoilState(localVideoFlip);
 
   const testSpeakerStatusRef = useRef(false);
   const micLevelTimer = useRef<ReturnType<typeof setInterval> | null>(null);
@@ -135,6 +138,16 @@ const Device = () => {
                   );
                 })}
               </Select>
+            </div>
+          </div>
+
+          <div className="item">
+            <div className="key">视频镜像</div>
+            <div className="value">
+              <Switch checked={videoFlip} onChange={(checked) => {
+                setVideoFlip(checked);
+                store.set('xyOpenLocalVideoFlip', checked);
+              }} />
             </div>
           </div>
 

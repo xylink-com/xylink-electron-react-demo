@@ -1,0 +1,45 @@
+@import '~@/assets/style/var.scss';
+
+.video-filter-wrapper {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+}
+
+.video-filter-item {
+    cursor: pointer;
+    text-align: center;
+    color: $lighter-color;
+    font-size: 12px;
+
+    &-label {
+        padding-top: 4px;
+    }
+
+    &.selected-item {
+        color: $primary-color;
+        
+        .video-filter-item-inner {
+            border-color: $primary-color;
+        }
+    }
+
+    &-inner {
+        height: 54px;
+        width: 54px;
+        border-radius: 3px;
+        overflow: hidden;
+        display: flex;
+        border: 2px solid transparent;
+
+        &:hover {
+            border-color: $primary-color;
+        }
+
+        img, .video-effect-unset-item {
+            height: 48px;
+            width: 48px;
+            margin: auto;
+        }
+    }
+}
