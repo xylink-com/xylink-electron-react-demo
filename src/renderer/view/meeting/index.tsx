@@ -143,7 +143,7 @@ function Meeting() {
   const [holdInfo, setHoldInfo] = useRecoilState(holdInfoState);
   // 会控下发主会场
   const [chirmanUri, setChirmanUri] = useState('');
-  const [confHost, setConfHost] = useState({ meetingId: '', isHost: false });
+  const [confHost, setConfHost] = useState({ isHost: false });
 
   const [meetingState, setMeetingState] = useRecoilState(callState);
   const settingInfo = useRecoilValue(settingInfoState);
@@ -232,9 +232,6 @@ function Meeting() {
           // xyRTC.current.checkAiCaptionSupport();
 
           setMeetingState(MeetingStatus.MEETING);
-          setVideo(
-            store.get('xyMeetingInfo').muteVideo ? 'muteVideo' : 'unmuteVideo'
-          );
         }
 
         xyRTC.current.broadcastEletronicBadge(broadCast);
@@ -794,7 +791,7 @@ function Meeting() {
           ? currentPage - 1
           : type === 'home'
           ? 0
-          : type;
+          : currentPage;
 
       xyRTC.current.switchPage(targetPage).then(
         (res: any) => console.log('switch page success: ', res),
@@ -872,7 +869,6 @@ function Meeting() {
 
   const endMeeting = () => {
     setAudio('mute');
-    setVideo('muteVideo');
     setMeetingState(MeetingStatus.CALLING);
     setLayout([]);
     setPageInfo(DEFAULT_PAGE_INFO);
@@ -883,7 +879,9 @@ function Meeting() {
     setCallMode(CallMode.AudioVideo);
     setHandStatus(false);
     setDeviceChangeType('');
-    setConfHost({ isHost: false, meetingId: '' });
+    setConfHost({ isHost: false });
+    // 退出会议时把视频是否静音还原
+    setVideo(store.get('xyMeetingInfo').muteVideo ? 'muteVideo' : 'unmuteVideo');
 
     AIFaceMapRef.current = new Map();
     setAIFaceMap(AIFaceMapRef.current);

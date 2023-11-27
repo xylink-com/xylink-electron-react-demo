@@ -1,7 +1,7 @@
-import { ILanguageList, ILayoutModelMap } from '@/type';
+import { ILanguageList, ILayoutModelMap, IVideoEffectStore } from '@/type';
 import { ACCOUNT, SERVER } from '@/config';
 import { MeetingStatus } from '@/type/enum';
-import { DeviceTypeKey, LayoutModel, TemplateModel } from '@xylink/xy-electron-sdk';
+import { DeviceTypeKey, LayoutModel, TemplateModel, VideoBeautyStyle, VideoFilterStyle } from '@xylink/xy-electron-sdk';
 
 // 服务协议
 export const XYLINK_AGREEMENT_URL =
@@ -204,3 +204,52 @@ export const CONTENT_PAGE_SIZE = 1000000;
 
 /** 轮询更新共享弹窗中的缩略图列表，如果传 0，则不做轮询 */
 export const CONTENT_LOOP_INTERVAL = 2000;
+
+/**
+ * 虚拟背景 tab 页签的 key
+ * 
+ * @value VIRTUAL_BG 虚拟背景
+ * @value BEAUTY 美颜
+ * @value FILTER 滤镜
+*/
+export enum IVideoEffectTabPaneType {
+  VIRTUAL_BG = 'virtual-bg',
+  BEAUTY = 'beauty',
+  FILTER = 'filter'
+}
+
+/**
+ * 虚拟背景配置
+ * 
+ * @param {string} VIRTUALIZATION - 背景虚化
+ * @param {number} MAX_IMG_SIZE - 图片最大值，10MB
+ * @param {string} ALLOW_MIME - 允许上传的图片类型
+ * @param {number} MAX_CUSTOM_NUM - 最大自定义图片数量
+ */
+export const VIRTUAL_BG = {
+  VIRTUALIZATION: 'VIRTUALIZATION',
+  MAX_IMG_SIZE: 10,
+  ALLOW_MIME: 'image/jpeg, image/png',
+  MAX_CUSTOM_NUM: 10,
+} as const;
+
+/** 保存自定义背景图的目录名，在 userData 目录下会新建这个目录 */
+export const VIRTUAL_BG_DIR = 'virtual-bg';
+
+/**
+ * 虚拟背景/美颜/滤镜 默认配置
+ */
+export const DEFAULT_VIDEO_EFFECT_CONFIG: IVideoEffectStore = {
+  selected: {
+    beauty: { style: VideoBeautyStyle.NONE },
+    filter: { style: VideoFilterStyle.NONE },
+  },
+
+  beautyMap: {},
+  filterMap: {},
+
+  virtualBg: {
+    list: []
+  },
+}
+

@@ -450,3 +450,13 @@ if (!app.requestSingleInstanceLock()) {
       console.log('whenReady error:', error);
     });
 }
+
+// 获取 userData 目录
+ipcMain.on('getUserDataDir', () => {
+  mainWindow?.webContents.send('getUserDataDir', app.getPath('userData'));
+});
+
+// 获取 assets 目录
+ipcMain.on('getAssetsDir', () => {
+  mainWindow?.webContents.send('getAssetsDir', getAssetPath());
+});

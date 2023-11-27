@@ -236,3 +236,17 @@
   cursor: pointer;
   z-index: 999;
 }
+
+.ant-slider {
+  &-track {
+    background-color: $primary-color;
+  }
+
+  &:hover &-track {
+    background-color: $primary-color;
+  }
+
+  &-handle {
+    border-width: 0px;
+  }
+}

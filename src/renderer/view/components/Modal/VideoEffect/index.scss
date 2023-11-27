@@ -1,0 +1,88 @@
+@import '~@/assets/style/var.scss';
+
+.video-effect-container {
+    width: 100%;
+
+    .video-view {
+        position: relative;
+        width: fit-content;
+
+        canvas {
+            background-color: #000;
+        }
+
+        .video-effect-contrast-btn {
+            width: 24px;
+            height: 24px;
+            cursor: pointer;
+            border-radius: $border-radius;
+            background-image: url(./assets/icons/originImage_normal.png);
+            background-repeat: no-repeat;
+            background-size: contain;
+
+            &-disabled {
+                cursor: default;
+                background-image: url(./assets/icons/originImage_disable.png);
+            }
+
+            &:not(&-disabled) {
+                &:hover {
+                    background-image: url(./assets/icons/originImage_hover.png);
+                }
+    
+                &:active {
+                    background-image: url(./assets/icons/originImage_selected.png);
+                }
+            }
+        }
+
+        &:hover .video-effect-level {
+            display: flex;
+        }
+
+        .video-effect-level {
+            position: absolute;
+            bottom: 8px;
+            width: 300px;
+            left: 50%;
+            padding: 0 12px;
+            border-radius: $border-radius;
+            transform: translateX(-50%);
+            background-color: rgba(0, 0, 0, 0.5);
+            display: none;
+            align-items: center;
+            justify-content: space-between;
+        }
+    }
+
+    .ant-space-item {
+        width: 100%;
+
+        .ant-tabs-tab-btn {
+            font-size: 13px;
+        }
+    }
+
+    .ant-tabs .ant-tabs-nav {
+        margin-bottom: 0;
+    }
+
+    .ant-tabs-tab {
+        padding: 8px 0;
+    }
+
+    .ant-tabs-tabpane {
+        max-height: 140px;
+        padding-top: 16px;
+        padding: 16px 2px;
+        overflow: auto;
+
+        &::-webkit-scrollbar {
+            width: 4px;
+        }
+        &::-webkit-scrollbar-thumb {
+            border-radius: 2px;
+            background-color: #e5e7f1;
+        }
+    }
+}

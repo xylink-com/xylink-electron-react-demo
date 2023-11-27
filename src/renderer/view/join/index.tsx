@@ -8,8 +8,8 @@ import xyRTC from '@/utils/xyRTC';
 import Section from '@/components/Section';
 import Setting from '../components/Setting';
 import { KICK_OUT_MAP } from '@/enum/error';
-import { useRecoilState } from 'recoil';
-import { deviceCheckFinishedState } from '@/utils/state';
+import { useRecoilState, useSetRecoilState } from 'recoil';
+import { deviceCheckFinishedState, videoState } from '@/utils/state';
 
 import './index.scss';
 
@@ -19,6 +19,7 @@ const JoinMeeting = () => {
   const [info, setInfo] = useState(store.get('xyMeetingInfo'));
   const [verifyDisabled, setVerifyDisabled] = useState(true);
   const isMonitorRef = useRef(false);
+  const setVideoState = useSetRecoilState(videoState);
   const [deviceCheckFinished, setDeviceCheckFinished] = useRecoilState(
     deviceCheckFinishedState
   );
@@ -216,7 +217,10 @@ const JoinMeeting = () => {
           <Checkbox
             checked={!info.muteVideo}
             onChange={(e) => {
-              onChangeValue(!e.target.checked, 'muteVideo');
+              const { checked } = e.target;
+
+              setVideoState(checked ? 'unmuteVideo' : 'muteVideo');
+              onChangeValue(!checked, 'muteVideo');
             }}
           >
             开启摄像头

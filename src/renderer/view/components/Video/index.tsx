@@ -5,6 +5,8 @@
  * @date  2020-1-07 10:34:18
  */
 
+import cn from 'classnames';
+import { useRecoilValue } from 'recoil';
 import { useRef, useEffect, useMemo } from 'react';
 import { ILayout, XYRTC, XYSlaveRTC } from '@xylink/xy-electron-sdk';
 import xyRTCInstance from '@/utils/xyRTC';
@@ -12,6 +14,7 @@ import xyRTCInstance from '@/utils/xyRTC';
 import './index.scss';
 import FaceInfo from './faceInfo';
 import { getSrcByDeviceType } from '@/utils';
+import { localVideoFlip } from '@/utils/state';
 
 interface IProps {
   item: ILayout;
@@ -31,6 +34,8 @@ const Video = (props: IProps) => {
     xyRTC = xyRTCInstance,
     toggleForceFullScreen,
   } = props;
+
+  const videoFlip = useRecoilValue(localVideoFlip);
 
   const videoRef = useRef<HTMLCanvasElement>(null);
   const canvasInfo = useRef<any>(null);
@@ -177,7 +182,7 @@ const Video = (props: IProps) => {
         {/* electron sdk的流由内部webgl渲染，所以业务层需要提供一个canvas元素供内部使用 */}
         {/* 通过 SDK暴露的 setVideoRender 方法，可将sourceId和canvas元素绑定起来，内部会自动执行渲染 */}
         <canvas
-          className={item.sourceId === 'LocalPreviewID' ? 'local-video' : ''}
+          className={item.sourceId === 'LocalPreviewID' ? cn(videoFlip && 'xy-video-flip') : ''}
           id={index}
           ref={videoRef}
         />

@@ -1,5 +1,14 @@
-import { ContentCaptureType, IAppThumbnail, IModel, IMonitorThumbnail, RecordStatus, TemplateModel } from "@xylink/xy-electron-sdk";
-import { LocalLanguage, ShowLanguage } from "./enum";
+import {
+  ContentCaptureType,
+  IAppThumbnail,
+  IModel,
+  IMonitorThumbnail,
+  RecordStatus,
+  TemplateModel,
+  VideoBeautyStyle,
+  VideoFilterStyle
+} from "@xylink/xy-electron-sdk";
+import { LocalLanguage, ShowLanguage, IVirtualBgType } from "./enum";
 
 /**
  * 静音状态
@@ -17,7 +26,7 @@ export type IAudio = 'mute' | 'unmute';
  * @value feedback 反馈
  * @value about 关于
  */
-export type TSettingType = 'device' | 'common' | 'feedback' | 'about';
+export type TSettingType = 'device' | 'common' | 'feedback' | 'about' | 'video-effect';
 
 /**
  * 设置信息
@@ -110,4 +119,54 @@ export interface IContentInfo {
   type: ContentCaptureType;
   info: IAppThumbnail | IMonitorThumbnail;
   name: React.ReactNode;
+}
+
+/**
+ * 虚拟背景配置
+ * 
+ * @property filename 文件名称，默认会在 app.getPath('userData') 处取数据
+ * @property hash 存入 hash 主要是用来比较是否是同一个文件
+ * @property id 唯一的 id
+ * @property type 是自定义背景还是预置的
+ */
+export interface IVirtualBgInfo {
+  filename: string;
+  hash: string;
+  id: string;
+  type: IVirtualBgType;
+}
+
+export type IBeautyMap = Partial<Record<VideoBeautyStyle, { level: number }>>;
+export type IFilterMap = Partial<Record<VideoFilterStyle, { level: number }>>;
+
+/**
+ * 选中的视频效果
+ * 
+ * @property virtualBg 选中的虚拟背景
+ * @property beauty 选中的美颜
+ * @property filter 选中的滤镜
+ */
+interface ISelectedVideoEffect {
+  virtualBg?: { id: IVirtualBgInfo['id'] };
+  beauty: { style: VideoBeautyStyle };
+  filter: { style: VideoFilterStyle };
+}
+
+/**
+ * 虚拟背景、美颜、滤镜数据
+ * 
+ * @property selected 选中的视频效果
+ * @property beautyMap 美颜效果集合
+ * @property filterMap 滤镜效果集合
+ * @property virtualBg 虚拟背景列表
+ */
+export interface IVideoEffectStore {
+  selected: ISelectedVideoEffect,
+
+  beautyMap: IBeautyMap;
+  filterMap: IFilterMap;
+
+  virtualBg: {
+    list: IVirtualBgInfo[];
+  },
 }

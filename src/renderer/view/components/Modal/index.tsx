@@ -1,6 +1,7 @@
 /**
  * 设置
  */
+import { useEffect } from 'react';
 import { Menu, Modal } from 'antd';
 import { MenuInfo } from 'rc-menu/lib/interface';
 import Device from './Device';
@@ -10,18 +11,28 @@ import Common from './Common';
 import { TSettingType } from '@/type/index';
 import {
   SettingOutlined,
+  DesktopOutlined,
   VideoCameraOutlined,
   FormOutlined,
   BulbOutlined,
 } from '@ant-design/icons';
-import { useRecoilState } from 'recoil';
-import { currentTabState, settingModalState } from '@/utils/state';
+import { useRecoilState, useRecoilValue } from 'recoil';
+import { ItemType } from 'antd/lib/menu/hooks/useItems';
+import { currentTabState, settingModalState, unLogin } from '@/utils/state';
 
 import './style/index.scss';
+import VideoEffect from './VideoEffect';
 
 const Setting = () => {
+  const isUnLogin = useRecoilValue(unLogin);
   const [visible, setVisible] = useRecoilState(settingModalState);
   const [current, setCurrent] = useRecoilState(currentTabState);
+
+  useEffect(() => {
+    if (isUnLogin && current === 'video-effect') {
+      setCurrent('common');
+    }
+  }, [current, isUnLogin]);
 
   const items = [
     {
@@ -34,6 +45,11 @@ const Setting = () => {
       key: 'device',
       icon: <VideoCameraOutlined />,
     },
+    !isUnLogin && {
+      label: '虚拟背景和美颜',
+      key: 'video-effect',
+      icon: <DesktopOutlined />,
+    },
     {
       label: '反馈',
       key: 'feedback',
@@ -44,7 +60,7 @@ const Setting = () => {
       key: 'about',
       icon: <BulbOutlined />,
     },
-  ];
+  ].filter(Boolean) as ItemType[];
 
   const onCancel = () => {
     setCurrent('common');
@@ -85,6 +101,8 @@ const Setting = () => {
             {current === 'common' && <Common />}
 
             {current === 'device' && <Device />}
+
+            {current === 'video-effect' && !isUnLogin && <VideoEffect />}
 
             {current === 'feedback' && <Feedback />}
             {current === 'about' && <Version />}
