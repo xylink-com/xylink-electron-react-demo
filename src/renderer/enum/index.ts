@@ -5,6 +5,7 @@ import {
   IPencilAnnotationKey,
   IVideoEffectStore,
 } from '@/type';
+import {ACCOUNT, SERVER} from '@/config'
 import { AnnotationColorKey, AnnotationKey, LoginType } from '@/type/enum';
 import {
   DeviceTypeKey,
@@ -65,18 +66,13 @@ export const DEFAULT_MEETING_INFO = {
 };
 
 /**
- * 服务器地址
- */
-export const DEFAULT_PROXY = 'cloud.xylink.com';
-
-/**
  * 设置信息
  */
 export const DEFAULT_SETTING_INFO = {
-  clientId: '',
-  clientSecret: '',
-  extId: '',
-  proxy: DEFAULT_PROXY,
+  clientId: ACCOUNT.clientId,
+  clientSecret: ACCOUNT.clientSecret,
+  extId: ACCOUNT.extId,
+  proxy: SERVER,
   model: LayoutModel.AUTO,
   loginType: LoginType.EXTERNAL,
 };

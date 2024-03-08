@@ -18,7 +18,7 @@ class RTC {
     let dllPath = '';
 
     if (isDevelopment) {
-      dllPath = `../cpp_sdk/${platformName}/dll`;
+      dllPath = `node_modules/@xylink/xy-electron-sdk/dll`;
     } else {
       // 如果win使用scheme调用，需传入绝对路径
       dllPath = isWin
