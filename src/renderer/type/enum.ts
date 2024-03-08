@@ -28,6 +28,43 @@ export enum LocalLanguage{
   ENGLISH = 'English',
 }
 
+
+
+/**
+ * 标注类型
+ */
+export enum AnnotationKey {
+  MOUSE = 'mouse',
+  PENCIL = 'pencil',
+  HIGHLIGHTER = 'highlighter',
+  ERASE = 'erase',
+  CLEAR = 'clear',
+  COLOR = 'color',
+  SAVE = 'save',
+}
+
+/**
+ * 标注颜色
+ */
+export enum AnnotationColorKey {
+  YELLOW = 'yellow',
+  BLACK = 'black',
+  BLUE = 'blue',
+  RED = 'red',
+}
+
+/**
+ * 批注画板事件
+ */
+export enum AnnotationEvent {
+  MOUSE = 'Mouse',
+  LINE = 'Line', // 铅笔 荧光笔 擦除
+  SAVE = 'Save',
+  CLEAR = 'Clear',
+  COLOR = 'Color',
+  // ERASE = 'erase'
+}
+
 /**
  * 背景图类型
  * 

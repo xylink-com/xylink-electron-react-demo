@@ -11,6 +11,7 @@ import {
   ContentCaptureType,
   RecordStatus,
   IOnHoldInfo,
+  ShareContentState
 } from '@xylink/xy-electron-sdk';
 import { atom } from 'recoil';
 import store from './store';
@@ -280,6 +281,14 @@ export const shareContentType = atom<ContentCaptureType>({
 });
 
 /**
+ * 共享状态
+*/
+export const contentStatusState= atom<ShareContentState>({
+  key: 'contentStatus',
+  default: ShareContentState.IDLE,
+});
+
+/**
  * 录制状态
  */
 
@@ -300,6 +309,24 @@ export const holdInfoState = atom<IOnHoldInfo>({
     isOnhold: false
   },
 });
+
+
+/**
+ * 会控下发批注权限
+ */
+export const canAnnotationState = atom({
+  key: 'canAnnotationState',
+  default:false,
+});
+
+
+/**
+ * 是否开始批注 content接收者使用
+ */
+export const annotationStatusState = atom({
+  key:'AnnotationStatus',
+  default: false
+})
 
 /**
  * 是否开启本地视频镜像

@@ -58,7 +58,8 @@ import {
   ContentCaptureType,
   RecordStatus,
   ShareContentState,
-  IMeetingMuteQuery
+  IMeetingMuteQuery,
+  IReceiveLine,
 } from '@xylink/xy-electron-sdk';
 import More from '../components/More';
 import PromptInfo from '../components/PromptInfo';
@@ -81,6 +82,9 @@ import {
   cloudRecordInfo,
   holdInfoState,
   AIFaceMapState,
+  canAnnotationState,
+  contentStatusState,
+  annotationStatusState,
 } from '@/utils/state';
 import {
   useRecoilState,
@@ -124,7 +128,8 @@ function Meeting() {
   const [video, setVideo] = useRecoilState(videoState);
   const [disableAudio, setDisableAudio] = useState(false);
   const [handStatus, setHandStatus] = useState(false);
-  const [shareContentStatus, setShareContentStatus] = useState(0);
+  const [shareContentStatus, setShareContentStatus] =
+  useRecoilState(contentStatusState);
   const [disableContent, setDisableContent] = useState(false);
   const [pageInfo, setPageInfo] = useState(DEFAULT_PAGE_INFO);
   // 会控弹幕
@@ -135,9 +140,11 @@ function Meeting() {
     TemplateModel.SPEAKER
   );
   // 自己开启录制的状态
-  const [{recordStatus, isSelfRecord}, setCloudRecordInfo] = useRecoilState(cloudRecordInfo);
+  const [{ recordStatus, isSelfRecord }, setCloudRecordInfo] =
+    useRecoilState(cloudRecordInfo);
   const resetCloudRecordInfo = useResetRecoilState(cloudRecordInfo);
   const [confCanRecord, setConfCanRecord] = useState(true);
+  const setCanAnnotation = useSetRecoilState(canAnnotationState);
 
   const [confInfo, setConfInfo] = useState<IConfInfo>(DEFAULT_CONF_INFO);
   const [holdInfo, setHoldInfo] = useRecoilState(holdInfoState);
@@ -171,6 +178,8 @@ function Meeting() {
   const broadCast = useRecoilValue(broadCastState);
   const setContentIsPaused = useSetRecoilState(contentSharingIsPaused);
   const setContentType = useSetRecoilState(shareContentType);
+  const setAnnotationStatus = useSetRecoilState(annotationStatusState);
+
   // 人脸识别
   const AIFaceMapRef = useRef(new Map());
   const AIFaceTimerRef = useRef(new Map());
@@ -215,6 +224,13 @@ function Meeting() {
 
     xyRTC.current.on('SupportAiCaptionResult', supportAiCaptionResultCallback);
   }, []);
+
+  useEffect(()=>{
+    ipcRenderer.on('NoticeAnnotationStatus', (event, visible) => {
+      setAnnotationStatus(visible);
+      visible ? xyRTC.current.startAnnotation() : xyRTC.current.stopAnnotation();
+    });
+  }, [])
 
   useEffect(() => {
     setVideo(
@@ -342,7 +358,7 @@ function Meeting() {
     xyRTC.current.on('ConfControl', (e: IConfControl) => {
       console.log('meeting control message: ', e);
 
-      const { disableMute, disableContent, disableRecord, feccIsDisabled, chirmanUri } = e;
+      const { disableMute, disableContent, disableRecord, feccIsDisabled, chirmanUri ,disableAnnotation} = e;
 
       // 强制静音
       setDisableAudio(disableMute);
@@ -358,6 +374,9 @@ function Meeting() {
 
       // 会控触发主会场
       setChirmanUri(chirmanUri);
+
+       // 批注权限
+       setCanAnnotation(!disableAnnotation);
     });
 
     // 会控取消举手 回调
@@ -525,6 +544,17 @@ function Meeting() {
       });
     });
 
+
+    // 接收者发送线条
+    xyRTC.current.on('AnnotationReceiveLine', (line: IReceiveLine) => {
+      ipcRenderer.send('AnnotationReceiveLine', line);
+    });
+
+    // 接收者清空线条
+    xyRTC.current.on('AnnotationClean', () => {
+      ipcRenderer.send('AnnotationClean');
+    });
+
     return () => {
       // 移除监听事件
       xyRTCTemp.removeAllListeners();
@@ -564,6 +594,13 @@ function Meeting() {
       feccOri: term?.roster.feccOri,
     }));
   }, [layout]);
+
+  // 结束批注
+  const endAnnotation = () => {
+    setAnnotationStatus(false);
+    xyRTC.current.stopAnnotation();
+    ipcRenderer.send('AnnotationStatus', false);
+  };
 
   /**
    * 自定义布局计算screen and layout data
@@ -895,6 +932,8 @@ function Meeting() {
     setSupportAiCaption(false);
     console.log('endCall stop')
 
+    endAnnotation();
+
     xyRTC.current.endCall();
 
     // 关闭会控弹框
@@ -919,6 +958,9 @@ function Meeting() {
     setContentIsPaused(false);
     setSharingIsManualPaused(false);
     xyRTC.current.stopSendContent();
+    setShareContentStatus(ShareContentState.IDLE);
+
+    endAnnotation();
   };
 
   const shareContent = () => {
@@ -1037,6 +1079,16 @@ function Meeting() {
     xyRTC.current.getConfMgmtUrl();
   };
 
+  useEffect(() => {
+    if (
+      confInfo.contentPartCount === 0 &&
+      shareContentStatus !== ShareContentState.SENDING
+    ) {
+      endAnnotation();
+    }
+  }, [confInfo.contentPartCount, shareContentStatus]);
+
+
   const renderLayout = () => {
     const layoutLen = layout.length;
     const hasContent = layout.find((item) => item.roster.isContent);
@@ -1152,7 +1204,7 @@ function Meeting() {
             <div
               className={`middle ${toolbarVisible.show ? 'visible' : 'hidden'}`}
             >
-              <More />
+              <More contentPartCount={confInfo.contentPartCount} />
 
               <div onClick={openMeetingControlWin} className={`button host`}>
                 <SVG icon="meeting_host" />

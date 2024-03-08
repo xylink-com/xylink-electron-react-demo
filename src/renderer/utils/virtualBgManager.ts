@@ -193,12 +193,10 @@ class BgManager {
      * @param userId 用户唯一标识
      */
     public setUser(userId = '') {
-        this.customDirPath = `${VIRTUAL_BG_DIR}/${userId}`;
-
         log.info('bgManager setUser', {
             userId,
             prevUserId: this.userId,
-            dirPath: this.customDirPath
+            prevDirPath: this.customDirPath
         });
 
         /** 如果跟上一次的 userId 比较发现不一样了，则需要清除 cache */
@@ -206,6 +204,9 @@ class BgManager {
             this.cacheData.forEach(item => {
                 URL.revokeObjectURL(item.url);
             });
+
+            // 切换用户才可以重置自定义上传目录
+            this.customDirPath = `${VIRTUAL_BG_DIR}/${userId}`;
 
             this.cacheData = [];
             this.userId = userId;

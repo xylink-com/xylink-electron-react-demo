@@ -53,6 +53,7 @@
     ]
   },
   "dependencies": {
+    "@xylink/xy-whiteboard": "0.0.4-beta.2",
     "@xylink/xy-electron-sdk": "^3.10.2",
     "antd": "^4.21.0",
     "clipboard": "^2.0.11",
@@ -63,9 +64,10 @@
     "js-base64": "^3.7.2",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
-    "react-router-dom": "^6.3.0",
+    "react-router-dom": "^6.17.0",
     "recoil": "^0.7.4",
-    "xss": "^1.0.14"
+    "xss": "^1.0.14",
+    "react-draggable": "^4.4.6"
   },
   "devDependencies": {
     "@pmmmwh/react-refresh-webpack-plugin": "^0.5.6",

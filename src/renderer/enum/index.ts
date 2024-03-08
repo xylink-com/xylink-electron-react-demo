@@ -1,6 +1,12 @@
-import { ILanguageList, ILayoutModelMap, IVideoEffectStore } from '@/type';
+import {
+  IAnnotationKey,
+  ILanguageList,
+  ILayoutModelMap,
+  IPencilAnnotationKey,
+  IVideoEffectStore,
+} from '@/type';
+import { AnnotationColorKey, AnnotationKey, LoginType, MeetingStatus } from '@/type/enum';
 import { ACCOUNT, SERVER } from '@/config';
-import { MeetingStatus } from '@/type/enum';
 import { DeviceTypeKey, LayoutModel, TemplateModel, VideoBeautyStyle, VideoFilterStyle } from '@xylink/xy-electron-sdk';
 
 // 服务协议
@@ -25,6 +31,10 @@ export const DEFAULT_USER_INFO = {
   extID: '',
   extUserId: '',
   displayName: '',
+  authCode: '',
+  isTempUser: true,
+  channelId: '',
+  token: '',
 };
 
 /**
@@ -217,6 +227,72 @@ export enum IVideoEffectTabPaneType {
   BEAUTY = 'beauty',
   FILTER = 'filter'
 }
+
+
+/**
+ * 标注操作类型map
+ */
+export const ANNOTATION_KEY_LIST: IAnnotationKey[] = [
+  {
+    key: AnnotationKey.MOUSE,
+    text: '鼠标',
+  },
+  {
+    key: AnnotationKey.PENCIL,
+    text: '铅笔',
+  },
+  {
+    key: AnnotationKey.HIGHLIGHTER,
+    text: '荧光笔',
+  },
+  {
+    key: AnnotationKey.ERASE,
+    text: '擦除',
+  },
+  {
+    key: AnnotationKey.CLEAR,
+    text: '清除',
+  },
+  {
+    key: AnnotationKey.COLOR,
+    text: '颜色',
+  },
+  {
+    key: AnnotationKey.SAVE,
+    text: '保存',
+  },
+];
+
+/**
+ * 标注颜色列表
+ */
+export const ANNOTATION_COLOR_LIST: AnnotationColorKey[] = [
+  AnnotationColorKey.YELLOW,
+  AnnotationColorKey.BLACK,
+  AnnotationColorKey.BLUE,
+  AnnotationColorKey.RED,
+];
+
+/**
+ * 标注颜色
+ */
+export const ANNOTATION_COLOR = {
+  [AnnotationColorKey.YELLOW]: '#ffc766',
+  [AnnotationColorKey.BLACK]: '#181818',
+  [AnnotationColorKey.BLUE]: '#2082bf',
+  [AnnotationColorKey.RED]: '#ff6666',
+};
+
+/**
+ * 标注宽度
+ */
+export const ANNOTATION_WIDTH: {
+  [key in IPencilAnnotationKey]: number;
+} = {
+  [AnnotationKey.PENCIL]: 3,
+  [AnnotationKey.HIGHLIGHTER]: 18,
+  [AnnotationKey.ERASE]: 30,
+};
 
 /**
  * 虚拟背景配置

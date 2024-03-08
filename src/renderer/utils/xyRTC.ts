@@ -37,6 +37,8 @@ class RTC {
       container: {
         elementId: 'container',
       },
+      // demo上层实现了篮筐，因此这里禁掉sdk内部设置的篮筐
+      enableSharingIndicator: false
     };
 
     return XYRTC.getXYInstance(instanceConfig as IConfig);

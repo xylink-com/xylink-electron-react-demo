@@ -24,13 +24,15 @@ const Feedback = (props: IProps) => {
   const uploadResult = (event: any) => {
     const { code } = event;
 
-    if (code === 'XYSDK:960000') {
+    if (code === 'XYSDK:969001') {
       message.info('提交成功');
 
       setContent('');
       props.onClose && props.onClose();
-      setUploadLoading(false);
+    } else {
+      message.info('提交失败');
     }
+    setUploadLoading(false);
   };
 
   const upload = () => {

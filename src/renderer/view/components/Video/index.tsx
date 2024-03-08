@@ -5,16 +5,28 @@
  * @date  2020-1-07 10:34:18
  */
 
+import { useRef, useEffect, useMemo, useState, memo } from 'react';
+import { ipcRenderer, IpcRendererEvent } from 'electron';
+import {
+  ILayout,
+  ILine,
+  Render,
+  XYRTC,
+  XYSlaveRTC,
+} from '@xylink/xy-electron-sdk';
 import cn from 'classnames';
-import { useRecoilValue } from 'recoil';
-import { useRef, useEffect, useMemo } from 'react';
-import { ILayout, XYRTC, XYSlaveRTC } from '@xylink/xy-electron-sdk';
 import xyRTCInstance from '@/utils/xyRTC';
 
 import './index.scss';
 import FaceInfo from './faceInfo';
-import { getSrcByDeviceType } from '@/utils';
+import { downloadUrl, getSrcByDeviceType } from '@/utils';
+import { useRecoilValue } from 'recoil';
+import { annotationStatusState } from '@/utils/state';
+import Whiteboard from '@/components/Annotation/whiteboard';
+import Toolbar from '@/components/Annotation/toolbar';
+import useAnnotationRectStyle from './useAnnotationRectStyle';
 import { localVideoFlip } from '@/utils/state';
+import dayjs from 'dayjs';
 
 interface IProps {
   item: ILayout;
@@ -35,10 +47,13 @@ const Video = (props: IProps) => {
     toggleForceFullScreen,
   } = props;
 
+  const annotationStatus = useRecoilValue(annotationStatusState);
   const videoFlip = useRecoilValue(localVideoFlip);
 
   const videoRef = useRef<HTMLCanvasElement>(null);
   const canvasInfo = useRef<any>(null);
+  const rendererRef = useRef<Render>();
+  const annotationRectStyle = useAnnotationRectStyle(item);
 
   useEffect(() => {
     if (videoRef.current) {
@@ -165,12 +180,56 @@ const Video = (props: IProps) => {
     return !!item.roster.isActiveSpeaker && templateModel === 'GALLERY';
   }, [item.roster.isActiveSpeaker, templateModel]);
 
+
+  const onCleanAnnotation = () => {
+    xyRTC.cleanAnnotation();
+  };
+
+  const onSendAnnotationLine = (lineData: ILine) => {
+    xyRTC.sendAnnotationLine(lineData);
+  };
+
+  /**
+   * 下载canvas
+   */
+  const onDownload = () => {
+    const canvas = document.createElement('canvas');
+    canvas.width = item.position.width;
+    canvas.height = item.position.height;
+    const render = new Render(canvas, {}, { preserveDrawingBuffer: true });
+    const frame = xyRTC.getVideoFrame(item.sourceId, true);
+
+    if (frame.hasData) {
+      const { buffer, width, height, rotation } = frame;
+      render.draw(buffer, width, height, rotation);
+    }
+
+    canvas.toBlob((blob) => {
+      const url = URL.createObjectURL(blob as Blob);
+
+      downloadUrl(url, `批注_${dayjs().format('YYYYMMDD_HH:mm:ss')}.png`);
+    });
+  };
+
   return (
     <div
       className={isActiveSpeaker ? 'wrap-video active-speaker' : 'wrap-video'}
       style={item.positionStyle}
       onDoubleClick={toggleForceFullScreen}
     >
+      {annotationStatus && item.roster.isContent && (
+        <div className="annotation-wrapper" style={annotationRectStyle}>
+          <Toolbar
+            annotationStatus={annotationStatus}
+            onDownload={onDownload}
+          />
+          <Whiteboard
+            isLocalShare={false}
+            onCleanAnnotation={onCleanAnnotation}
+            onSendAnnotationLine={onSendAnnotationLine}
+          />
+        </div>
+      )}
       {/* 人脸识别 */}
       {isShowFaceInfo && <FaceInfo item={item}></FaceInfo>}
 
@@ -182,7 +241,11 @@ const Video = (props: IProps) => {
         {/* electron sdk的流由内部webgl渲染，所以业务层需要提供一个canvas元素供内部使用 */}
         {/* 通过 SDK暴露的 setVideoRender 方法，可将sourceId和canvas元素绑定起来，内部会自动执行渲染 */}
         <canvas
-          className={item.sourceId === 'LocalPreviewID' ? cn(videoFlip && 'xy-video-flip') : ''}
+          className={
+            item.sourceId === 'LocalPreviewID'
+              ? cn(videoFlip && 'xy-video-flip')
+              : ''
+          }
           id={index}
           ref={videoRef}
         />

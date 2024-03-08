@@ -2,13 +2,14 @@ import {
   ContentCaptureType,
   IAppThumbnail,
   IModel,
+  IMonitorInfo，
   IMonitorThumbnail,
   RecordStatus,
   TemplateModel,
   VideoBeautyStyle,
   VideoFilterStyle
 } from "@xylink/xy-electron-sdk";
-import { LocalLanguage, ShowLanguage, IVirtualBgType } from "./enum";
+import { AnnotationKey, LocalLanguage, ShowLanguage , IVirtualBgType} from './enum';
 
 /**
  * 静音状态
@@ -60,10 +61,10 @@ export interface ILoginData {
   extID?: string;
   extUserId?: string;
   displayName?: string;
-  authCode?: string,
-  isTempUser?: boolean,
-  channelId?: string,
-  token?: string
+  authCode?: string;
+  isTempUser?: boolean;
+  channelId?: string;
+  token?: string;
 }
 
 /**
@@ -110,6 +111,8 @@ export interface ICloudRecordInfo{
   isSelfRecord: boolean;
 }
 
+export type IMonitor = IMonitorThumbnail & IMonitorInfo;
+
 /**
  * 共享详情
  */
@@ -117,7 +120,7 @@ export interface IContentInfo {
   key: React.Key; // 是不是屏幕区域共享
   screenRegionSharing?: boolean;
   type: ContentCaptureType;
-  info: IAppThumbnail | IMonitorThumbnail;
+  info: IAppThumbnail | IMonitor;
   name: React.ReactNode;
 }
 
@@ -170,3 +173,20 @@ export interface IVideoEffectStore {
     list: IVirtualBgInfo[];
   },
 }
+
+
+/**
+ * 标注类型/文案
+ */
+export interface IAnnotationKey {
+  key: AnnotationKey;
+  text: string;
+}
+
+/**
+ * 可绘制线条的批注类别
+ */
+export type IPencilAnnotationKey =
+  | AnnotationKey.ERASE
+  | AnnotationKey.PENCIL
+  | AnnotationKey.HIGHLIGHTER;

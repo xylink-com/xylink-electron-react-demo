@@ -116,6 +116,11 @@ const Device = () => {
     setTestSpeakerStatus(!testSpeakerStatus);
   };
 
+  const onSwitchVideoFlip = (checked:boolean) => {
+    setVideoFlip(checked);
+    store.set('xyOpenLocalVideoFlip', checked);
+  }
+
   return (
     <div className="setting__content-device">
       <div className={`setting__content-device-main`}>
@@ -144,10 +149,7 @@ const Device = () => {
           <div className="item">
             <div className="key">视频镜像</div>
             <div className="value">
-              <Switch checked={videoFlip} onChange={(checked) => {
-                setVideoFlip(checked);
-                store.set('xyOpenLocalVideoFlip', checked);
-              }} />
+            <Switch checked={videoFlip} onChange={onSwitchVideoFlip} />
             </div>
           </div>
 

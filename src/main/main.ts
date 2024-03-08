@@ -6,6 +6,7 @@ import {
   ipcMain,
   Menu,
   Tray,
+  desktopCapturer
 } from 'electron';
 import Store from 'electron-store';
 import MenuBuilder from './menu';
@@ -55,6 +56,9 @@ let meetingControlWindow: BrowserWindow | null = null;
 let screenRegionShareWindow: BrowserWindow | null = null;
 
 const icon = getAssetPath('logo512.png');
+
+// 即使GPU奔溃，仍然可以使用webgl api
+app.disableDomainBlockingFor3DAPIs();
 
 // electron 的硬件加速功能，在 win7 或者 Linux 系统上，容易出现黑屏或者卡死
 if (release().startsWith('6.1')) app.disableHardwareAcceleration();
@@ -177,16 +181,19 @@ ipcMain.on('meetingControlWin', (event, arg) => {
  * 计算区域共享弹窗位置的物理像素
  * @returns {Rectangle}
  */
-function getContentWindowPhysicalRect() {
+function getContentWindowRect(isPhysicalRect = true) {
   let rect = { x: 0, y: 0, width: 0, height: 0 };
   if (screenRegionShareWindow) {
     const { x, y, width, height } = screenRegionShareWindow.getContentBounds();
-    rect = screen.dipToScreenRect(null, {
+    const regionDipRect = {
       x: Math.ceil(x + 4) + 1,
       y: Math.ceil(y + 24) + 1,
       width: Math.floor(width - 8) - 1,
       height: Math.floor(height - 28) - 1,
-    });
+    };
+    rect = isPhysicalRect
+      ? screen.dipToScreenRect(null, regionDipRect)
+      : regionDipRect;
   }
   return rect;
 }
@@ -195,16 +202,16 @@ function getContentWindowPhysicalRect() {
  * 更新区域共享的位置信息
  */
 function updateContentRegion() {
-  mainWindow?.webContents.send('updateDisplayRegion', getContentWindowPhysicalRect());
+  mainWindow?.webContents.send('updateDisplayRegion', getContentWindowRect());
 }
 
 /**
  * screenRegionShare.html中用到，区域共享时监听鼠标是否在篮筐上，从而决定是否让弹窗可以点击穿透
  */
-ipcMain.on('ignoreMouseEvent',(event, ignore)=>{
-  if(ignore){
+ipcMain.on('ignoreMouseEvent', (event, ignore) => {
+  if (ignore) {
     screenRegionShareWindow?.setIgnoreMouseEvents(true, { forward: true });
-  }else{
+  } else {
     screenRegionShareWindow?.setIgnoreMouseEvents(false);
   }
 });
@@ -214,34 +221,51 @@ ipcMain.on('closeScreenRegionShare', (event, arg) => {
   screenRegionShareWindow?.close();
 });
 
-// 区域共享
+// 区域共享 / 全屏桌面共享
 ipcMain.on('screenRegionShare', (event, arg) => {
   if (screenRegionShareWindow) {
     screenRegionShareWindow.close();
     screenRegionShareWindow = null;
   }
 
+  const { type = 'area' } = arg || {};
+  const isFullScreenShare = type === 'fullScreen';
+  let point = { x: 0, y: 0 };
+
+  if (isFullScreenShare) {
+    point = screen.screenToDipPoint({
+      x: arg.rect.x,
+      y: arg.rect.y,
+    });
+  }
+
   const { workAreaSize } = screen.getPrimaryDisplay();
   console.log('workAreaSize ===> ', workAreaSize);
 
   screenRegionShareWindow = new BrowserWindow({
-    width: 800,
-    height: 600,
+    width: isFullScreenShare ? undefined : 800,
+    height: isFullScreenShare ? undefined : 600,
+    x: isFullScreenShare ? point.x : undefined,
+    y: isFullScreenShare ? point.y : undefined,
     frame: false,
     transparent: true,
     minHeight: Math.ceil(workAreaSize.height * 0.3),
-    minWidth:  Math.ceil(workAreaSize.width * 0.3),
-    movable: true,
-    resizable: true,
+    minWidth: Math.ceil(workAreaSize.width * 0.3),
+    movable: !isFullScreenShare,
+    resizable: !isFullScreenShare,
     minimizable: false,
     maximizable: false,
-    fullscreenable: false,
+    fullscreenable: true,
+    fullscreen: isFullScreenShare,
     closable: true,
+    alwaysOnTop: true,
     webPreferences: {
       nodeIntegration: true,
-      contextIsolation: false // 否则页面无法用require
-    }
+      contextIsolation: false, // 否则页面无法用require
+    },
   });
+
+  screenRegionShareWindow?.setIgnoreMouseEvents(true, { forward: true });
 
   // 区域共享弹窗不显示在任务栏中，禁止用户手动关闭弹窗
   screenRegionShareWindow.setSkipTaskbar(true);
@@ -249,17 +273,31 @@ ipcMain.on('screenRegionShare', (event, arg) => {
   // 区域共享弹窗始终在所有应用的最上层
   screenRegionShareWindow.setAlwaysOnTop(true, 'screen-saver');
 
-  // screenRegionShareWindow.loadURL(resolveHtmlPath('index.html','/screenRegionShare'));
-  screenRegionShareWindow.loadURL(resolveHtmlPath('screenRegionShare.html'));
+  // 屏幕篮筐无法覆盖底部导航栏，需要focus
+  setTimeout(() => {
+    screenRegionShareWindow?.focus();
+  }, 500);
 
-  mainWindow?.webContents.send('startRegionShare', getContentWindowPhysicalRect());
+  // screenRegionShareWindow.loadURL(resolveHtmlPath('index.html',`/screenRegionShare/${type}`));
+  screenRegionShareWindow.loadURL(
+    resolveHtmlPath(`screenRegionShare.html`, '', `?type=${type}`)
+  );
 
-  screenRegionShareWindow.on('close', () => {
-    screenRegionShareWindow = null;
-  });
+  if (!isFullScreenShare) {
+    mainWindow?.webContents.send('startRegionShare', getContentWindowRect());
+  }
 
   screenRegionShareWindow.on('resized', () => {
     updateContentRegion();
+  });
+
+  screenRegionShareWindow.on('close', () => {
+    screenRegionShareWindow = null;
+    mainWindow?.webContents.send('regionSharingWindowLoaded', false);
+  });
+
+  screenRegionShareWindow.on('ready-to-show', () => {
+    mainWindow?.webContents.send('regionSharingWindowLoaded', true);
   });
 
   // 移动之前，应该先把共享暂停，然后 moved 之后再
@@ -274,6 +312,72 @@ ipcMain.on('screenRegionShare', (event, arg) => {
   screenRegionShareWindow.on('moved', () => {
     updateContentRegion();
   });
+});
+
+// 接收主窗口批注状态：是否开始
+ipcMain.on('AnnotationStatus', (event, visible) => {
+  if (visible) {
+    mainWindow?.minimize();
+  }
+
+  screenRegionShareWindow?.webContents.send('AnnotationStatus', visible);
+});
+
+// 接收来自content接收着发送的线条
+ipcMain.on('AnnotationReceiveLine', (event, line) => {
+  screenRegionShareWindow?.webContents.send('AnnotationReceiveLine', {
+    ...line,
+  });
+});
+
+// 接收来自content接收着清空批注的消息
+ipcMain.on('AnnotationClean', (event) => {
+  screenRegionShareWindow?.webContents.send('AnnotationClean');
+});
+
+// 点击批注工具关闭按钮，通知主窗口关闭批注
+ipcMain.on('NoticeAnnotationStatus', (event, visible) => {
+  mainWindow?.webContents.send('NoticeAnnotationStatus', visible);
+});
+
+// 保存批注图片，需要抓取画板所在桌面截图
+ipcMain.on('captureScreenImg', async (event, isFullScreen) => {
+  if (screenRegionShareWindow) {
+    const { x, y, width, height } = screenRegionShareWindow.getBounds();
+    const currentScreen = screen.getDisplayMatching({ x, y, width, height });
+
+    desktopCapturer
+      .getSources({
+        types: ['screen'],
+        thumbnailSize: {
+          width: currentScreen.bounds.width,
+          height: currentScreen.bounds.height,
+        },
+      })
+      .then((sources) => {
+        const source = sources.find(
+          (item) => Number(item.display_id) === currentScreen.id
+        );
+        let thumbnail = source?.thumbnail;
+
+        if (!isFullScreen) {
+          const region = getContentWindowRect(false);
+          const rect = {
+            ...region,
+            x: region.x - currentScreen.bounds.x,
+            y: region.y - currentScreen.bounds.y,
+          };
+
+          // 区域共享需要裁剪
+          thumbnail = thumbnail?.crop(rect);
+        }
+
+        screenRegionShareWindow?.webContents.send(
+          'receiveCaptureScreenImg',
+          thumbnail?.toPNG()
+        );
+      });
+  }
 });
 
 // 创建主窗口
@@ -336,6 +440,9 @@ function createMainWindow() {
     meetingControlWindow && meetingControlWindow.close();
     meetingControlWindow = null;
   });
+
+  // 设置为false , 否则共享全屏时，主窗口被覆盖，会失去响应
+  window.webContents.setBackgroundThrottling(false);
 
   window.webContents.on('devtools-opened', () => {
     window.focus();

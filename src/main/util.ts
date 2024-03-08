@@ -5,7 +5,7 @@ import log from 'electron-log';
 
 const PROTOCOL = 'xylink-electron';
 
-export let resolveHtmlPath: (htmlFileName: string, hashName?: string) => string;
+export let resolveHtmlPath: (htmlFileName: string, hashName?: string,  search?: string) => string;
 
 const { platform, env } = process;
 
@@ -16,17 +16,24 @@ export const isDevelopment = env.NODE_ENV === 'development';
 
 if (isDevelopment) {
   const port = process.env.PORT || 1212;
-  resolveHtmlPath = (htmlFileName: string, hashName = '') => {
-    const url = `http://localhost:${port}/${htmlFileName}#${hashName}`;
+  resolveHtmlPath = (htmlFileName: string, hashName = '', search ='') => {
+    let url = `http://localhost:${port}/${htmlFileName}`;
+    if (search) {
+      url += search;
+    }
+    if (hashName) {
+      url += `#${hashName}`;
+    }
 
     return url;
   };
 } else {
-  resolveHtmlPath = (htmlFileName: string, hashName = '') => {
+  resolveHtmlPath = (htmlFileName: string, hashName = '', search ='') => {
     return format({
       pathname: path.join(__dirname, '../renderer/', htmlFileName),
       protocol: 'file',
       hash: hashName,
+      search,
       slashes: true,
     });
   };
