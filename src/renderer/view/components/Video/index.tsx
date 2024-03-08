@@ -34,6 +34,7 @@ interface IProps {
   templateModel?: string;
   isShowFaceInfo?: boolean;
   xyRTC?: XYRTC | XYSlaveRTC;
+  isExternalDrawLocalVideo?: boolean; // isExternalDraw：控制是否是副屏渲染模式，副屏渲染需要手动处理YUV数据
   toggleForceFullScreen?: () => void;
 }
 
@@ -41,6 +42,7 @@ const Video = (props: IProps) => {
   const {
     item,
     index,
+    isExternalDrawLocalVideo = false,
     templateModel,
     isShowFaceInfo,
     xyRTC = xyRTCInstance,
@@ -90,14 +92,45 @@ const Video = (props: IProps) => {
   }, [props.item]);
 
   useEffect(() => {
-    // 有sourceId后，才需要调用渲染函数setVideoRender
-    if (props.item.sourceId) {
-      // 此副作用受sourceId的影响，在其变动时，重新执行此 setVideoRender 方法
-      // 此方法是动态绑定sourceId和canvas元素，SDK内部会启动定时器按照屏幕刷新率30帧/s的方法获取流数据并通过webgl渲染
-      // 此方法设置完成后，第三方不需要关注流的渲染，关注业务逻辑即可
-      xyRTC.setVideoRender(props.item.sourceId, index);
+    // 非副屏渲染，调用setVideoRender即可
+    if (!isExternalDrawLocalVideo) {
+      // 有sourceId后，才需要调用渲染函数setVideoRender
+      if (props.item.sourceId) {
+        // 此副作用受sourceId的影响，在其变动时，重新执行此 setVideoRender 方法
+        // 此方法是动态绑定sourceId和canvas元素，SDK内部会启动定时器按照屏幕刷新率30帧/s的方法获取流数据并通过webgl渲染
+        // 此方法设置完成后，第三方不需要关注流的渲染，关注业务逻辑即可
+        xyRTC.setVideoRender(props.item.sourceId, index);
+      }
     }
-  }, [props.item.sourceId, index, xyRTC]);
+  }, [props.item.sourceId, isExternalDrawLocalVideo, index, xyRTC]);
+
+  useEffect(() => {
+    // 副屏模式下，Local画面需要手动渲染，其他场景请勿手动渲染
+    if (isExternalDrawLocalVideo) {
+      // 初始化Render WebGL渲染器，Local画面因为接收的主窗口IPC传递过来的YUV数据，需要自行渲染
+      // 外接屏幕的所有远端画面，不需要通过此方式处理
+      rendererRef.current = new Render(videoRef.current);
+
+      // 监听主窗口IPC传递过来的Local YUV Buffer数据
+      ipcRenderer.on('localVideoStream', onLocalVideoStream);
+    }
+
+    // 销毁时，清理监听事件
+    return () => {
+      ipcRenderer.removeListener('localVideoStream', onLocalVideoStream);
+    };
+  }, [isExternalDrawLocalVideo]);
+
+  /**
+   *  副屏渲染Local画面，正常模式下，不需要执行
+   */
+  const onLocalVideoStream = (event: IpcRendererEvent, msg: any) => {
+    const { buffer } = msg;
+    const { width, height, rotation } = msg.videoFrame;
+
+    // 调用渲染器绘画画面
+    rendererRef.current?.draw(buffer, width, height, rotation);
+  };
 
   const renderVideoName = () => {
     return (
@@ -126,8 +159,8 @@ const Video = (props: IProps) => {
       state === 8
     ) {
       const itemWidth = item.position.width;
-      const srcUrl = getSrcByDeviceType(dt)
-  
+      const srcUrl = getSrcByDeviceType(dt);
+
       // 视频暂停默认头像大小
       let avatarWidth = 56;
       if (itemWidth > 480) {
@@ -179,7 +212,6 @@ const Video = (props: IProps) => {
   const isActiveSpeaker = useMemo(() => {
     return !!item.roster.isActiveSpeaker && templateModel === 'GALLERY';
   }, [item.roster.isActiveSpeaker, templateModel]);
-
 
   const onCleanAnnotation = () => {
     xyRTC.cleanAnnotation();
@@ -255,4 +287,3 @@ const Video = (props: IProps) => {
 };
 
 export default Video;
-

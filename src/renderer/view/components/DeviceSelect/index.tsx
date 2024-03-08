@@ -7,6 +7,7 @@ import { IDeviceItem, DeviceTypeKey } from '@xylink/xy-electron-sdk';
 import { useRecoilValue, useSetRecoilState } from 'recoil';
 import {
   currentTabState,
+  holdInfoState,
   selectedDeviceState,
   settingModalState,
   toolbarState,
@@ -32,6 +33,7 @@ const DeviceSelect = (props: IProps) => {
   const setCurrent = useSetRecoilState(currentTabState);
   const selectedDevice = useRecoilValue(selectedDeviceState);
   const setToolVisible = useSetRecoilState(toolbarState);
+  const holdInfo = useRecoilValue(holdInfoState);
 
   useEffect(() => {
     setToolVisible((state) => ({
@@ -48,15 +50,15 @@ const DeviceSelect = (props: IProps) => {
   };
 
   useEffect(() => {
-    debounceSwitchSpeakerMessage(selectedDevice.speaker, speakerList, DeviceTypeKey.speaker);
+    debounceSwitchSpeakerMessage(selectedDevice.speaker, speakerList, DeviceTypeKey.speaker, holdInfo.isOnhold);
   }, [selectedDevice.speaker]);
 
   useEffect(() => {
-    debounceSwitchMicrophoneMessage(selectedDevice.microphone, microphoneList, DeviceTypeKey.microphone);
+    debounceSwitchMicrophoneMessage(selectedDevice.microphone, microphoneList, DeviceTypeKey.microphone, holdInfo.isOnhold);
   }, [selectedDevice.microphone]);
 
   useEffect(() => {
-    debounceSwitchCameraMessage(selectedDevice.camera, cameraList, DeviceTypeKey.camera);
+    debounceSwitchCameraMessage(selectedDevice.camera, cameraList, DeviceTypeKey.camera, holdInfo.isOnhold);
   }, [selectedDevice.camera]);
 
   const content =
@@ -154,12 +156,12 @@ const DeviceSelect = (props: IProps) => {
   );
 };
 
-const switchDeviceMessage = (selectedDeviceId: string, deviceList: IDeviceItem[], deviceTypeKey: DeviceTypeKey) => {
+const switchDeviceMessage = (selectedDeviceId: string, deviceList: IDeviceItem[], deviceTypeKey: DeviceTypeKey, isOnhold: boolean) => {
   console.log(`selectedDevice deviceTypeKey ${deviceTypeKey}`, selectedDeviceId)
 
   const device = deviceList.find(item => item.devId === selectedDeviceId);
 
-  if (device) {
+  if (device && !isOnhold) {
     message.info(`${DeviceNameMap[deviceTypeKey]}设备已自动切换至${device.devName}`, 3);
   }
 }

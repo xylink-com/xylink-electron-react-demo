@@ -1,33 +1,33 @@
 import {
   app,
-  screen,
   BrowserWindow,
   globalShortcut,
   ipcMain,
+  screen,
   Menu,
   Tray,
-  desktopCapturer
+  powerMonitor,
+  desktopCapturer,
+  crashReporter
 } from 'electron';
 import Store from 'electron-store';
 import MenuBuilder from './menu';
 import {
-  checkCameraAccess,
   checkDeviceAccessPrivilege,
-  checkMicrophoneAccess,
   getAssetPath,
   isMac,
   isWin,
+  isShowFrame,
   resolveHtmlPath,
-  isDevelopment,
-  handleUrl,
-  handleArgv,
 } from './util';
 import log from 'electron-log';
 import { release } from 'os';
+import path from 'path';
 
 Store.initRenderer();
 
-// 主进程日志文件路径
+const isDevelopment = process.env.NODE_ENV !== 'production';
+
 // on Linux: ~/.config/{app name}/logs/{process type}.log
 // on macOS: ~/Library/Logs/{app name}/{process type}.log
 // on Windows: %USERPROFILE%\AppData\Roaming\{app name}\logs\{process type}.log
@@ -38,6 +38,7 @@ log.info('process info:', {
   node: process.versions.node,
   chrome: process.versions.chrome,
   userData: app.getPath('userData'),
+  crashDumps: app.getPath('crashDumps'),
   appData: app.getPath('appData'),
   temp: app.getPath('temp'),
   exe: app.getPath('exe'),
@@ -48,31 +49,80 @@ log.info('process info:', {
 const width = 960;
 const height = 600;
 
+// 外接屏幕窗口引用
+let externalWindow: BrowserWindow | null = null;
 // 主窗口引用
 let mainWindow: BrowserWindow | null = null;
 // 会控窗口
 let meetingControlWindow: BrowserWindow | null = null;
+
+let webMeetingWindow: BrowserWindow | null = null;
 // 区域共享弹窗
 let screenRegionShareWindow: BrowserWindow | null = null;
 
 const icon = getAssetPath('logo512.png');
 
+let number = ''; // 会议号
+const PROTOCOL = 'xylink-electron';
+
+
+app.setPath('crashDumps', app.getPath('logs'));
+crashReporter.start({ uploadToServer: false, ignoreSystemCrashHandler:false, rateLimit :false });
+
+function registerScheme() {
+  if (isWin) {
+    const args = [];
+    if (!app.isPackaged) {
+      args.push(path.resolve(process.argv[1]));
+    }
+    args.push('--');
+
+    // if (!app.isDefaultProtocolClient(PROTOCOL, process.execPath, args)) {
+    //   app.setAsDefaultProtocolClient(PROTOCOL, process.execPath, args);
+    // }
+    // app.setAsDefaultProtocolClient(PROTOCOL, process.execPath, args);
+
+    handleArgv(args);
+  }
+}
+
+registerScheme();
+
+function handleArgv(argv: string[]) {
+  const prefix = `${PROTOCOL}:`;
+
+  const offset = app.isPackaged ? 1 : 2;
+  const url = argv.find((arg, i) => i >= offset && arg.startsWith(prefix));
+  if (url) handleUrl(url);
+}
+
+function handleUrl(url: string) {
+  // xylink-electron://joinMeeting?number=123
+  const urlObj = new URL(url);
+  const { searchParams } = urlObj;
+  number = searchParams.get('number') || '';
+
+  // createWindow可传入此参数，做其他业务处理
+  log.log('handleUrl number:', number);
+}
+
 // 即使GPU奔溃，仍然可以使用webgl api
 app.disableDomainBlockingFor3DAPIs();
 
 // electron 的硬件加速功能，在 win7 或者 Linux 系统上，容易出现黑屏或者卡死
+// 禁用硬件加速，共享屏幕批注白板时，会大概率出现穿透的问题
 if (release().startsWith('6.1')) app.disableHardwareAcceleration();
 
 // 缩小窗口
 ipcMain.on('window-minus', () => {
-  if (mainWindow && !mainWindow.isMinimized()) {
-    mainWindow.minimize();
+  if (mainWindow) {
+    if (!mainWindow.isMinimized()) mainWindow.minimize();
   }
 });
 
 // 关闭窗口
 ipcMain.on('window-close', () => {
-  if (mainWindow && !isMac) {
+  if (mainWindow && isWin) {
     mainWindow.setSkipTaskbar(true);
     mainWindow.hide(); // 隐藏窗口
   }
@@ -102,9 +152,7 @@ ipcMain.on('exit-fullscreen', (event) => {
   if (mainWindow && !mainWindow.isDestroyed()) {
     mainWindow.setFullScreen(false);
 
-    mainWindow.setContentSize(960, 628);
-
-    mainWindow.center();
+    mainWindow.setContentSize(width, height);
   }
 
   event.preventDefault();
@@ -127,27 +175,125 @@ ipcMain.on('check-device-access-privilege', async () => {
   mainWindow && mainWindow.webContents.send('check-device-finished', true);
 });
 
-// 申请摄像头权限
-ipcMain.on('check-camera-access', async () => {
-  await checkCameraAccess();
-
-  mainWindow && mainWindow.webContents.send('check-camera-finished', true);
-});
-
-// 申请麦克风权限
-ipcMain.on('check-microphone-access', async () => {
-  await checkMicrophoneAccess();
-
-  mainWindow && mainWindow.webContents.send('check-microphone-finished', true);
-});
-
 // 重新打开窗口
 ipcMain.on('relaunch', () => {
   app.relaunch();
   app.exit(0);
 });
 
-// 打开会控弹窗
+// 主窗口通知主进程关闭外接屏幕窗口
+ipcMain.on('closeExternalWindow', (event, msg) => {
+  console.log('closed external window');
+
+  if (msg) {
+    externalWindow && externalWindow.close();
+  }
+});
+
+// 打开外接屏
+ipcMain.on('openWindow', (event, arg) => {
+  if (arg) {
+    const displays = screen.getAllDisplays();
+
+    console.log('displays', displays);
+    const externalDisplay = displays.find((display) => {
+      return display.bounds.x !== 0 || display.bounds.y !== 0;
+    });
+
+    console.log('args: ', arg);
+    console.log('externalDisplay: ', externalDisplay);
+
+    if (externalWindow) {
+      externalWindow.close();
+    }
+
+    if (externalDisplay) {
+      mainWindow && mainWindow.webContents.send('secondWindow', true);
+
+      externalWindow = new BrowserWindow({
+        x: externalDisplay.bounds.x + 50,
+        y: externalDisplay.bounds.y + 50,
+        width: 1000,
+        height: 660,
+        backgroundColor: '#fff',
+        titleBarStyle: 'hidden',
+        webPreferences: {
+          nodeIntegration: true,
+          contextIsolation: false,
+        },
+        title: '小鱼Electron 外接屏幕',
+        show: false,
+        icon,
+      });
+
+      if (isDevelopment) {
+        externalWindow.webContents.openDevTools();
+      }
+
+      externalWindow.loadURL(resolveHtmlPath('index.html', '/slaveScreen'));
+
+      externalWindow.webContents.on('did-finish-load', () => {
+        const winId = {
+          externalId: externalWindow?.webContents.id,
+          mainId: mainWindow?.webContents.id,
+        };
+
+        // 向外接屏幕发送当前窗口和主窗口的窗口id信息，便于渲染进程之间通信
+        mainWindow && mainWindow.webContents.send('currentWindowId', winId);
+        externalWindow &&
+          externalWindow.webContents.send('currentWindowId', winId);
+
+        mainWindow && mainWindow.webContents.send('domReady', true);
+      });
+
+      externalWindow.once('ready-to-show', () => {
+        externalWindow && externalWindow.show();
+      });
+
+      externalWindow.on('close', () => {
+        console.log('close external window');
+
+        if (mainWindow) {
+          mainWindow.webContents.send('clearTimer', true);
+          mainWindow.webContents.send('closedExternalWindow', true);
+        }
+
+        if (externalWindow) {
+          externalWindow.webContents.send('closedExternalWindow', true);
+        }
+      });
+
+      externalWindow.on('closed', () => {
+        console.log('closed external window');
+
+        externalWindow = null;
+      });
+    } else {
+      mainWindow && mainWindow.webContents.send('secondWindow', false);
+    }
+  }
+});
+
+// 打开Web会议
+ipcMain.on('webviewShowWebMeeting', () => {
+  if (webMeetingWindow) {
+    return;
+  }
+
+  webMeetingWindow = new BrowserWindow({
+    width,
+    height,
+    frame: true,
+    icon,
+    resizable: true,
+  });
+  webMeetingWindow.loadURL('https://cdn.xylink.com/webrtc/web/index.html');
+
+  webMeetingWindow.on('close', () => {
+    webMeetingWindow = null;
+  });
+});
+
 // 打开会控弹窗
 ipcMain.on('meetingControlWin', (event, arg) => {
   if (meetingControlWindow) {
@@ -380,13 +526,12 @@ ipcMain.on('captureScreenImg', async (event, isFullScreen) => {
   }
 });
 
-// 创建主窗口
 function createMainWindow() {
   const window = new BrowserWindow({
-    width: 960,
-    height: 628,
-    minHeight: 628,
-    minWidth: 960,
+    width,
+    height,
+    minHeight: height,
+    minWidth: width,
     webPreferences: {
       nodeIntegration: true,
       contextIsolation: false,
@@ -395,15 +540,15 @@ function createMainWindow() {
     },
     title: '',
     center: true,
-    frame: isMac,
-    transparent: !isMac,
+    frame: isShowFrame, // window 自定义操作栏
+    // transparent: isWin,
     backgroundColor: '#00000000',
-    resizable: false,
+    resizable: true,
     show: false,
     icon,
     fullscreen: false,
     fullscreenable: false,
-    acceptFirstMouse: true,
+    acceptFirstMouse: true, // mac 属性
   });
 
   window.loadURL(resolveHtmlPath('index.html'));
@@ -436,9 +581,19 @@ function createMainWindow() {
   });
 
   window.on('closed', () => {
-    mainWindow = null;
+    externalWindow && externalWindow.close();
+    externalWindow = null;
+
     meetingControlWindow && meetingControlWindow.close();
     meetingControlWindow = null;
+
+    screenRegionShareWindow && screenRegionShareWindow.close();
+    screenRegionShareWindow = null;
+
+    webMeetingWindow && webMeetingWindow.close();
+    webMeetingWindow = null;
+
+    mainWindow = null;
   });
 
   // 设置为false , 否则共享全屏时，主窗口被覆盖，会失去响应
@@ -470,11 +625,12 @@ function createMainWindow() {
   return window;
 }
 
-if (!app.requestSingleInstanceLock()) {
+const appLock = app.requestSingleInstanceLock();
+
+if (!appLock) {
   app.quit();
-  process.exit(0);
 } else {
-  // macOS 下通过Scheme启动时，主实例会通过open-url事件接收URL
+  // macOS 下通过协议URL启动时，主实例会通过 open-url 事件接收这个 URL
   app.on('open-url', (event, urlStr) => {
     handleUrl(urlStr);
   });
@@ -511,14 +667,30 @@ if (!app.requestSingleInstanceLock()) {
 
   // create main BrowserWindow when electron is ready
   app.on('ready', () => {
+    // app.setPath('crashDumps', '/path/to/crashes')
     mainWindow = createMainWindow();
+  });
+
+  // 监听崩溃
+  app.on('render-process-gone', (event, webContents, details) => {
+    log.error('render-process-gone', details);
+  });
+
+  // 监听崩溃
+  app.on('child-process-gone', (event, details) => {
+    log.error('child-process-gone', details);
+  });
+
+  // 系统休眠，需要退会，否则会崩溃
+  powerMonitor.on('suspend', () => {
+    mainWindow?.webContents.send('systemSuspend');
   });
 
   let tray = null;
   app
     .whenReady()
     .then(() => {
-      if (!isMac) {
+      if (isWin) {
         tray = new Tray(getAssetPath('logo256.ico'));
 
         Menu.setApplicationMenu(null);
@@ -537,12 +709,13 @@ if (!app.requestSingleInstanceLock()) {
             label: '退出',
             click: () => {
               mainWindow && mainWindow.close();
+              externalWindow && externalWindow.close();
               meetingControlWindow && meetingControlWindow.close();
               app && app.quit();
             },
           },
         ]);
-        tray.setToolTip('小鱼云视频');
+        tray.setToolTip('小鱼易连');
         tray.setContextMenu(contextMenu);
 
         tray.on('double-click', () => {
@@ -567,3 +740,4 @@ ipcMain.on('getUserDataDir', () => {
 ipcMain.on('getAssetsDir', () => {
   mainWindow?.webContents.send('getAssetsDir', getAssetPath());
 });
+

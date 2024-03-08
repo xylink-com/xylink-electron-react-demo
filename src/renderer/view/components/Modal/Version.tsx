@@ -2,6 +2,7 @@
  * 关于界面
  */
 import { useEffect, useState } from 'react';
+import logo from '@/assets/img/logo.png';
 import xyRTC from '@/utils/xyRTC';
 
 const Version = () => {
@@ -19,6 +20,7 @@ const Version = () => {
 
   return (
     <div className="setting__content-about">
+      <img width="150" src={logo} alt="logo" />
       <div className="about-version">版本号：{about.version}</div>
       <div className="about-version about-time">变更时间：{about.update}</div>
 

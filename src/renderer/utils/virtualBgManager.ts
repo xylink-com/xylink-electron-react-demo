@@ -28,7 +28,7 @@ class BgManager {
 
     /**
      * 根据 filePath 获取到对应的数据
-     * 
+     *
      * @param filePath 文件路径
      * @param type 虚拟背景类型
      */
@@ -43,7 +43,7 @@ class BgManager {
 
     /**
      * IBgFileData 转 IVirtualBgInfo
-     * 
+     *
      * @param bg 虚拟背景数据
     */
     private createIVirtualBgInfo(bg: IBgFileData) {
@@ -53,7 +53,7 @@ class BgManager {
 
     /**
      * 根据 bgFileList 生成 hash-filePath 字典
-     * 
+     *
      * @param bgFileList 虚拟背景列表数据
     */
     private createFileHashMap(bgFileList: IBgFileData[]) {
@@ -65,7 +65,7 @@ class BgManager {
 
     /**
      * 创建出虚拟背景列表数据
-     * 
+     *
      * @param dirPath 图片所在的文件夹目录
      * @param type 虚拟背景图片类型
      */
@@ -144,6 +144,7 @@ class BgManager {
      * 初始化，返回虚拟背景数据、当前选中的虚拟背景ID和文件路径
      */
     public async init() {
+        // 删除缓存blobUrl, 测试性能影响
         if (this.cacheData.length) {    // 有缓存就直接使用缓存
             this.filePathMap = this.createFileHashMap(this.cacheData);
 
@@ -189,7 +190,7 @@ class BgManager {
 
     /**
      * 设置 userId，更新存储位置，登录时应该调用这个函数
-     * 
+     *
      * @param userId 用户唯一标识
      */
     public setUser(userId = '') {
@@ -204,7 +205,6 @@ class BgManager {
             this.cacheData.forEach(item => {
                 URL.revokeObjectURL(item.url);
             });
-
             // 切换用户才可以重置自定义上传目录
             this.customDirPath = `${VIRTUAL_BG_DIR}/${userId}`;
 
@@ -217,7 +217,7 @@ class BgManager {
      * 把 File 对象写入目录
      * 先计算出 hash，看 fileHashMap 中是否可以找到对应的文件
      * 如果找到了就直接返回，找不到则存入文件，更新 fileHashMap
-     * 
+     *
      * @param file File 对象
     */
     public async createNewBgByFile(file: File): Promise<IBgFileData> {
@@ -263,7 +263,7 @@ class BgManager {
     /**
      * 删除某个背景图配置，并根据 hash 匹配背景图配置，
      * 如果只匹配到一个配置，则把图片文件也删除掉
-     * 
+     *
      * @param bg 要被删除的背景图数据
     */
     public deleteBg(bg: IBgFileData) {
@@ -300,12 +300,14 @@ class BgManager {
             }
         }
 
+        log.info('selected virtual bg', { selectedId, selectedFilePath });
+
         return { selectedId, selectedFilePath };
     }
 
     /**
      * 更新选中的背景图
-     * 
+     *
      * @param selectedId 更新选中的背景
      * @param newList 更新列表，不传则不更新
      */
@@ -317,7 +319,7 @@ class BgManager {
 
     /**
      * 更新虚拟背景列表
-     * 
+     *
      * @param list 更新虚拟背景列表
      */
     public updateBgList(list: IBgFileData[]) {

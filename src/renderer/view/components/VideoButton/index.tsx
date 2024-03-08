@@ -34,9 +34,8 @@ const VideoButton = (props: IProps) => {
 
   return (
     <div
-      className={`button-box ${
-        callMode === CallMode.AudioOnly ? 'disabled-button' : ''
-      }`}
+      className={`button-box ${callMode === CallMode.AudioOnly ? 'disabled-button' : ''
+        }`}
     >
       <DebounceButton className={`button ${videoClass}`} onClick={videoOperate}>
         <SVG icon={svgIcon} type={svgType} />

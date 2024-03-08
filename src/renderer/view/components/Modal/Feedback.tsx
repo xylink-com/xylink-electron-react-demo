@@ -1,27 +1,36 @@
 import { useEffect, useState } from 'react';
 import xyRTC from '@/utils/xyRTC';
 import { Button, message, Input } from 'antd';
+// import { SERVER } from '@/utils/config';
+
+// import './index.scss';
+// import { TServerEnv } from '@/type';
 
 const { TextArea } = Input;
 
 interface IProps {
+  // env: TServerEnv;
   onClose?: () => void;
 }
 
 const Feedback = (props: IProps) => {
+  // const { env } = props;
   const [uploadLoading, setUploadLoading] = useState(false);
   const [content, setContent] = useState('');
 
+  useEffect(() => {
+    // 设置log server
+    // const { logServer } = SERVER(env);
 
-  useEffect(()=>{
+    // xyRTC.logger.setLogServer(logServer);
     xyRTC.on('LogUploadResult', uploadResult);
 
     return () => {
       xyRTC.off('LogUploadResult', uploadResult);
     };
-  },[])
+  }, []);
 
-  const uploadResult = (event: any) => {
+const uploadResult = (event: any) => {
     const { code } = event;
 
     if (code === 'XYSDK:969001') {
@@ -41,6 +50,7 @@ const Feedback = (props: IProps) => {
     try {
       xyRTC.logUpload(content);
     } catch (err) {
+      console.log('upload error: ', err);
       message.info('提交失败');
       setContent('');
       props.onClose && props.onClose();

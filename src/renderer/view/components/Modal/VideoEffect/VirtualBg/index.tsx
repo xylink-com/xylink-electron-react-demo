@@ -166,7 +166,7 @@ const VirtualBg = (props: IVirtualBgProps) => {
             >
                 <img src={bg_01} />
             </div>
-            
+
             {
                 bgImgList.map(bg => {
                     const { id, url, type } = bg;
@@ -182,9 +182,9 @@ const VirtualBg = (props: IVirtualBgProps) => {
                                 <img src={closeIcon} onClick={(e) => {
                                     e.stopPropagation();
                                     handleDelBg(bg);
-                                }} className='close-icon' />
+                                }} className='close-icon'/>
                             )}
-                            <img src={url} />
+                            <img src={url}/>
                         </div>
                     )
                 })

@@ -7,35 +7,39 @@ import { useNavigate } from 'react-router-dom';
 import { Form, Input, Row, Button, Checkbox, message } from 'antd';
 import { CheckboxChangeEvent } from 'antd/lib/checkbox';
 import xyRTC from '@/utils/xyRTC';
-import { shell } from 'electron';
 import store from '@/utils/store';
 import {
   DEFAULT_LOGIN_INFO,
   DEFAULT_USER_INFO,
+  IVideoEffectTabPaneType,
+  LoginTypeMap,
   PRIVACY_AGREEMENT_URL,
   XYLINK_AGREEMENT_URL,
-  IVideoEffectTabPaneType,
 } from '@/enum';
-import { useSetRecoilState } from 'recoil';
-import { LoginStatus, MeetingStatus } from '@/type/enum';
+import { LoginType } from '@/type/enum';
 import Section from '@/components/Section';
 import Setting from '../components/Setting';
+// import Annotation from '@/components/Annotation';
 import { SDK_ERROR_MAP } from '@/enum/error';
-import { bgManager } from '@/utils/virtualBgManager';
-import videoEffectStore from '@/utils/videoEffectStore';
+import { SUCCESS_CODE } from '@/enum';
+import { shell } from 'electron';
 import { initVideoEffect } from '@/utils/initVideoEffect';
-import { videoEffectTab, unLogin } from '@/utils/state';
+import videoEffectStore from '@/utils/videoEffectStore';
+import { bgManager } from '@/utils/virtualBgManager';
+import { settingInfoState, videoEffectTab, unLogin } from '@/utils/state';
 import { ILoginState } from '@xylink/xy-electron-sdk';
-import { ILoginData } from '@/type';
 
 import './index.scss';
+import { ILoginData } from '@/type';
+import { useRecoilValue, useSetRecoilState } from 'recoil';
 
-const { XY, EXTERNAL } = MeetingStatus;
+const { XY, EXTERNAL, CCB_AUTH_CODE, THREE_XY, THREE_EXT_TOKEN } = LoginType;
 
 const Login = () => {
-  const navigate = useNavigate();
   const setVideoEffectTab = useSetRecoilState(videoEffectTab);
   const setIsUnLogin = useSetRecoilState(unLogin);
+  const { loginType = XY } = useRecoilValue(settingInfoState);
+  const navigate = useNavigate();
   const [userInfo, setUserInfo] = useState(() => {
     const cacheUserInfo = store.get('xyUserInfo');
 
@@ -53,10 +57,14 @@ const Login = () => {
     initVideoEffect.reset();
     setVideoEffectTab(IVideoEffectTabPaneType.VIRTUAL_BG);
 
+    if(process.env.NODE_ENV === 'production'){
+      xyRTC.setLogLevel('NONE');
+    }
+
     const loginStateHandler = (e: ILoginState) => {
       const { state, info, error } = e;
 
-      if (state === LoginStatus.Logined) {
+      if (state === 'Logined') {
         store.set('xyLoginInfo', info);
 
         // 更新虚拟背景和美颜的 userId，绑定三方账号
@@ -70,8 +78,9 @@ const Login = () => {
         setIsUnLogin(false);
         initVideoEffect.init();  // 初始化虚拟背景
         navigate('join');
-      } else if (state === LoginStatus.Logouted) {
-        if (error === 'XYSDK:969001') {
+      } else if (state === 'Logouted') {
+
+        if (error === SUCCESS_CODE) {
           // 清空登录信息
           store.set('xyLoginInfo', DEFAULT_LOGIN_INFO);
           return;
@@ -89,29 +98,39 @@ const Login = () => {
   }, []);
 
   useEffect(() => {
-    const { loginType } = userInfo;
+    const {
+      extID,
+      phone = '',
+      password,
+      extUserId,
+      displayName,
+      authCode,
+      channelId,
+      token,
+    } = userInfo;
 
-    if (loginType === XY) {
-      setVerifyDisabled(!(userInfo.phone && userInfo.password));
+    let isDisabled = false;
+
+    switch (loginType) {
+      case XY:
+        isDisabled = !(phone && password);
+        break;
+      case EXTERNAL:
+        isDisabled = !(extID && extUserId && displayName);
+        break;
+      case CCB_AUTH_CODE:
+        isDisabled = !(extID && extUserId && authCode && channelId);
+        break;
+      case THREE_XY:
+        isDisabled = !(extID && phone && password);
+        break;
+      case THREE_EXT_TOKEN:
+        isDisabled = !(extID && token);
+        break;
     }
 
-    if (loginType === EXTERNAL) {
-      setVerifyDisabled(
-        !(userInfo.extID && userInfo.extUserId && userInfo.displayName)
-      );
-    }
-  }, [userInfo]);
-
-  const switchLoginType = () => {
-    const loginType = userInfo.loginType === XY ? EXTERNAL : XY;
-
-    setUserInfo((info) => ({
-      ...info,
-      loginType,
-    }));
-
-    store.set('xyUserInfo.loginType', loginType);
-  };
+    setVerifyDisabled(isDisabled);
+  }, [loginType, userInfo]);
 
   const onChangeInput = (e: ChangeEvent<HTMLInputElement>, key: string) => {
     setUserInfo((info) => ({
@@ -128,14 +147,60 @@ const Login = () => {
       return;
     }
 
-    if (userInfo.loginType === XY) {
-      const { phone, password } = e;
+    const {
+      extID = '',
+      phone = '',
+      password = '',
+      extUserId = '',
+      displayName = '',
+      authCode = '',
+      isTempUser = false,
+      channelId = '',
+      token = '',
+    } = e;
 
-      xyRTC.login(phone, password);
-    } else {
-      const { extID = '', extUserId = '', displayName = '' } = e;
+    switch (loginType) {
+      case XY:
+        xyRTC.login(phone, password);
+        break;
+      case EXTERNAL:
+        xyRTC.loginExternalAccount(
+          extID,
+          extUserId,
+          displayName,
+          authCode,
+          isTempUser
+        );
+        break;
+      case CCB_AUTH_CODE:
+        xyRTC.loginWithAuthCode(
+          extID,
+          extUserId,
+          displayName,
+          authCode,
+          isTempUser,
+          channelId
+        );
+        break;
 
-      xyRTC.loginExternalAccount(extID, extUserId, displayName);
+      case THREE_XY:
+        const accountArr = phone.split('-');
+        const countryCode = accountArr.length === 1 ? '+86' : accountArr[0];
+        const account = accountArr.length > 1 ? accountArr[1] : phone;
+
+        xyRTC.loginXYAccount({
+          extID,
+          countryCode,
+          account,
+          password,
+        });
+        break;
+      case THREE_EXT_TOKEN:
+        xyRTC.loginExtToken({
+          extID,
+          token,
+        });
+        break;
     }
   };
 
@@ -148,86 +213,163 @@ const Login = () => {
     shell.openExternal(url);
   };
 
+  const onChangeTempUser = (e: CheckboxChangeEvent) => {
+    setUserInfo((info) => ({
+      ...info,
+      isTempUser: e.target.checked,
+    }));
+
+    store.set('xyUserInfo.isTempUser', e.target.checked);
+  };
+
   return (
     <Section>
+      {/* <Annotation/> */}
       <div className="login-tab">
-        <div>
-          {userInfo.loginType === EXTERNAL ? '三方账号登录' : '账号密码登录'}
-        </div>
-        <div className="login-tab-click" onClick={switchLoginType}>
-          {userInfo.loginType === EXTERNAL ? '账号密码登录' : '三方账号登录'}
-        </div>
+        <div>{LoginTypeMap[loginType]}</div>
+        {/* <Toolbar annotationStatus={true} /> */}
+
       </div>
 
       <Form onFinish={onLogin} initialValues={userInfo} className="xy-form">
-        {userInfo.loginType === XY && (
-          <>
-            <Form.Item
-              name="phone"
-              rules={[{ required: true, message: '请输入账号!' }]}
-            >
-              <Input
-                type="phone"
-                placeholder="请输入账号"
-                onChange={(e) => {
-                  onChangeInput(e, 'phone');
-                }}
-              />
-            </Form.Item>
-            <Form.Item
-              name="password"
-              rules={[{ required: true, message: '请输入密码!' }]}
-            >
-              <Input
-                type="password"
-                placeholder="请输入密码"
-                onChange={(e) => {
-                  onChangeInput(e, 'password');
-                }}
-              />
-            </Form.Item>
-          </>
+        {[EXTERNAL, CCB_AUTH_CODE, THREE_XY, THREE_EXT_TOKEN].includes(
+          loginType
+        ) && (
+          <Form.Item
+            name="extID"
+            rules={[{ required: true, message: '请输入企业ID!' }]}
+          >
+            <Input
+              type="text"
+              placeholder="企业ID (必填)"
+              onChange={(e) => {
+                onChangeInput(e, 'extID');
+              }}
+            />
+          </Form.Item>
         )}
 
-        {userInfo.loginType === EXTERNAL && (
-          <>
-            <Form.Item
-              name="extID"
-              rules={[{ required: true, message: '请输入企业ID!' }]}
-            >
-              <Input
-                type="text"
-                placeholder="请输入企业ID"
-                onChange={(e) => {
-                  onChangeInput(e, 'extID');
-                }}
-              />
-            </Form.Item>
-            <Form.Item
-              name="extUserId"
-              rules={[{ required: true, message: '请输入三方用户ID!' }]}
-            >
-              <Input
-                type="text"
-                placeholder="请输入三方用户ID"
-                onChange={(e) => {
-                  onChangeInput(e, 'extUserId');
-                }}
-              />
-            </Form.Item>
-            <Form.Item
-              name="displayName"
-              rules={[{ required: true, message: '请输入入会名称！' }]}
-            >
-              <Input
-                type="text"
-                placeholder="请输入入会名称"
-                onChange={(e) => {
-                  onChangeInput(e, 'displayName');
-                }}
-              />
-            </Form.Item>
-          </>
+        {[XY, THREE_XY].includes(loginType) && (
+          <Form.Item
+            name="phone"
+            rules={[{ required: true, message: '请输入账号!' }]}
+          >
+            <Input
+              type="phone"
+              placeholder="账号 (必填)"
+              onChange={(e) => {
+                onChangeInput(e, 'phone');
+              }}
+            />
+          </Form.Item>
+        )}
+        {[XY, THREE_XY].includes(loginType) && (
+          <Form.Item
+            name="password"
+            rules={[{ required: true, message: '请输入密码!' }]}
+          >
+            <Input
+              type="password"
+              placeholder="密码 (必填)"
+              onChange={(e) => {
+                onChangeInput(e, 'password');
+              }}
+            />
+          </Form.Item>
+        )}
+        {[EXTERNAL, CCB_AUTH_CODE].includes(loginType) && (
+          <Form.Item
+            name="extUserId"
+            rules={[{ required: true, message: '请输入三方用户ID!' }]}
+          >
+            <Input
+              type="text"
+              placeholder="三方用户ID (必填)"
+              onChange={(e) => {
+                onChangeInput(e, 'extUserId');
+              }}
+            />
+          </Form.Item>
+        )}
+        {[EXTERNAL, CCB_AUTH_CODE].includes(loginType) && (
+          <Form.Item
+            name="displayName"
+            rules={
+              loginType === CCB_AUTH_CODE
+                ? undefined
+                : [{ required: true, message: '请输入入会名称！' }]
+            }
+          >
+            <Input
+              type="text"
+              placeholder={`入会名称 (${
+                loginType === CCB_AUTH_CODE ? '选填' : '必填'
+              })`}
+              onChange={(e) => {
+                onChangeInput(e, 'displayName');
+              }}
+            />
+          </Form.Item>
+        )}
+
+        {loginType === THREE_EXT_TOKEN && (
+          <Form.Item
+            name="token"
+            rules={[{ required: true, message: '请输入token!' }]}
+          >
+            <Input
+              type="text"
+              placeholder="token (必填)"
+              onChange={(e) => {
+                onChangeInput(e, 'token');
+              }}
+            />
+          </Form.Item>
+        )}
+        {[CCB_AUTH_CODE, EXTERNAL].includes(loginType) && (
+          <Form.Item
+            name="authCode"
+            rules={
+              loginType === CCB_AUTH_CODE
+                ? [{ required: true, message: '请输入授权码！' }]
+                : undefined
+            }
+          >
+            <Input
+              type="text"
+              placeholder={`请输入授权码 (${
+                loginType === CCB_AUTH_CODE ? '必填' : '选填'
+              })`}
+              onChange={(e) => {
+                onChangeInput(e, 'authCode');
+              }}
+            />
+          </Form.Item>
+        )}
+
+        {loginType === CCB_AUTH_CODE && (
+          <Form.Item
+            name="channelId"
+            rules={[{ required: true, message: '请输入渠道id!' }]}
+          >
+            <Input
+              type="text"
+              placeholder="请输入渠道id (必填)"
+              onChange={(e) => {
+                onChangeInput(e, 'channelId');
+              }}
+            />
+          </Form.Item>
+        )}
+
+        {[CCB_AUTH_CODE, EXTERNAL].includes(loginType) && (
+          <Form.Item
+            name="isTempUser"
+            valuePropName="checked"
+            className="isTempUser"
+          >
+            <Checkbox onChange={onChangeTempUser}>临时用户</Checkbox>
+          </Form.Item>
         )}
 
         <div className="declare">
@@ -240,7 +382,7 @@ const Login = () => {
               }}
             >
               《服务协议》
-            </span>
+            </span>{' '}
             和
             <span
               className="declare-url"

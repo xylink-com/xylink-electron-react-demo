@@ -19,11 +19,11 @@ const useDeviceSelect = () => {
 
   const currentDeviceCallback = (currentDevice: Partial<ICurrentDevice>) => {
     console.log('currentDeviceCallback currentDevice: ', currentDevice);
-    setSelectedDevice((prevState: ICurrentDevice) => ({ ...prevState, ...currentDevice }));
-     // 会外使用麦克风需要用户自己处理麦克风采集，设备更新需要重新捕获麦克风
-     if(currentDevice.microphone && !isInMeeting){
+    // 会外使用麦克风需要用户自己处理麦克风采集，设备更新需要重新捕获麦克风
+    if(currentDevice.microphone && !isInMeeting){
       xyRTC.startAudioCapture();
     }
+    setSelectedDevice((prevState: ICurrentDevice) => ({ ...prevState, ...currentDevice }));
   }
   const deviceCallback = (deviceList: Partial<IDeviceList>) => {
     console.log('deviceCallback deviceList: ', deviceList)

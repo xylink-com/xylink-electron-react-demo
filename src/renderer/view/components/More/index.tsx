@@ -1,7 +1,8 @@
 /**
  * 会中底部按钮"更多" 包含设置和键盘功能
+ *
  */
-import { useState, useEffect , useMemo} from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { message, Popover } from 'antd';
 import xyRTC from '@/utils/xyRTC';
 import SVG from '@/components/Svg';
@@ -19,16 +20,19 @@ import {
   contentStatusState,
   shareContentType,
 } from '@/utils/state';
-import { CallMode,
+import {
+  CallMode,
   ContentCaptureType,
-  ShareContentState, } from '@xylink/xy-electron-sdk';
+  ShareContentState,
+} from '@xylink/xy-electron-sdk';
 
-  import { ipcRenderer } from 'electron';
+import './index.scss';
+import { ipcRenderer } from 'electron';
 
-  const { SENDING } = ShareContentState;
-  interface IProps {
-    contentPartCount: number;
-  }
+const { SENDING } = ShareContentState;
+interface IProps {
+  contentPartCount: number;
+}
 const More = (props: IProps) => {
   const [callMode, setCallMode] = useRecoilState(callModeState);
   const [visible, setVisible] = useState(false);
@@ -37,7 +41,6 @@ const More = (props: IProps) => {
   const setToolVisible = useSetRecoilState(toolbarState);
   const [farEndControl, setFarEndControl] = useRecoilState(farEndControlState);
   const videoMuteState = useRecoilValue(videoState);
-
   const [annotationStatus, setAnnotationStatus] = useRecoilState(
     annotationStatusState
   );
@@ -57,7 +60,6 @@ const More = (props: IProps) => {
     // 共享弹窗加载完成才可以批注，content接收者除外
     return (regionWindowLoaded || props.contentPartCount > 0) && confCanAnnotation;
   }, [regionWindowLoaded, props.contentPartCount, confCanAnnotation]);
-
 
   useEffect(() => {
     setToolVisible((state) => ({
@@ -89,9 +91,13 @@ const More = (props: IProps) => {
     setCallMode(mode);
   };
 
-  const onFarEndControl = ()=>{
-    if(!farEndControl.show && !farEndControl.callUri){
-      message.info('当前没有可以控制的摄像头')
+  const onFarEndControl = () => {
+    if (farEndControl.disabled) {
+      return;
+    }
+
+    if (!farEndControl.show && !farEndControl.callUri) {
+      message.info('当前没有可以控制的摄像头');
       return;
     }
 
@@ -99,13 +105,12 @@ const More = (props: IProps) => {
       message.info('语音模式下，不支持遥控摄像头操作');
       return;
     }
-    
+
     setFarEndControl((state) => ({
       ...state,
-      show: !state.show
-    }))
-  }
-
+      show: !state.show,
+    }));
+  };
 
   const switchAnnotation = () => {
     if (!canAnnotation) {
@@ -139,6 +144,7 @@ const More = (props: IProps) => {
           {annotationStatus ? '停止批注' : '批注'}
         </li>
       )}
+
       <li onClick={switchCallMode}>
         {callMode === CallMode.AudioOnly ? '退出语音模式' : '语音模式'}
       </li>
@@ -167,6 +173,7 @@ const More = (props: IProps) => {
         设置
       </li>
       <li
+        className={farEndControl.disabled ? 'disabled' : ''}
         onClick={onFarEndControl}
       >
         {farEndControl.show ? '退出遥控模式' : '遥控摄像头'}

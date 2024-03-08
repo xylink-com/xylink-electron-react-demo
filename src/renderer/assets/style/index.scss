@@ -33,7 +33,7 @@
   .section-content {
     position: relative;
     height: 100%;
-    padding: 66px 70px 0 70px;
+    padding: 40px 70px 0 70px;
     display: flex;
     flex-direction: column;
   }
@@ -59,6 +59,9 @@
   .ant-form-item {
     margin-bottom: 16px;
     color: $text-color;
+    &.isTempUser{
+      margin-bottom: 12px;
+    }
     .ant-input {
       color: $text-color;
       padding: 10px 12px;
@@ -77,7 +80,7 @@
   .mb30 {
     margin-bottom: 30px;
   }
-
+  .isTempUser,
   .declare {
     label {
       font-size: 12px;
@@ -92,7 +95,7 @@
   &-bottom {
     position: absolute;
     width: 100%;
-    bottom: 85px;
+    bottom: 65px;
     flex-direction: column;
     align-items: center;
   }

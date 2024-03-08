@@ -63,18 +63,17 @@ const ContentThumbnail = () => {
 
       if (monitor) {
         thumbnails.push(monitor);
-      } else {
+      }
+      else {
         // 获取缩略图，创建新的缩略图数据
-        const monitorThumb: IMonitorThumbnail = xyRTC.getMonitorThumbnail(
-          monitorInfo.monitorName
-        );
+        const monitorThumb: IMonitorThumbnail = xyRTC.getMonitorThumbnail(monitorInfo.monitorName);
 
         if (monitorThumb.hasData) {
           const info: IContentInfo = {
-            info: { ...monitorThumb, rect: monitorInfo.rect },
+            info: {...monitorThumb, rect: monitorInfo.rect},
             key: monitorInfo.monitorName,
             name: index === 0 ? '当前屏幕' : `共享屏幕${index}`,
-            type: ContentCaptureType.SCREEN,
+            type: ContentCaptureType.SCREEN
           };
           thumbnails.push(info);
         }
@@ -87,7 +86,7 @@ const ContentThumbnail = () => {
       info: thumbnails[0].info,
       key: 'region-sharing',
       screenRegionSharing: true,
-      type: ContentCaptureType.SCREEN,
+      type: ContentCaptureType.SCREEN
     });
 
     // 获取 app 缩略图
@@ -100,10 +99,7 @@ const ContentThumbnail = () => {
       if (appContentInfo) {
         thumbnails.push(appContentInfo);
       } else {
-        const appData: IApp & IAppThumbnail = {
-          ...xyRTC.getAppThumbnail(hwnd),
-          ...appInfo,
-        };
+        const appData: IApp & IAppThumbnail = { ...xyRTC.getAppThumbnail(hwnd), ...appInfo };
         // 有些应用可能获取的缩略图有问题，比如任务管理器，需要判断一下是是不是有问题的图片，如果有问题则使用 icon 代替
         let appIcon: IAppIcon | null = null;
 
@@ -122,12 +118,12 @@ const ContentThumbnail = () => {
               <span title={appName}>{appName.split(' - ')[0]}</span>
             </span>
           ),
-        };
+        }
         thumbnails.push(content);
       }
     }
     return thumbnails;
-  };
+  }
 
   useEffect(() => {
     setCurSelectedContent(prev => {
@@ -217,8 +213,8 @@ const ContentThumbnail = () => {
 
   // 区域共享监听，桌面共享不会走到这里
   useEffect(() => {
-    type OnRegionSharingHandler = (event: Electron.IpcRendererEvent, region: Electron.Rectangle) => void;
     const startRegionShare: OnRegionSharingHandler = (_event, region) => {
+
       console.log('startRegionShare region, ', region);
 
       const { x, y, width: w, height: h } = region || {};
@@ -231,10 +227,11 @@ const ContentThumbnail = () => {
           enableFluentMode,
           localContentPreview: false,
           withAudio: withDesktopAudio,
-          region: { x, y, w, h },
+          region:  { x, y, w, h },
           bEnableAnnotation
         },
       });
+
       setVisible(false);
       setContentType(ContentCaptureType.SCREEN);
       setCurSelectedContent(null);
@@ -248,7 +245,6 @@ const ContentThumbnail = () => {
   }, [enableFluentMode, withDesktopAudio, curSelectedContent, bEnableAnnotation]);
 
   useEffect(()=>{
-
     const updateDisplayRegion: OnRegionSharingHandler = (_event, region) => {
       console.log('updateDisplayRegion region, ', region);
       // 如果是暂停的状态，则不应该恢复
@@ -265,11 +261,12 @@ const ContentThumbnail = () => {
     ipcRenderer.on('updateDisplayRegion', updateDisplayRegion);
     ipcRenderer.on('regionSharingWindowWillChange', onregionSharingWindowWillChange);
 
-    return () => {
+    return ()=>{
       ipcRenderer.off('updateDisplayRegion', updateDisplayRegion);
       ipcRenderer.off('regionSharingWindowWillChange', onregionSharingWindowWillChange);
+
     }
-  }, [ sharingIsPaused]);
+  }, [sharingIsPaused])
 
   const { totalPage, paginationList } = React.useMemo(() => {
     const startIdx = (currentPage - 1) * CONTENT_PAGE_SIZE;

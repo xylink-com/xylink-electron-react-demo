@@ -27,6 +27,8 @@ const ThumbnailRenderer = (props: ThumbnailRendererProps) => {
         }
     }, [buffer, width, height]);
 
+    if (width === 0 || height === 0) return null;
+
     return <canvas ref={thumbnailRef}></canvas>
 }
 

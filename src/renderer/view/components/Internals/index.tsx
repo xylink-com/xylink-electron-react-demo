@@ -26,7 +26,7 @@ const Internals = (props: IProps) => {
 
     timer.current = setInterval(() => {
       getStatistics();
-    }, 500);
+    }, 3000);
 
     return () => {
       if (timer.current) {

@@ -1,4 +1,4 @@
-import { useEffect, useMemo } from 'react';
+import { useEffect, useMemo, useRef } from 'react';
 import Modal from '@/components/Modal';
 import Button from '@/components/Button'
 import style from './index.module.scss';

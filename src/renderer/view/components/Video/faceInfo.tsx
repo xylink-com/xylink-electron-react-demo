@@ -10,7 +10,7 @@ import {
   AIFaceMapState,
   broadCastState,
   faceTypeState,
-  localVideoFlip
+  localVideoFlip,
 } from '@/utils/state';
 import { LOCAL_VIEW_ID } from '@/enum';
 

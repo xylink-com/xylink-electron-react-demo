@@ -3,7 +3,6 @@
  * @authors Luo-jinghui (luojinghui424@gmail.com)
  * @date  2020-04-28 17:26:40
  */
-
 import { TerminalType } from "@xylink/xy-electron-sdk";
 
 /**
@@ -43,7 +42,7 @@ export const debounce = function (fn: any, delay: number, atleast: number) {
  * 非立即执行防抖
  * @param fn 立即执行函数
  * @param wait 防抖间隔 ms
- * @returns 
+ * @returns
  */
 export const debounceNotImmediate = (fn: Function, wait: number) => {
   let timerId: NodeJS.Timeout | undefined;
@@ -78,6 +77,7 @@ export const throttle = function (fn: any, wait: number) {
     }
   };
 };
+
 
 export const isMac = process.platform === 'darwin';
 export const isWin = process.platform === 'win32';
@@ -114,10 +114,9 @@ export const farEndControlSupport = (feccOri: number | undefined) => {
   }
 }
 
-
 /**
  * 获取设备的默认头像链接
- * 
+ *
  * @param terminalType 终端设备类型
  * @returns {string} avatar链接
  */
@@ -160,3 +159,4 @@ export const downloadUrl = (url: string, fileName: string) => {
   }, 200);
 };
 
+export const isDev = process.env.NODE_ENV !== 'production';

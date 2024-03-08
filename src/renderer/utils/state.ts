@@ -11,7 +11,7 @@ import {
   ContentCaptureType,
   RecordStatus,
   IOnHoldInfo,
-  ShareContentState
+  ShareContentState,
 } from '@xylink/xy-electron-sdk';
 import { atom } from 'recoil';
 import store from './store';
@@ -202,7 +202,7 @@ export const interactiveState = atom<IInteractiveToolInfo>({
     webViewUrl: '',
     resultWebViewUrl: '',
     questionnaireId: '',
-    business: ''
+    business: '',
   },
 });
 
@@ -327,7 +327,6 @@ export const annotationStatusState = atom({
   key:'AnnotationStatus',
   default: false
 })
-
 /**
  * 是否开启本地视频镜像
  */
@@ -337,7 +336,7 @@ export const localVideoFlip = atom<boolean>({
 });
 
 /**
- * 滤镜、美颜、虚拟背景 Tab 
+ * 滤镜、美颜、虚拟背景 Tab
  */
 export const videoEffectTab = atom<IVideoEffectTabPaneType>({
   key: 'videoEffectTabPaneKey',

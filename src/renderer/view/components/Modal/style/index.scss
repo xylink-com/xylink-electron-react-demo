@@ -243,6 +243,9 @@
 
     &-common {
       height: 100%;
+      overflow: auto;
+      margin-right: -35px;
+      padding-right: 35px;
       .item {
         .key {
           width: 100px;

@@ -2,14 +2,17 @@ import {
   ContentCaptureType,
   IAppThumbnail,
   IModel,
-  IMonitorInfo，
+  IMonitorInfo,
   IMonitorThumbnail,
   RecordStatus,
   TemplateModel,
   VideoBeautyStyle,
-  VideoFilterStyle
-} from "@xylink/xy-electron-sdk";
-import { AnnotationKey, LocalLanguage, ShowLanguage , IVirtualBgType} from './enum';
+  VideoFilterStyle,
+} from '@xylink/xy-electron-sdk';
+import { AnnotationKey, LocalLanguage, ShowLanguage } from './enum';
+import { IVirtualBgType } from '@/type/enum';
+
+export type TServerEnv = 'TXDEV' | 'TXQA' | 'PRE' | 'PRD';
 
 /**
  * 静音状态
@@ -27,23 +30,29 @@ export type IAudio = 'mute' | 'unmute';
  * @value feedback 反馈
  * @value about 关于
  */
-export type TSettingType = 'device' | 'common' | 'feedback' | 'about' | 'video-effect';
-
-/**
- * 设置信息
- *
- * @property { string } clientId
- * @property { string } clientSecret
- * @property { string } extId 企业ID
- * @property { string } proxy 服务器地址
- * @property { string } model 布局模式
- */
+export type TSettingType =
+  | 'device'
+  | 'common'
+  | 'feedback'
+  | 'about'
+  | 'video-effect';
 export interface ISettingInfo {
   clientId: string;
   clientSecret: string;
   extId: string;
   proxy: string;
   model: IModel;
+}
+
+/**
+ * 窗口ID 信息
+ *
+ * @property { number? } mainId 主屏ID
+ * @property { number? } externalId 副屏ID
+ */
+export interface ICurrentWindowId {
+  mainId?: number;
+  externalId?: number;
 }
 
 /**
@@ -102,11 +111,11 @@ export interface ILanguageList {
 
 /**
  * 录制详情
- * 
+ *
  * @property recordStatus 录制状态
  * @property isSelfRecord 是否是本地录制
  */
-export interface ICloudRecordInfo{
+export interface ICloudRecordInfo {
   recordStatus: RecordStatus;
   isSelfRecord: boolean;
 }
@@ -126,7 +135,7 @@ export interface IContentInfo {
 
 /**
  * 虚拟背景配置
- * 
+ *
  * @property filename 文件名称，默认会在 app.getPath('userData') 处取数据
  * @property hash 存入 hash 主要是用来比较是否是同一个文件
  * @property id 唯一的 id
@@ -144,7 +153,7 @@ export type IFilterMap = Partial<Record<VideoFilterStyle, { level: number }>>;
 
 /**
  * 选中的视频效果
- * 
+ *
  * @property virtualBg 选中的虚拟背景
  * @property beauty 选中的美颜
  * @property filter 选中的滤镜
@@ -157,23 +166,22 @@ interface ISelectedVideoEffect {
 
 /**
  * 虚拟背景、美颜、滤镜数据
- * 
+ *
  * @property selected 选中的视频效果
  * @property beautyMap 美颜效果集合
  * @property filterMap 滤镜效果集合
  * @property virtualBg 虚拟背景列表
  */
 export interface IVideoEffectStore {
-  selected: ISelectedVideoEffect,
+  selected: ISelectedVideoEffect;
 
   beautyMap: IBeautyMap;
   filterMap: IFilterMap;
 
   virtualBg: {
     list: IVirtualBgInfo[];
-  },
+  };
 }
-
 
 /**
  * 标注类型/文案

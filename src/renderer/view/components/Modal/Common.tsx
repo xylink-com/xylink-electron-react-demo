@@ -14,12 +14,14 @@ import {
   DEFAULT_SETTING_INFO,
   LAYOUT_MODE_LIST,
   LAYOUT_MODE_MAP,
+  LoginTypeMap,
+  RESOLUTION_LIST,
 } from '@/enum';
 import store from '@/utils/store';
 import xyRTC from '@/utils/xyRTC';
 import { ipcRenderer } from 'electron';
 import { CheckboxChangeEvent } from 'antd/lib/checkbox';
-import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
+import { useRecoilState, useRecoilValue } from 'recoil';
 import {
   broadCastState,
   callState,
@@ -28,8 +30,8 @@ import {
   withDesktopAudioState,
   localResolutionState,
 } from '@/utils/state';
-import { FaceType, IModel, TFaceType } from '@xylink/xy-electron-sdk';
-import { MeetingStatus } from '@/type/enum';
+import { FaceType, IModel } from '@xylink/xy-electron-sdk';
+import { LoginType, MeetingStatus } from '@/type/enum';
 import { RuleObject } from 'antd/lib/form';
 import { StoreValue } from 'antd/lib/form/interface';
 import { ISettingInfo } from '@/type';
@@ -40,7 +42,8 @@ const { Option } = Select;
 const Common = () => {
   const [settingInfo, setSettingInfo] = useRecoilState(settingInfoState);
   const meetingState = useRecoilValue(callState);
-  const setSelectedResolution = useSetRecoilState(localResolutionState);
+  const [selectedResolution, setSelectedResolution] =
+    useRecoilState(localResolutionState);
   const [faceType, setFaceType] = useRecoilState(faceTypeState);
   const [withDesktopAudio, setWithDesktopAudio] = useRecoilState(
     withDesktopAudioState
@@ -50,7 +53,7 @@ const Common = () => {
 
   const isInMeeting = meetingState === MeetingStatus.MEETING;
 
-  const { model } = settingInfo;
+  const { model, loginType = LoginType.XY } = settingInfo;
 
   // 校验服务器地址
   const handleCheckProxy = async (rule: RuleObject, value: StoreValue) => {
@@ -59,7 +62,7 @@ const Common = () => {
     }
 
     const regex = RegExp(
-      '^(?=^.{3,255}$)[a-zA-Z0-9][-a-zA-Z0-9]{0,62}(\\.[a-zA-Z0-9][-a-zA-Z0-9]{0,62})+(:[0-9]*)?$'
+      '^(?=^.{3,255}$)[a-zA-Z0-9][-a-zA-Z0-9]{0,62}(\\.[a-zA-Z0-9][-a-zA-Z0-9]{0,62})+(\:[0-9]*)?$'
     );
 
     if (!regex.test(value)) {
@@ -100,6 +103,19 @@ const Common = () => {
     xyRTC.switchModel(val);
   };
 
+  const onSwitchLoginType = (val: LoginType) => {
+    setSettingInfo((info) => {
+      const newInfo = {
+        ...info,
+        loginType: val,
+      };
+
+      store.set('xySettingInfo', newInfo);
+
+      return newInfo;
+    });
+  };
+
   // 共享内容时采集电脑声音
   const onChangeContentAudio = (e: CheckboxChangeEvent) => {
     store.set('xyWithDesktopAudio', e.target?.checked);
@@ -121,7 +137,7 @@ const Common = () => {
 
     setFaceType(enable ? FaceType.EletronicBadge : '');
 
-    xyRTC?.enableFaceDetectMode(faceType as TFaceType, enable);
+    xyRTC?.enableFaceDetectMode(faceType, enable);
   };
 
   // 选择人脸信息展示模式
@@ -135,11 +151,11 @@ const Common = () => {
   };
 
   // 设置本地预览分辨率
-  const onSelectResolution = (val: number) => {
-    setSelectedResolution(val);
+  // const onSelectResolution = (val: number) => {
+  //   setSelectedResolution(val);
 
-    xyRTC.setLocalPreviewResolution(val);
-  };
+  //   xyRTC.setLocalPreviewResolution(val);
+  // };
 
   return (
     <div className="setting__content-common">
@@ -188,7 +204,20 @@ const Common = () => {
               <Form.Item name="extId" label="企业ID">
                 <Input key="extId" placeholder="不填写则用公有云环境默认值" />
               </Form.Item>
-
+              <div className="item">
+                <div className="key">布局模式</div>
+                <div className="value">
+                  <Select value={model} onChange={onSwitchModel}>
+                    {LAYOUT_MODE_LIST.map((key) => {
+                      return (
+                        <Option key={key} value={key}>
+                          {LAYOUT_MODE_MAP[key]}
+                        </Option>
+                      );
+                    })}
+                  </Select>
+                </div>
+              </div>
               <Form.Item>
                 <div className="setting-btn-box">
                   <Button
@@ -211,13 +240,13 @@ const Common = () => {
           </div>
 
           <div className="item">
-            <div className="key">布局模式</div>
+            <div className="key">登录方式</div>
             <div className="value">
-              <Select value={model} onChange={onSwitchModel}>
-                {LAYOUT_MODE_LIST.map((key) => {
+              <Select value={loginType} onChange={onSwitchLoginType}>
+                {Object.keys(LoginTypeMap).map((key) => {
                   return (
                     <Option key={key} value={key}>
-                      {LAYOUT_MODE_MAP[key]}
+                      {LoginTypeMap[key as LoginType]}
                     </Option>
                   );
                 })}

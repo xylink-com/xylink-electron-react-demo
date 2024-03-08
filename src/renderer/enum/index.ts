@@ -5,9 +5,14 @@ import {
   IPencilAnnotationKey,
   IVideoEffectStore,
 } from '@/type';
-import { AnnotationColorKey, AnnotationKey, LoginType, MeetingStatus } from '@/type/enum';
-import { ACCOUNT, SERVER } from '@/config';
-import { DeviceTypeKey, LayoutModel, TemplateModel, VideoBeautyStyle, VideoFilterStyle } from '@xylink/xy-electron-sdk';
+import { AnnotationColorKey, AnnotationKey, LoginType } from '@/type/enum';
+import {
+  DeviceTypeKey,
+  LayoutModel,
+  TemplateModel,
+  VideoBeautyStyle,
+  VideoFilterStyle,
+} from '@xylink/xy-electron-sdk';
 
 // 服务协议
 export const XYLINK_AGREEMENT_URL =
@@ -22,7 +27,6 @@ export const PRIVACY_AGREEMENT_URL =
  *
  */
 export const DEFAULT_USER_INFO = {
-  loginType: MeetingStatus.EXTERNAL,
   phone: '+86-',
   password: '',
   meeting: '',
@@ -57,18 +61,24 @@ export const DEFAULT_MEETING_INFO = {
   displayName: '', // 会议中显示的名称
   muteVideo: true, // 入会时是否关闭摄像头
   muteAudio: true, // 入会时是否静音
-  meetingId:'',
+  meetingId: '',
 };
+
+/**
+ * 服务器地址
+ */
+export const DEFAULT_PROXY = 'cloud.xylink.com';
 
 /**
  * 设置信息
  */
 export const DEFAULT_SETTING_INFO = {
-  clientId: ACCOUNT.clientId,
-  clientSecret: ACCOUNT.clientSecret,
-  extId: ACCOUNT.extId,
-  proxy: SERVER,
+  clientId: '',
+  clientSecret: '',
+  extId: '',
+  proxy: DEFAULT_PROXY,
   model: LayoutModel.AUTO,
+  loginType: LoginType.EXTERNAL,
 };
 
 /**
@@ -141,52 +151,52 @@ export const LAYOUT_MODEL_MAP: ILayoutModelMap = {
     [
       {
         key: TemplateModel.SPEAKER,
-        text: '缩略视图'
-      }
+        text: '缩略视图',
+      },
     ],
     [
       {
         key: TemplateModel.GALLERY,
-        text: '宫格视图'
-      }
-    ]
+        text: '宫格视图',
+      },
+    ],
   ],
   content: [
     [
       {
         key: TemplateModel.MULTI_PIC_CONTENT_HIGH_PRIORITY,
-        text: '缩略视图'
+        text: '缩略视图',
       },
       {
         key: TemplateModel.MULTI_PIC_ACTIVE_HIGH_PRIORITY,
-        text: '缩略共享'
+        text: '缩略共享',
       },
       {
         key: TemplateModel.TWO_PIC_PIP,
-        text: '共享视图'
+        text: '共享视图',
       },
       {
         key: TemplateModel.CONTENT_ONLY,
-        text: '共享全视图'
+        text: '共享全视图',
       },
       {
         key: TemplateModel.TWO_PIC_SYMMETRIC,
-        text: '共享+演讲'
-      }
+        text: '共享+演讲',
+      },
     ],
     [
       {
         key: TemplateModel.GALLERY,
-        text: '宫格视图'
-      }
-    ]
-  ]
+        text: '宫格视图',
+      },
+    ],
+  ],
 };
 
 /**
  * 同传字幕操作按钮
  */
-export const languageList: ILanguageList ={
+export const languageList: ILanguageList = {
   local: {
     Chinese: '简体中文',
     English: 'English',
@@ -205,29 +215,40 @@ export const DeviceNameMap = {
   [DeviceTypeKey.speaker]: '音频输出',
   [DeviceTypeKey.microphone]: '音频输入',
   [DeviceTypeKey.camera]: '视频',
-}
+};
+
+/**
+ * 登录类型遍历
+ */
+export const LoginTypeMap: Partial<{
+  [key in LoginType]: string;
+}> = {
+  [LoginType.XY]: '小鱼账号登录 (旧)',
+  [LoginType.EXTERNAL]: '三方账号登录',
+  [LoginType.CCB_AUTH_CODE]: '建行授权码登录',
+  [LoginType.THREE_XY]: '小鱼账号登录',
+  [LoginType.THREE_EXT_TOKEN]: '三方token登录',
+};
 
 export const SUCCESS_CODE = 'XYSDK:969001';
 
 /** 共享缩略图分页大小 */
 export const CONTENT_PAGE_SIZE = 1000000;
-
-/** 轮询更新共享弹窗中的缩略图列表，如果传 0，则不做轮询 */
-export const CONTENT_LOOP_INTERVAL = 2000;
+/** 2s 轮询，如果传 0，则不做轮询 */
+export const CONTENT_LOOP_INTERVAL = 0;
 
 /**
  * 虚拟背景 tab 页签的 key
- * 
+ *
  * @value VIRTUAL_BG 虚拟背景
  * @value BEAUTY 美颜
  * @value FILTER 滤镜
-*/
+ */
 export enum IVideoEffectTabPaneType {
   VIRTUAL_BG = 'virtual-bg',
   BEAUTY = 'beauty',
-  FILTER = 'filter'
+  FILTER = 'filter',
 }
-
 
 /**
  * 标注操作类型map
@@ -296,7 +317,7 @@ export const ANNOTATION_WIDTH: {
 
 /**
  * 虚拟背景配置
- * 
+ *
  * @param {string} VIRTUALIZATION - 背景虚化
  * @param {number} MAX_IMG_SIZE - 图片最大值，10MB
  * @param {string} ALLOW_MIME - 允许上传的图片类型
@@ -325,7 +346,6 @@ export const DEFAULT_VIDEO_EFFECT_CONFIG: IVideoEffectStore = {
   filterMap: {},
 
   virtualBg: {
-    list: []
+    list: [],
   },
-}
-
+};

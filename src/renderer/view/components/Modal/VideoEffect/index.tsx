@@ -13,7 +13,7 @@ import { MeetingStatus } from '@/type/enum';
 import store from '@/utils/videoEffectStore';
 import { initVideoEffect } from '@/utils/initVideoEffect';
 import { IVideoEffectTabPaneType } from '@/enum';
-import LocalVideo from '../../LocalVideo';
+import LocalVideo from './LocalVideo';
 import VirtualBg from './VirtualBg';
 import VideoBeauty from './Beauty';
 import VideoFilter from './Filter';
