@@ -2527,10 +2527,10 @@
     shelljs "^0.8.4"
     signale "^1.4.0"
 
-"@xylink/xy-whiteboard@0.0.4-beta.2":
-  version "0.0.4-beta.2"
-  resolved "https://registry.npmmirror.com/@xylink%2fxy-whiteboard/-/xy-whiteboard-0.0.4-beta.2.tgz#60bdee6332c00512be97cdd273af85e6e5b685ad"
-  integrity sha512-SaVpoU6cMzwiK2wJ84cHy8X7PT+wmSwjYc0bS99RxvglSlOryKeO64iZaz4tchYJKqDQMj3UAj9LxqPMUuAfzQ==
+"@xylink/xy-whiteboard@^0.0.5":
+  version "0.0.5"
+  resolved "https://registry.npmmirror.com/@xylink/xy-whiteboard/-/xy-whiteboard-0.0.5.tgz#e81b2ba8ff64e39121b78707568c22388cd2436b"
+  integrity sha512-ehh6dj4EFSwyPrMOTcBl3DntP9sNYMVyICPKn+wb7VLZhAKujOfN8SxIX6LXPDZuxSH5h22WM+huD61bmuQc2A==
   dependencies:
     js-base64 "^3.6.1"
     konva "^9.2.1"
