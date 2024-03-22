@@ -33,7 +33,7 @@ import './index.scss';
 import { ILoginData } from '@/type';
 import { useRecoilValue, useSetRecoilState } from 'recoil';
 
-const { XY, EXTERNAL, CCB_AUTH_CODE, THREE_XY, THREE_EXT_TOKEN } = LoginType;
+const { XY, EXTERNAL, THREE_XY, THREE_EXT_TOKEN } = LoginType;
 
 const Login = () => {
   const setVideoEffectTab = useSetRecoilState(videoEffectTab);
@@ -104,8 +104,6 @@ const Login = () => {
       password,
       extUserId,
       displayName,
-      authCode,
-      channelId,
       token,
     } = userInfo;
 
@@ -117,9 +115,6 @@ const Login = () => {
         break;
       case EXTERNAL:
         isDisabled = !(extID && extUserId && displayName);
-        break;
-      case CCB_AUTH_CODE:
-        isDisabled = !(extID && extUserId && authCode && channelId);
         break;
       case THREE_XY:
         isDisabled = !(extID && phone && password);
@@ -155,7 +150,6 @@ const Login = () => {
       displayName = '',
       authCode = '',
       isTempUser = false,
-      channelId = '',
       token = '',
     } = e;
 
@@ -170,16 +164,6 @@ const Login = () => {
           displayName,
           authCode,
           isTempUser
-        );
-        break;
-      case CCB_AUTH_CODE:
-        xyRTC.loginWithAuthCode(
-          extID,
-          extUserId,
-          displayName,
-          authCode,
-          isTempUser,
-          channelId
         );
         break;
 
@@ -232,7 +216,7 @@ const Login = () => {
       </div>
 
       <Form onFinish={onLogin} initialValues={userInfo} className="xy-form">
-        {[EXTERNAL, CCB_AUTH_CODE, THREE_XY, THREE_EXT_TOKEN].includes(
+        {[EXTERNAL, THREE_XY, THREE_EXT_TOKEN].includes(
           loginType
         ) && (
           <Form.Item
@@ -277,7 +261,7 @@ const Login = () => {
             />
           </Form.Item>
         )}
-        {[EXTERNAL, CCB_AUTH_CODE].includes(loginType) && (
+        {[EXTERNAL].includes(loginType) && (
           <Form.Item
             name="extUserId"
             rules={[{ required: true, message: '请输入三方用户ID!' }]}
@@ -291,20 +275,16 @@ const Login = () => {
             />
           </Form.Item>
         )}
-        {[EXTERNAL, CCB_AUTH_CODE].includes(loginType) && (
+        {[EXTERNAL].includes(loginType) && (
           <Form.Item
             name="displayName"
             rules={
-              loginType === CCB_AUTH_CODE
-                ? undefined
-                : [{ required: true, message: '请输入入会名称！' }]
+              [{ required: true, message: '请输入入会名称！' }]
             }
           >
             <Input
               type="text"
-              placeholder={`入会名称 (${
-                loginType === CCB_AUTH_CODE ? '选填' : '必填'
-              })`}
+              placeholder={`入会名称 (${'必填'})`}
               onChange={(e) => {
                 onChangeInput(e, 'displayName');
               }}
@@ -326,20 +306,13 @@ const Login = () => {
             />
           </Form.Item>
         )}
-        {[CCB_AUTH_CODE, EXTERNAL].includes(loginType) && (
+        {[EXTERNAL].includes(loginType) && (
           <Form.Item
             name="authCode"
-            rules={
-              loginType === CCB_AUTH_CODE
-                ? [{ required: true, message: '请输入授权码！' }]
-                : undefined
-            }
           >
             <Input
               type="text"
-              placeholder={`请输入授权码 (${
-                loginType === CCB_AUTH_CODE ? '必填' : '选填'
-              })`}
+              placeholder={`请输入授权码 (${'选填'})`}
               onChange={(e) => {
                 onChangeInput(e, 'authCode');
               }}
@@ -347,22 +320,7 @@ const Login = () => {
           </Form.Item>
         )}
 
-        {loginType === CCB_AUTH_CODE && (
-          <Form.Item
-            name="channelId"
-            rules={[{ required: true, message: '请输入渠道id!' }]}
-          >
-            <Input
-              type="text"
-              placeholder="请输入渠道id (必填)"
-              onChange={(e) => {
-                onChangeInput(e, 'channelId');
-              }}
-            />
-          </Form.Item>
-        )}
-
-        {[CCB_AUTH_CODE, EXTERNAL].includes(loginType) && (
+        {[EXTERNAL].includes(loginType) && (
           <Form.Item
             name="isTempUser"
             valuePropName="checked"

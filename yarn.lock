@@ -1543,7 +1543,7 @@
 
 "@remix-run/router@1.15.3":
   version "1.15.3"
-  resolved "https://fe-private-npm.xylink.com/@remix-run%2frouter/-/router-1.15.3.tgz#d2509048d69dbb72d5389a14945339f1430b2d3c"
+  resolved "https://registry.npmmirror.com/@remix-run%2frouter/-/router-1.15.3.tgz#d2509048d69dbb72d5389a14945339f1430b2d3c"
   integrity sha512-Oy8rmScVrVxWZVOpEF57ovlnhpZ8CCPlnIIumVcV9nFdiSIrus99+Lw78ekXyGvVDlIsFJbSfmSovJUhCWYV3w==
 
 "@sinclair/typebox@^0.23.3":
@@ -2516,10 +2516,10 @@
   resolved "https://registry.yarnpkg.com/@xtuc/long/-/long-4.2.2.tgz#d291c6a4e97989b5c61d9acf396ae4fe133a718d"
   integrity sha512-NuHqBY1PB/D8xU6s/thBgOAiAP7HOYDQ32+BFZILJ8ivkUkAHQnWfn6WhL79Owj1qmUnoN/YPhktdIoucipkAQ==
 
-"@xylink/xy-electron-sdk@^3.10.3-beta.0":
-  version "3.10.3-beta.0"
-  resolved "https://fe-private-npm.xylink.com/@xylink%2fxy-electron-sdk/-/xy-electron-sdk-3.10.3-beta.0.tgz#7341c9ed21b9d209d7918363c95826dbb10b71ef"
-  integrity sha512-0Hl0axa22FLiqyj+JHy3XCbgNdNV7lX675SqDMhOpFokHDk6gleWb6vTNE5NCCRy5TX0xzhcon/CJhhE1MiWjQ==
+"@xylink/xy-electron-sdk@^3.10.3":
+  version "3.10.3"
+  resolved "https://registry.npmmirror.com/@xylink/xy-electron-sdk/-/xy-electron-sdk-3.10.3.tgz#d1aafab181e9c5184056f920719e3d28b805316d"
+  integrity sha512-wzi5E3gQ4a6eiFi1xnloT3kdZetTyc7EgzoGp62yCeV+mHedulS8cHYlinNAl1o6cWlPtBWbcUpZpk8PosqrLw==
   dependencies:
     dayjs "^1.11.6"
     download "^8.0.0"
@@ -2529,7 +2529,7 @@
 
 "@xylink/xy-whiteboard@0.0.4-beta.2":
   version "0.0.4-beta.2"
-  resolved "https://fe-private-npm.xylink.com/@xylink%2fxy-whiteboard/-/xy-whiteboard-0.0.4-beta.2.tgz#60bdee6332c00512be97cdd273af85e6e5b685ad"
+  resolved "https://registry.npmmirror.com/@xylink%2fxy-whiteboard/-/xy-whiteboard-0.0.4-beta.2.tgz#60bdee6332c00512be97cdd273af85e6e5b685ad"
   integrity sha512-SaVpoU6cMzwiK2wJ84cHy8X7PT+wmSwjYc0bS99RxvglSlOryKeO64iZaz4tchYJKqDQMj3UAj9LxqPMUuAfzQ==
   dependencies:
     js-base64 "^3.6.1"
@@ -3630,7 +3630,7 @@ clone@^1.0.2:
 
 clsx@^1.1.1:
   version "1.2.1"
-  resolved "https://fe-private-npm.xylink.com/clsx/-/clsx-1.2.1.tgz#0ddc4a20a549b59c93a4116bb26f5294ca17dc12"
+  resolved "https://registry.npmmirror.com/clsx/-/clsx-1.2.1.tgz#0ddc4a20a549b59c93a4116bb26f5294ca17dc12"
   integrity sha512-EcR6r5a8bj6pu3ycsa/E/cKVGuTgZJZdsyUYHOksG/UHIiKfjxzRxYJpyVBwYaQeOvghal9fcc4PidlgzugAQg==
 
 co@^4.6.0:
@@ -7158,7 +7158,7 @@ js-base64@*, js-base64@^3.7.2:
 
 js-base64@^3.6.1:
   version "3.7.7"
-  resolved "https://fe-private-npm.xylink.com/js-base64/-/js-base64-3.7.7.tgz#e51b84bf78fbf5702b9541e2cb7bfcb893b43e79"
+  resolved "https://registry.npmmirror.com/js-base64/-/js-base64-3.7.7.tgz#e51b84bf78fbf5702b9541e2cb7bfcb893b43e79"
   integrity sha512-7rCnleh0z2CkXhH67J8K1Ytz0b2Y+yxTPL+/KOJoa20hfnVQ/3/T6W/KflYI4bRHRagNeXeU2bkNGI3v1oS/lw==
 
 "js-tokens@^3.0.0 || ^4.0.0", js-tokens@^4.0.0:
@@ -7361,7 +7361,7 @@ klona@^2.0.4:
 
 konva@^9.2.1:
   version "9.3.6"
-  resolved "https://fe-private-npm.xylink.com/konva/-/konva-9.3.6.tgz#62b36292dbe06c56eb161d5ead221c2b5c5a8926"
+  resolved "https://registry.npmmirror.com/konva/-/konva-9.3.6.tgz#62b36292dbe06c56eb161d5ead221c2b5c5a8926"
   integrity sha512-dqR8EbcM0hjuilZCBP6xauQ5V3kH3m9kBcsDkqPypQuRgsXbcXUrxqYxhNbdvKZpYNW8Amq94jAD/C0NY3qfBQ==
 
 language-subtag-registry@~0.3.2:
@@ -7954,7 +7954,7 @@ nanoid@^3.3.4:
 
 nanoid@^3.3.7:
   version "3.3.7"
-  resolved "https://fe-private-npm.xylink.com/nanoid/-/nanoid-3.3.7.tgz#d0c301a691bc8d54efa0a2226ccf3fe2fd656bd8"
+  resolved "https://registry.npmmirror.com/nanoid/-/nanoid-3.3.7.tgz#d0c301a691bc8d54efa0a2226ccf3fe2fd656bd8"
   integrity sha512-eSRppjcPIatRIMC1U6UngP8XFcz8MQWGQdt1MTBQ7NaAmvXDfvNxbvWV3x2y6CdEUciCSsDHDQZbhYaB8QEo2g==
 
 native-ext-loader@^2.3.0:
@@ -8794,7 +8794,7 @@ postcss-selector-parser@^6.0.2, postcss-selector-parser@^6.0.4, postcss-selector
 
 postcss-sorting@^8.0.2:
   version "8.0.2"
-  resolved "https://fe-private-npm.xylink.com/postcss-sorting/-/postcss-sorting-8.0.2.tgz#6393385ece272baf74bee9820fb1b58098e4eeca"
+  resolved "https://registry.npmmirror.com/postcss-sorting/-/postcss-sorting-8.0.2.tgz#6393385ece272baf74bee9820fb1b58098e4eeca"
   integrity sha512-M9dkSrmU00t/jK7rF6BZSZauA5MAaBW4i5EnJXspMwt4iqTh/L9j6fgMnbElEOfyRyfLfVbIHj/R52zHzAPe1Q==
 
 postcss-svgo@^5.1.0:
@@ -8828,7 +8828,7 @@ postcss@^8.3.5, postcss@^8.4.7:
 
 postcss@^8.4.32:
   version "8.4.35"
-  resolved "https://fe-private-npm.xylink.com/postcss/-/postcss-8.4.35.tgz#60997775689ce09011edf083a549cea44aabe2f7"
+  resolved "https://registry.npmmirror.com/postcss/-/postcss-8.4.35.tgz#60997775689ce09011edf083a549cea44aabe2f7"
   integrity sha512-u5U8qYpBCpN13BsiEB0CbR1Hhh4Gc0zLFuedrHJKMctHCHAGrMdG0PRM/KErzAL3CU6/eckEtmHNB3x6e3c0vA==
   dependencies:
     nanoid "^3.3.7"
@@ -9407,7 +9407,7 @@ react-dom@^18.2.0:
 
 react-draggable@^4.4.6:
   version "4.4.6"
-  resolved "https://fe-private-npm.xylink.com/react-draggable/-/react-draggable-4.4.6.tgz#63343ee945770881ca1256a5b6fa5c9f5983fe1e"
+  resolved "https://registry.npmmirror.com/react-draggable/-/react-draggable-4.4.6.tgz#63343ee945770881ca1256a5b6fa5c9f5983fe1e"
   integrity sha512-LtY5Xw1zTPqHkVmtM3X8MUOxNDOUhv/khTgBgrUvwaS064bwVvxT+q5El0uUFNx5IEPKXuRejr7UqLwBIg5pdw==
   dependencies:
     clsx "^1.1.1"
@@ -9415,7 +9415,7 @@ react-draggable@^4.4.6:
 
 react-error-boundary@^4.0.13:
   version "4.0.13"
-  resolved "https://fe-private-npm.xylink.com/react-error-boundary/-/react-error-boundary-4.0.13.tgz#80386b7b27b1131c5fbb7368b8c0d983354c7947"
+  resolved "https://registry.npmmirror.com/react-error-boundary/-/react-error-boundary-4.0.13.tgz#80386b7b27b1131c5fbb7368b8c0d983354c7947"
   integrity sha512-b6PwbdSv8XeOSYvjt8LpgpKrZ0yGdtZokYwkwV2wlcZbxgopHX/hgPl5VgpnoVOWd868n1hktM8Qm4b+02MiLQ==
   dependencies:
     "@babel/runtime" "^7.12.5"
@@ -9442,7 +9442,7 @@ react-refresh@^0.13.0:
 
 react-router-dom@^6.17.0:
   version "6.22.3"
-  resolved "https://fe-private-npm.xylink.com/react-router-dom/-/react-router-dom-6.22.3.tgz#9781415667fd1361a475146c5826d9f16752a691"
+  resolved "https://registry.npmmirror.com/react-router-dom/-/react-router-dom-6.22.3.tgz#9781415667fd1361a475146c5826d9f16752a691"
   integrity sha512-7ZILI7HjcE+p31oQvwbokjk6OA/bnFxrhJ19n82Ex9Ph8fNAq+Hm/7KchpMGlTgWhUxRHMMCut+vEtNpWpowKw==
   dependencies:
     "@remix-run/router" "1.15.3"
@@ -9450,7 +9450,7 @@ react-router-dom@^6.17.0:
 
 react-router@6.22.3:
   version "6.22.3"
-  resolved "https://fe-private-npm.xylink.com/react-router/-/react-router-6.22.3.tgz#9d9142f35e08be08c736a2082db5f0c9540a885e"
+  resolved "https://registry.npmmirror.com/react-router/-/react-router-6.22.3.tgz#9d9142f35e08be08c736a2082db5f0c9540a885e"
   integrity sha512-dr2eb3Mj5zK2YISHK++foM9w4eBnO23eKnZEDs7c880P6oKbrjz/Svg9+nxqtHQK+oMW4OtjZca0RqPglXxguQ==
   dependencies:
     "@remix-run/router" "1.15.3"
@@ -10495,7 +10495,7 @@ stylehacks@^5.1.0:
 
 stylelint-order@^6.0.3:
   version "6.0.4"
-  resolved "https://fe-private-npm.xylink.com/stylelint-order/-/stylelint-order-6.0.4.tgz#3e80d876c61a98d2640de181433686f24284748b"
+  resolved "https://registry.npmmirror.com/stylelint-order/-/stylelint-order-6.0.4.tgz#3e80d876c61a98d2640de181433686f24284748b"
   integrity sha512-0UuKo4+s1hgQ/uAxlYU4h0o0HS4NiQDud0NAUNI0aa8FJdmYHA5ZZTFHiV5FpmE3071e9pZx5j0QpVJW5zOCUA==
   dependencies:
     postcss "^8.4.32"

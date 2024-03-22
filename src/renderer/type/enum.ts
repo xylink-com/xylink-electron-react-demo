@@ -7,7 +7,6 @@ export enum MeetingStatus {
 export enum LoginType{
   XY = 'XY',
   EXTERNAL = 'EXTERNAL',
-  CCB_AUTH_CODE = 'CCB_AUTH_CODE',
   THREE_XY = 'THREE_XY_ACCOUNT',
   THREE_EXT_TOKEN = 'THREE_EXT_TOKEN',
   // THREE_EXT_USER_ID = 'THREE_EXT_USER_ID',

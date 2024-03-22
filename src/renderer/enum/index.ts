@@ -221,7 +221,6 @@ export const LoginTypeMap: Partial<{
 }> = {
   [LoginType.XY]: '小鱼账号登录 (旧)',
   [LoginType.EXTERNAL]: '三方账号登录',
-  [LoginType.CCB_AUTH_CODE]: '建行授权码登录',
   [LoginType.THREE_XY]: '小鱼账号登录',
   [LoginType.THREE_EXT_TOKEN]: '三方token登录',
 };
