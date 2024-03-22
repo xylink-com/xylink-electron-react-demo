@@ -1,13 +1,13 @@
 /**
  * 设置
  */
-import { useEffect } from 'react';
 import { Menu, Modal } from 'antd';
 import { MenuInfo } from 'rc-menu/lib/interface';
 import Device from './Device';
 import Feedback from './Feedback';
 import Version from './Version';
 import Common from './Common';
+import VideoEffect from './VideoEffect';
 import { TSettingType } from '@/type/index';
 import {
   SettingOutlined,
@@ -17,11 +17,11 @@ import {
   BulbOutlined,
 } from '@ant-design/icons';
 import { useRecoilState, useRecoilValue } from 'recoil';
-import { ItemType } from 'antd/lib/menu/hooks/useItems';
 import { currentTabState, settingModalState, unLogin } from '@/utils/state';
+import type { ItemType } from 'antd/lib/menu/hooks/useItems';
 
 import './style/index.scss';
-import VideoEffect from './VideoEffect';
+import { useEffect } from 'react';
 
 const Setting = () => {
   const isUnLogin = useRecoilValue(unLogin);

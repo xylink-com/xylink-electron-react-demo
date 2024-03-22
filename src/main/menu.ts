@@ -21,7 +21,10 @@ export default class MenuBuilder {
   }
 
   buildMenu(): Menu {
-    if (isDevelopment || process.env.DEBUG_PROD === 'true') {
+    if (
+      isDevelopment ||
+      process.env.DEBUG_PROD === 'true'
+    ) {
       this.setupDevelopmentEnvironment();
     }
 
@@ -33,7 +36,7 @@ export default class MenuBuilder {
     Menu.setApplicationMenu(menu);
 
     app.setAboutPanelOptions({
-      applicationName: '小鱼云视频',
+      applicationName: '小鱼易连',
       applicationVersion: pkg.version,
       version: '',
       iconPath: getAssetPath('logo@4x.png'),
@@ -65,7 +68,7 @@ export default class MenuBuilder {
         },
       },
     ]);
-    tray.setToolTip('小鱼云视频');
+    tray.setToolTip('小鱼易连');
     tray.setContextMenu(contextMenu);
 
     tray.on('double-click', () => {
@@ -92,10 +95,10 @@ export default class MenuBuilder {
 
   buildDarwinTemplate(): MenuItemConstructorOptions[] {
     const subMenuAbout: DarwinMenuItemConstructorOptions = {
-      label: '小鱼云视频',
+      label: '小鱼易连',
       submenu: [
         {
-          label: '关于小鱼云视频',
+          label: '关于小鱼易连',
           selector: 'orderFrontStandardAboutPanel:',
         },
         {
@@ -106,7 +109,7 @@ export default class MenuBuilder {
           ],
         },
         {
-          label: '退出小鱼云视频',
+          label: '退出小鱼易连',
           accelerator: 'Command+Q',
           click: () => {
             app.quit();

@@ -1,6 +1,3 @@
-/**
- * electron store
- */
 import Store from 'electron-store';
 import {
   DEFAULT_USER_INFO,
@@ -15,6 +12,7 @@ export const defaultsStore = {
   xyMeetingInfo: DEFAULT_MEETING_INFO,
   xySettingInfo: DEFAULT_SETTING_INFO,
   xyWithDesktopAudio: false,
+  xyOpenLocalVideoFlip: false,
 };
 
 const store = new Store({

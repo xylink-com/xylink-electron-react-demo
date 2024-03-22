@@ -10,6 +10,7 @@ import {
   AIFaceMapState,
   broadCastState,
   faceTypeState,
+  localVideoFlip,
 } from '@/utils/state';
 import { LOCAL_VIEW_ID } from '@/enum';
 
@@ -19,6 +20,7 @@ interface IProps {
 
 const FaceInfo = (props: IProps) => {
   const { item } = props;
+  const videoFlip = useRecoilValue(localVideoFlip);
   const AIFaceMap = useRecoilValue(AIFaceMapState); // 人脸位置等信息
   const faceType = useRecoilValue(faceTypeState); // 远端人脸 显示类型
   const broadCast = useRecoilValue(broadCastState); // 是否广播本地电子铭牌
@@ -69,7 +71,7 @@ const FaceInfo = (props: IProps) => {
 
       let startX = x1;
 
-      if (item.sourceId === LOCAL_VIEW_ID) {
+      if (item.sourceId === LOCAL_VIEW_ID && videoFlip) {
         startX = w - x2;
       }
 
@@ -86,6 +88,7 @@ const FaceInfo = (props: IProps) => {
       item.roster.videoHeight,
       item.roster.videoWidth,
       item.sourceId,
+      videoFlip
     ]
   );
 

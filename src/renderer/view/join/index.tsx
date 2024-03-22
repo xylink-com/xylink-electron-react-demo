@@ -1,6 +1,11 @@
+/**
+ * 加入会议
+ *
+ */
 import { useEffect, useState, useRef, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { ipcRenderer } from 'electron';
+import { useSetRecoilState, useRecoilState } from 'recoil';
 import { Form, Input, Row, Button, Checkbox, message } from 'antd';
 import Avatar from '@/components/Avatar';
 import store from '@/utils/store';
@@ -8,7 +13,7 @@ import xyRTC from '@/utils/xyRTC';
 import Section from '@/components/Section';
 import Setting from '../components/Setting';
 import { KICK_OUT_MAP } from '@/enum/error';
-import { useRecoilState, useSetRecoilState } from 'recoil';
+import { initVideoEffect } from '@/utils/initVideoEffect';
 import { deviceCheckFinishedState, videoState } from '@/utils/state';
 
 import './index.scss';
@@ -16,10 +21,10 @@ import './index.scss';
 const JoinMeeting = () => {
   const navigate = useNavigate();
   const { displayName = '' } = store.get('xyLoginInfo') || {};
+  const setVideoState = useSetRecoilState(videoState);
   const [info, setInfo] = useState(store.get('xyMeetingInfo'));
   const [verifyDisabled, setVerifyDisabled] = useState(true);
   const isMonitorRef = useRef(false);
-  const setVideoState = useSetRecoilState(videoState);
   const [deviceCheckFinished, setDeviceCheckFinished] = useRecoilState(
     deviceCheckFinishedState
   );
@@ -32,16 +37,10 @@ const JoinMeeting = () => {
   }, [navigate]);
 
   useEffect(() => {
-    ipcRenderer.on('check-camera-finished', (event, isFinished) => {
+    ipcRenderer.on('check-device-finished', (event, isFinished) => {
       setDeviceCheckFinished((state) => ({
         ...state,
         cameraCheckFinished: isFinished,
-      }));
-    });
-
-    ipcRenderer.on('check-microphone-finished', (event, isFinished) => {
-      setDeviceCheckFinished((state) => ({
-        ...state,
         microphoneCheckFinished: isFinished,
       }));
     });
@@ -58,7 +57,7 @@ const JoinMeeting = () => {
       meetingPassword,
       muteVideo = false,
       muteAudio = false,
-      meetingId
+      meetingId,
     } = info;
 
     const result = xyRTC.makeCall(
@@ -69,7 +68,7 @@ const JoinMeeting = () => {
       muteAudio,
       {
         isMonitor: isMonitorRef.current,
-        meetingId
+        meetingId,
       }
     );
 
@@ -78,6 +77,9 @@ const JoinMeeting = () => {
 
       navigate('/');
     } else {
+      // 设置虚拟背景、美颜效果
+      initVideoEffect.init();
+
       navigate('/meeting');
     }
   }, [info, navigate]);
@@ -132,8 +134,7 @@ const JoinMeeting = () => {
     }
 
     // 检测、申请摄像头权限
-    ipcRenderer.send('check-camera-access');
-    ipcRenderer.send('check-microphone-access');
+    ipcRenderer.send('check-device-access-privilege');
 
     setIsJoin(true);
   };
@@ -174,9 +175,7 @@ const JoinMeeting = () => {
             }}
           />
         </Form.Item>
-        <Form.Item
-          name="meetingId"
-        >
+        <Form.Item name="meetingId">
           <Input
             type="text"
             placeholder="meetingId, 可选"
@@ -246,6 +245,16 @@ const JoinMeeting = () => {
           >
             加入会议
           </Button>
+
+          {/* <Button
+                type="primary"
+                style={{ marginLeft: '10px' }}
+                onClick={() => {
+                  makeCall(true);
+                }}
+              >
+                开始监会
+              </Button> */}
         </Row>
       </Form>
     </Section>

@@ -1,0 +1,84 @@
+html,
+body,
+#root {
+  background: transparent;
+}
+
+*{
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+.container {
+  margin: 0px;
+  padding: 0px;
+  width: 100vw;
+  height: 100vh;
+  pointer-events: none;
+  position: relative;
+  background: transparent;
+}
+
+.line {
+  background: #3876ff;
+  -webkit-app-region: drag;
+  cursor: move;
+  position: absolute;
+  pointer-events: auto;
+}
+
+.line1 {
+  height: 24px;
+  top: 0;
+  left: 0;
+  right: 0;
+}
+
+.line2 {
+  height: 4px;
+  bottom: 0;
+  left: 0;
+  right: 0;
+}
+
+.line3 {
+  width: 4px;
+  bottom: 0;
+  left: 0;
+  top: 0;
+}
+
+.line4 {
+  width: 4px;
+  bottom: 0;
+  right: 0;
+  top: 0;
+}
+
+.center {
+  position: absolute;
+  left: 4px;
+  bottom: 4px;
+  right: 4px;
+  top: 24px;
+  pointer-events: auto;
+}
+
+.fullScreen {
+  .line {
+    -webkit-app-region: none;
+    cursor: initial;
+  }
+
+  .line1, .line2 {
+    height: 6px;
+  }
+
+  .center {
+    left: 6px;
+  bottom: 6px;
+  right: 6px;
+  top: 6px;
+  }
+}

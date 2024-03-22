@@ -132,7 +132,7 @@ const PromptInfo = (props: IProps) => {
     );
   };
 
-  /** 共享APP是否已被暂停 */
+  /** app 共享是否已被暂停 */
   const appSharingIsPaused = sharingType === ContentCaptureType.APP && sharingIsPaused;
 
   return (

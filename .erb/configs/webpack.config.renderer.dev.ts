@@ -46,16 +46,23 @@ const configuration: webpack.Configuration = {
 
   target: ['electron-renderer'],
 
-  entry: [
-    `webpack-dev-server/client?http://localhost:${port}/dist`,
-    'webpack/hot/only-dev-server',
-    path.join(webpackPaths.srcRendererPath, 'index.tsx'),
-  ],
+  entry:{
+    renderer: [
+      `webpack-dev-server/client?http://localhost:${port}/dist`,
+      'webpack/hot/only-dev-server',
+      path.join(webpackPaths.srcRendererPath, 'index.tsx'),
+    ],
+    screenRegionShare: [
+      `webpack-dev-server/client?http://localhost:${port}/dist`,
+      'webpack/hot/only-dev-server',
+      path.join(webpackPaths.screenSharePath, 'index.tsx'),
+    ]
+  },
 
   output: {
     path: webpackPaths.distRendererPath,
     publicPath: '/',
-    filename: 'renderer.dev.js',
+    filename: '[name].[hash:8].js',
     // library: {
     //   type: 'umd',
     // },
@@ -171,6 +178,7 @@ const configuration: webpack.Configuration = {
         removeAttributeQuotes: true,
         removeComments: true,
       },
+      chunks: ['renderer'],
       isBrowser: false,
       env: process.env.NODE_ENV,
       isDevelopment: process.env.NODE_ENV !== 'production',
@@ -178,16 +186,17 @@ const configuration: webpack.Configuration = {
     }),
 
     /**
-     * 区域共享篮筐代码量很少，单独一个页面，也无需注射冗余js
-     */
+    * @version v3.10.1 区域共享篮筐代码量很少，单独一个页面，也无需注射冗余js
+    * @version v3.10.3 增加批注功能，逻辑增加，还需使用react, 增加chunks
+    */
     new HtmlWebpackPlugin({
-      inject: false,
       filename: path.join('screenRegionShare.html'),
-      template: path.join(webpackPaths.srcRendererPath, 'screenRegionShare.html'),
+      template: path.join(webpackPaths.srcRendererPath, 'index.ejs'),
       minify: {
         removeAttributeQuotes: true,
         removeComments: true,
       },
+      chunks: ['screenRegionShare'],
       isBrowser: false,
       env: process.env.NODE_ENV,
       isDevelopment: process.env.NODE_ENV !== 'production',

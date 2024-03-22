@@ -14,16 +14,45 @@
       font-weight: normal;
       cursor: pointer;
     }
-    margin-bottom: 24px;
+    margin-bottom: 20px;
   }
 }
 
 .xy-form-bottom {
   position: relative;
+
   .setting-btn {
     position: absolute;
     bottom: -40px;
     left: 50%;
     transform: translateX(-50%);
+  }
+}
+
+.shake {
+  animation: shake 0.8s both;
+  text-align: left;
+}
+
+@keyframes shake {
+  10%,
+  90% {
+    transform: translate3d(-1px, 0, 0);
+  }
+
+  20%,
+  80% {
+    transform: translate3d(1px, 0, 0);
+  }
+
+  30%,
+  50%,
+  70% {
+    transform: translate3d(-2px, 0, 0);
+  }
+
+  40%,
+  60% {
+    transform: translate3d(2px, 0, 0);
   }
 }

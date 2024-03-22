@@ -5,6 +5,15 @@
   overflow: hidden;
 }
 
+.annotation-wrapper{
+  position: absolute;
+  left:0;
+  top:0;
+  right: 0;
+  bottom: 0;
+  z-index: 20;
+}
+
 .video {
   width: 100%;
   height: 100%;
@@ -101,6 +110,7 @@
       flex-direction: column;
       position: relative;
       z-index: 1;
+
       .avatar {
         height: auto;
       }
@@ -116,10 +126,12 @@
       height: 24px;
       margin: 0 -8px 0 -2px;
     }
+
     .audio-muted-status {
       background: url('./img/audio_mute.png') center center no-repeat;
       background-size: 16px;
     }
+
     .audio-unmuted-status {
       background: url('./img/audio_unmute.png') center center no-repeat;
       background-size: 16px;
@@ -178,11 +190,11 @@
   justify-content: center;
 }
 
-
 .face-scan {
   position: absolute;
   z-index: 999;
   color: #fff;
+
   .face-card {
     position: relative;
   }

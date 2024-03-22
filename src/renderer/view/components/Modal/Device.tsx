@@ -22,15 +22,17 @@ const { Option } = Select;
 const Device = () => {
   const meetingState = useRecoilValue(callState);
 
-  const { cameraList, microphoneList, speakerList, switchDevice } = useDeviceSelect()
+  const { cameraList, microphoneList, speakerList, switchDevice } = useDeviceSelect();
 
   const isInMeeting = meetingState === MeetingStatus.MEETING;
   const selectedDevice =
     useRecoilValue(selectedDeviceState);
+
+  const [videoFlip, setVideoFlip] = useRecoilState(localVideoFlip);
+
   const [testSpeakerStatus, setTestSpeakerStatus] = useState(false);
   const [micLevel, setMicLevel] = useState(0); // 音频输入级别
   const [speakerLevel, setSpeakerLevel] = useState(0); // 音频输出级别
-  const [videoFlip, setVideoFlip] = useRecoilState(localVideoFlip);
 
   const testSpeakerStatusRef = useRef(false);
   const micLevelTimer = useRef<ReturnType<typeof setInterval> | null>(null);
@@ -116,6 +118,11 @@ const Device = () => {
     setTestSpeakerStatus(!testSpeakerStatus);
   };
 
+  const onSwitchVideoFlip = (checked:boolean) => {
+    setVideoFlip(checked);
+    store.set('xyOpenLocalVideoFlip', checked);
+  }
+
   return (
     <div className="setting__content-device">
       <div className={`setting__content-device-main`}>
@@ -144,10 +151,7 @@ const Device = () => {
           <div className="item">
             <div className="key">视频镜像</div>
             <div className="value">
-              <Switch checked={videoFlip} onChange={(checked) => {
-                setVideoFlip(checked);
-                store.set('xyOpenLocalVideoFlip', checked);
-              }} />
+              <Switch checked={videoFlip} onChange={onSwitchVideoFlip} />
             </div>
           </div>
 

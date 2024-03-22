@@ -6,7 +6,7 @@ import { ipcRenderer } from 'electron';
 import React, { useEffect, useRef, useState } from 'react';
 import { Checkbox, Button, Modal, Space, message } from 'antd';
 import { useRecoilState, useSetRecoilState, useRecoilValue } from 'recoil';
-import { contentThumbnailModalState } from '@/utils/state';
+import { annotationStatusState, contentThumbnailModalState } from '@/utils/state';
 import xyRTC from '@/utils/xyRTC';
 import { shareContentType, withDesktopAudioState, contentSharingIsPaused } from '@/utils/state';
 import style from './index.module.scss';
@@ -16,15 +16,18 @@ import {
   IApp,
   IAppIcon,
   IAppThumbnail,
+  IMonitorInfo,
   IMonitorThumbnail,
   ISendContentParams,
 } from '@xylink/xy-electron-sdk';
 import store from '@/utils/store';
 import SVG from '@/components/Svg';
 import regionIcon from './img/icon-region-2x.png';
-import { IContentInfo } from '@/type';
+import { IContentInfo, IMonitor } from '@/type';
 import { CONTENT_PAGE_SIZE, CONTENT_LOOP_INTERVAL } from '@/enum';
 import ThumbnailRenderer from '@/view/components/ThumbnailRenderer';
+
+type OnRegionSharingHandler = (event: Electron.IpcRendererEvent, region: Electron.Rectangle) => void;
 
 const ContentThumbnail = () => {
   const [visible, setVisible] = useRecoilState(contentThumbnailModalState);
@@ -33,9 +36,11 @@ const ContentThumbnail = () => {
   );
   const setContentType = useSetRecoilState(shareContentType);
   const sharingIsPaused = useRecoilValue(contentSharingIsPaused);
+  const setAnnotationStatus = useSetRecoilState(annotationStatusState);
 
   const [currentPage, setCurrentPage] = useState(1);
   const [enableFluentMode, setEnableFluentMode] = useState(false);
+  const [bEnableAnnotation, setBEnableAnnotation] = useState(true);
   const [thumbnailsList, setThumbnailsList] = useState<IContentInfo[]>([]);
   const [curSelectedContent, setCurSelectedContent] = useState<IContentInfo | null>(null);
 
@@ -51,22 +56,22 @@ const ContentThumbnail = () => {
   const getThumbnailList = () => {
     const thumbnails: IContentInfo[] = [];
     // 获取屏幕缩略图
-    const monitorNameList: string[] = xyRTC.getMonitorList();
+    const monitorInfoList: IMonitorInfo[] = xyRTC.getMonitorInfos();
 
-    monitorNameList.forEach((monitorName, index) => {
-      const monitor = thumbnailsMapRef.current.get(monitorName);
+    monitorInfoList.forEach((monitorInfo, index) => {
+      const monitor = thumbnailsMapRef.current.get(monitorInfo.monitorName);
 
       if (monitor) {
         thumbnails.push(monitor);
       }
       else {
         // 获取缩略图，创建新的缩略图数据
-        const monitorThumb: IMonitorThumbnail = xyRTC.getMonitorThumbnail(monitorName);
+        const monitorThumb: IMonitorThumbnail = xyRTC.getMonitorThumbnail(monitorInfo.monitorName);
 
         if (monitorThumb.hasData) {
           const info: IContentInfo = {
-            info: monitorThumb,
-            key: monitorName,
+            info: {...monitorThumb, rect: monitorInfo.rect},
+            key: monitorInfo.monitorName,
             name: index === 0 ? '当前屏幕' : `共享屏幕${index}`,
             type: ContentCaptureType.SCREEN
           };
@@ -152,43 +157,67 @@ const ContentThumbnail = () => {
       return;
     }
 
-    if (curSelectedContent.screenRegionSharing) {
-      return ipcRenderer.send('screenRegionShare');
+    // 可能当前正在接收content, 并且处于批注状态, 需要先关掉批注
+    setAnnotationStatus((prevStatus) => {
+      if (prevStatus) {
+        xyRTC.stopAnnotation();
+        ipcRenderer.send('AnnotationStatus', false);
+      }
+
+      return false;
+    });
+
+    const { type, info ,screenRegionSharing} = curSelectedContent;
+
+    if (type === ContentCaptureType.SCREEN) {
+      const desktopShareType = screenRegionSharing ? 'area' : 'fullScreen';
+      // 桌面共享直接隐藏缩略图弹窗，无需等
+      if (!screenRegionSharing) {
+        xyRTC.startSendContent({
+          contentStreamMode: ContentStreamMode.BOTH,
+          contentCaptureType: ContentCaptureType.SCREEN,
+          contentInfo: {
+            source: (info as IMonitor).monitorName,
+            enableFluentMode,
+            localContentPreview: false,
+            withAudio: withDesktopAudio,
+            bEnableAnnotation
+          },
+        });
+
+        setVisible(false);
+        setContentType(ContentCaptureType.SCREEN);
+        setCurSelectedContent(null);
+      }
+
+      return ipcRenderer.send('screenRegionShare', {type: desktopShareType, rect:( info as IMonitor).rect});
+    }else if(type === ContentCaptureType.APP){
+      xyRTC.startSendContent({
+        contentCaptureType: type,
+        contentStreamMode: ContentStreamMode.BOTH,
+        contentInfo: {
+          source: '',
+          viewId:(info as IAppThumbnail).hwnd,
+          withAudio: withDesktopAudio,
+          enableFluentMode,
+          localContentPreview: false,
+          bEnableAnnotation
+        },
+      });
     }
 
-    const { type, info } = curSelectedContent;
-
-    const payload: ISendContentParams = {
-      contentCaptureType: type,
-      contentStreamMode: ContentStreamMode.BOTH,
-      contentInfo: {
-        source: '',
-        withAudio: withDesktopAudio,
-        enableFluentMode,
-        localContentPreview: false,
-      },
-    };
-
-    console.log('payload ====> ', payload);
-
-    if (type === ContentCaptureType.APP) {
-      payload.contentInfo.viewId = (info as IAppThumbnail).hwnd;
-      xyRTC.startSendContent(payload);
-    } else if (type === ContentCaptureType.SCREEN) {
-      payload.contentInfo.source = (info as IMonitorThumbnail).monitorName;
-      xyRTC.startSendContent(payload);
-    }
     setVisible(false);
     setCurSelectedContent(null);
     setContentType(type);
   };
 
+  // 区域共享监听，桌面共享不会走到这里
   useEffect(() => {
-    type OnRegionSharingHandler = (event: Electron.IpcRendererEvent, region: Electron.Rectangle) => void;
     const startRegionShare: OnRegionSharingHandler = (_event, region) => {
+
       console.log('startRegionShare region, ', region);
 
-      const { x, y, width: w, height: h } = region;
+      const { x, y, width: w, height: h } = region || {};
 
       xyRTC.startSendContent({
         contentStreamMode: ContentStreamMode.BOTH,
@@ -198,18 +227,24 @@ const ContentThumbnail = () => {
           enableFluentMode,
           localContentPreview: false,
           withAudio: withDesktopAudio,
-          region: { x, y, w, h },
+          region:  { x, y, w, h },
+          bEnableAnnotation
         },
       });
+
       setVisible(false);
       setContentType(ContentCaptureType.SCREEN);
+      setCurSelectedContent(null);
     }
 
-    const onregionSharingWindowWillChange = () => {
-      // 将要移动窗口的时候, 把共享先暂停
-      xyRTC.pauseContentCapture();
-    }
+    ipcRenderer.on('startRegionShare', startRegionShare);
 
+    return () => {
+      ipcRenderer.off('startRegionShare', startRegionShare);
+    }
+  }, [enableFluentMode, withDesktopAudio, curSelectedContent, bEnableAnnotation]);
+
+  useEffect(()=>{
     const updateDisplayRegion: OnRegionSharingHandler = (_event, region) => {
       console.log('updateDisplayRegion region, ', region);
       // 如果是暂停的状态，则不应该恢复
@@ -219,16 +254,19 @@ const ContentThumbnail = () => {
       console.log(res);
     };
 
-    ipcRenderer.on('startRegionShare', startRegionShare);
+    const onregionSharingWindowWillChange = () => {
+      // 将要移动窗口的时候, 把共享先暂停
+      xyRTC.pauseContentCapture();
+    }
     ipcRenderer.on('updateDisplayRegion', updateDisplayRegion);
     ipcRenderer.on('regionSharingWindowWillChange', onregionSharingWindowWillChange);
 
-    return () => {
-      ipcRenderer.off('startRegionShare', startRegionShare);
+    return ()=>{
       ipcRenderer.off('updateDisplayRegion', updateDisplayRegion);
       ipcRenderer.off('regionSharingWindowWillChange', onregionSharingWindowWillChange);
+
     }
-  }, [enableFluentMode, withDesktopAudio, sharingIsPaused]);
+  }, [sharingIsPaused])
 
   const { totalPage, paginationList } = React.useMemo(() => {
     const startIdx = (currentPage - 1) * CONTENT_PAGE_SIZE;
@@ -279,7 +317,11 @@ const ContentThumbnail = () => {
                     key={thumbnail.key}
                     onDoubleClick={startShare}
                     checked={thumbnail.key === curSelectedContent?.key}
-                    onClick={() => setCurSelectedContent(thumbnail)}
+                    onClick={() => {
+                      setCurSelectedContent(thumbnail);
+                      thumbnail.type === ContentCaptureType.APP &&
+                        setBEnableAnnotation(false);
+                    }}
                     label={thumbnail.name}
                   >
                     <ThumbnailRenderer
@@ -307,6 +349,15 @@ const ContentThumbnail = () => {
         </div>
         <div className={style.footer}>
           <Space size={24}>
+          <Checkbox
+              checked={!bEnableAnnotation}
+              disabled={curSelectedContent?.type === ContentCaptureType.APP}
+              onChange={(e) => {
+                setBEnableAnnotation(!e.target.checked);
+              }}
+            >
+              共享内容时禁止他人批注
+            </Checkbox>
             <Checkbox
               checked={withDesktopAudio}
               onChange={(e) => {

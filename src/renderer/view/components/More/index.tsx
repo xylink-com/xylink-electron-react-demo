@@ -1,7 +1,8 @@
 /**
  * 会中底部按钮"更多" 包含设置和键盘功能
+ *
  */
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { message, Popover } from 'antd';
 import xyRTC from '@/utils/xyRTC';
 import SVG from '@/components/Svg';
@@ -13,13 +14,26 @@ import {
   toolbarState,
   videoState,
   currentTabState,
-  farEndControlState
+  farEndControlState,
+  annotationStatusState,
+  canAnnotationState,
+  contentStatusState,
+  shareContentType,
 } from '@/utils/state';
-import { CallMode } from '@xylink/xy-electron-sdk';
+import {
+  CallMode,
+  ContentCaptureType,
+  ShareContentState,
+} from '@xylink/xy-electron-sdk';
 
 import './index.scss';
+import { ipcRenderer } from 'electron';
 
-const More = () => {
+const { SENDING } = ShareContentState;
+interface IProps {
+  contentPartCount: number;
+}
+const More = (props: IProps) => {
   const [callMode, setCallMode] = useRecoilState(callModeState);
   const [visible, setVisible] = useState(false);
   const setCurrentTabState = useSetRecoilState(currentTabState);
@@ -27,6 +41,25 @@ const More = () => {
   const setToolVisible = useSetRecoilState(toolbarState);
   const [farEndControl, setFarEndControl] = useRecoilState(farEndControlState);
   const videoMuteState = useRecoilValue(videoState);
+  const [annotationStatus, setAnnotationStatus] = useRecoilState(
+    annotationStatusState
+  );
+  const confCanAnnotation = useRecoilValue(canAnnotationState);
+  const contentStatus = useRecoilValue(contentStatusState);
+  const contentType = useRecoilValue(shareContentType);
+  const [regionWindowLoaded, setRegionWindowLoaded] = useState(false);
+
+  useEffect(() => {
+    ipcRenderer.on('regionSharingWindowLoaded', (event, loaded: boolean) => {
+      console.log('regionSharingWindowLoaded', loaded)
+      setRegionWindowLoaded(loaded);
+    });
+  }, []);
+
+  const canAnnotation = useMemo(() => {
+    // 共享弹窗加载完成才可以批注，content接收者除外
+    return (regionWindowLoaded || props.contentPartCount > 0) && confCanAnnotation;
+  }, [regionWindowLoaded, props.contentPartCount, confCanAnnotation]);
 
   useEffect(() => {
     setToolVisible((state) => ({
@@ -58,9 +91,13 @@ const More = () => {
     setCallMode(mode);
   };
 
-  const onFarEndControl = ()=>{
-    if(!farEndControl.show && !farEndControl.callUri){
-      message.info('当前没有可以控制的摄像头')
+  const onFarEndControl = () => {
+    if (farEndControl.disabled) {
+      return;
+    }
+
+    if (!farEndControl.show && !farEndControl.callUri) {
+      message.info('当前没有可以控制的摄像头');
       return;
     }
 
@@ -68,15 +105,46 @@ const More = () => {
       message.info('语音模式下，不支持遥控摄像头操作');
       return;
     }
-    
+
     setFarEndControl((state) => ({
       ...state,
-      show: !state.show
-    }))
-  }
+      show: !state.show,
+    }));
+  };
+
+  const switchAnnotation = () => {
+    if (!canAnnotation) {
+      return;
+    }
+
+    setAnnotationStatus((prevStatus) => {
+      prevStatus ? xyRTC.stopAnnotation() : xyRTC.startAnnotation();
+
+      if (contentStatus === SENDING) {
+        // 分享者
+        ipcRenderer.send('AnnotationStatus', !prevStatus);
+      }
+
+      return !prevStatus;
+    });
+
+    setVisible(false);
+  };
 
   const content = (
     <ul className="more-select">
+      {/*TODO 作为发送者，如果共享app, 目前还不支持 */}
+      {((contentStatus === SENDING &&
+        contentType === ContentCaptureType.SCREEN) ||
+        props.contentPartCount > 0) && (
+        <li
+          className={!canAnnotation ? 'disabled' : ''}
+          onClick={switchAnnotation}
+        >
+          {annotationStatus ? '停止批注' : '批注'}
+        </li>
+      )}
+
       <li onClick={switchCallMode}>
         {callMode === CallMode.AudioOnly ? '退出语音模式' : '语音模式'}
       </li>
@@ -105,6 +173,7 @@ const More = () => {
         设置
       </li>
       <li
+        className={farEndControl.disabled ? 'disabled' : ''}
         onClick={onFarEndControl}
       >
         {farEndControl.show ? '退出遥控模式' : '遥控摄像头'}

@@ -4,6 +4,7 @@
 import { useRef, useEffect } from 'react';
 import { ISubTitle } from '@xylink/xy-electron-sdk';
 import './index.scss';
+import { isMac } from '@/utils';
 
 interface IProps {
   subTitle: ISubTitle;
@@ -31,7 +32,8 @@ const Barrage = ({ subTitle }: IProps) => {
     big: '24px',
   };
   const locationMap: Record<string, string> = {
-    top: '0px',
+    // window的顶部工具栏是固定存在的，不会丢失hover的时候消失，所以预留30px
+    top: isMac ? '0px': '30px',
     middle: '42%',
     bottom: '0px',
   };

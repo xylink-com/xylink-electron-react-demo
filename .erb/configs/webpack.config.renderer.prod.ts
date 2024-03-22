@@ -32,12 +32,15 @@ const configuration: webpack.Configuration = {
 
   target: ['electron-renderer'],
 
-  entry: [path.join(webpackPaths.srcRendererPath, 'index.tsx')],
+  entry: {
+    renderer: path.join(webpackPaths.srcRendererPath, 'index.tsx'),
+    screenRegionShare: path.join(webpackPaths.screenSharePath, 'index.tsx'),
+  },
 
   output: {
     path: webpackPaths.distRendererPath,
     publicPath: './',
-    filename: 'renderer.js',
+    filename: '[name].[contenthash:8].js',
     // library: {
     //   type: 'umd',
     // },
@@ -149,24 +152,25 @@ const configuration: webpack.Configuration = {
         removeComments: true,
       },
       isBrowser: false,
+      chunks:['renderer'],
       isDevelopment: process.env.NODE_ENV !== 'production',
     }),
 
     /**
-     * 区域共享篮筐代码量很少，单独一个页面，也无需注射冗余js
-     */
+    * @version v3.10.1 区域共享篮筐代码量很少，单独一个页面，也无需注射冗余js
+    * @version v3.10.3 增加批注功能，逻辑增加，还需使用react, 增加chunks
+    */
     new HtmlWebpackPlugin({
-      inject: false,
       filename: path.join('screenRegionShare.html'),
-      template: path.join(webpackPaths.srcRendererPath, 'screenRegionShare.html'),
+      template: path.join(webpackPaths.srcRendererPath, 'index.ejs'),
       minify: {
+        collapseWhitespace: true,
         removeAttributeQuotes: true,
         removeComments: true,
       },
       isBrowser: false,
-      env: process.env.NODE_ENV,
+      chunks: ['screenRegionShare'],
       isDevelopment: process.env.NODE_ENV !== 'production',
-      nodeModules: webpackPaths.appNodeModulesPath,
     }),
   ],
 };

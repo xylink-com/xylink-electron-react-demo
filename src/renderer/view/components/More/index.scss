@@ -19,8 +19,11 @@
     color: #fff;
     text-align: center;
     cursor: pointer;
-    &:hover {
+    &:hover:not(.disabled) {
       background: $primary-color;
+    }
+    &.disabled{
+      color: rgb(128,128,128);
     }
   }
 }
