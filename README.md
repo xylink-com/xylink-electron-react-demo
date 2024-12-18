@@ -18,22 +18,28 @@ export const ACCOUNT = {
 
 ## 集成开发
 
+从此版本开始，window平台支持64位
+
 ### 第一步
 
 安装依赖之前，检查`.npmrc`中配置
 
 windows 环境下配置如下
 
+#### 32位配置如下
 ```bash
 arch=ia32
-platform=win32
 ```
 
-mac 环境下，需要注释掉上述配置
+#### 64位配置如下
+```bash
+arch=x64
+```
+
+#### mac 环境下，需要注释掉上述配置
 
 ```bash
 # arch=ia32
-# platform=win32
 ```
 
 ### 第二步
@@ -42,20 +48,9 @@ mac 环境下，需要注释掉上述配置
 
 ```bash
 # 安装依赖
-$ yarn
+$ yarn install
 ```
-
-### 第三步
-
-electron 包安装，版本随意，此处演示
-
-```bash
-# window 安装32位electron
-$ yarn add electron@13.6.9 --arch=ia32
-
-# mac平台
-$ yarn add electron@13.6.9
-```
+> 注意：如果已经安装过依赖，但是需要切换不同平台，例如从windows 32位切换到64位，则需要删除node_modules目录和yarn.lock文件，重新安装依赖
 
 ### 第四步
 
@@ -105,8 +100,11 @@ $ yarn dev
 ### 构建
 
 ```bash
-# windows
+# windows 32位
 $ yarn package
+
+# windows 64位
+$ yarn package:x64
 
 # mac
 $ yarn package:mac

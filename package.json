@@ -1,6 +1,6 @@
 {
   "name": "xylink-electron-react-demo",
-  "version": "3.10.4",
+  "version": "3.10.5",
   "license": "MIT",
   "author": "XYLink Inc",
   "description": "xylink electron app",
@@ -15,6 +15,7 @@
     "postinstall": "ts-node .erb/scripts/check-native-dep.js && electron-builder install-app-deps && cross-env NODE_ENV=development TS_NODE_TRANSPILE_ONLY=true webpack --config ./.erb/configs/webpack.config.renderer.dev.dll.ts",
     "lint": "cross-env NODE_ENV=development eslint . --ext .js,.jsx,.ts,.tsx",
     "package": "ts-node ./.erb/scripts/clean.js dist && npm run build && electron-builder build --publish never --win --ia32",
+    "package:x64": "ts-node ./.erb/scripts/clean.js dist && npm run build && electron-builder build --publish never --win --x64",
     "package:mac": "ts-node ./.erb/scripts/clean.js dist && npm run build && electron-builder build --publish never --mac",
     "rebuild": "electron-rebuild --parallel --types prod,dev,optional --module-dir release/app",
     "test": "jest"
@@ -86,7 +87,7 @@
     "@types/webpack-bundle-analyzer": "^4.4.1",
     "@typescript-eslint/eslint-plugin": "^5.23.0",
     "@typescript-eslint/parser": "^5.23.0",
-    "@xylink/xy-electron-sdk": "^3.10.5-beta.3",
+    "@xylink/xy-electron-sdk": "^3.10.5",
     "babel-loader": "^8.2.5",
     "babel-plugin-import": "^1.13.5",
     "babel-plugin-named-asset-import": "^0.3.8",
@@ -159,7 +160,7 @@
       "installerHeaderIcon": "assets/logo256.ico",
       "include": "assets/installer.nsh"
     },
-    "asar": false,
+    "asar": true,
     "protocols": [
       {
         "name": "xylink-electron",
